@@ -1,9 +1,9 @@
 # JavaCrossPlatformNIOBench
 Cross Platform mass storage benchmark utility (Win32, Win64, Linux32, Linux64)
 
-ASM directory contains FASM sources.
+NativeBench directory contains FASM sources.
 
-JAVA directory contains Java sources (NetBeans project).
+NIOBench directory contains Java sources (NetBeans project).
 
 Java Runtime Environment (JRE) required.
 
