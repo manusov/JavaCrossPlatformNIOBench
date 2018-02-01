@@ -1,0 +1,10 @@
+Steps for Linux native library support at NIOBench and other utilities.
+
+1) Linux 64 file Write-Read-Copy-Delete sample.
+2) Linux 32 file Write-Read-Copy-Delete sample.
+3) JNI driver for Linux 64, connect to NIOBench, include RDRAND and File I/O.
+4) JNI driver for Linux 32, connect to NIOBench, include RDRAND and File I/O.
+5) NIOBench java code correction for native Linux 32/64 support.
+
+---
+
