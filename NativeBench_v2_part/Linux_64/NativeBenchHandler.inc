@@ -63,19 +63,30 @@ mov r13,[r14+40]               ; R13 = Measurement counter
 ;--- Prepare parameters for WRITE operation cycle ---
 mov r12,[r14+16]               ; R12 = Block count
 ;--- Write source file ---
+
 .WriteBlock:
-mov rdi,rbx                    ; Parm#1 = File descriptor, handle
-lea rsi,[r14+2048]             ; Parm#2 = Pointer to buffer
+lea rsi,[r14+2048]             ; Parm#2 = RSI = Pointer to buffer
 and rsi,0FFFFFFFFFFFFF000h     ; Required 4KB page alignment
 add rsi,00000000000001000h     ; Alignment possible: size reserved
-mov rdx,[r14+08]               ; Parm#3 = Buffer size, byte count per call
+mov rdx,[r14+08]               ; Parm#3 = RDX = Buffer size, byte count per call
+
+.WriteSubBlock:
+mov rdi,rbx                    ; Parm#1 = RDI = File descriptor, handle
 mov eax,SYS_WRITE              ; Function code = Write to file
+push rdx rsi
 syscall
+pop rsi rdx
 test rax,rax                   ; Check RAX = Status
 jz .Skip_Operation             ; Go if error write file, length = 0
 js .Skip_Operation             ; Go if error write file, length < 0, status
+
+add rsi,rax                    ; Advance RSI = pointer by returned size
+sub rdx,rax                    ; Subtract returned size from RDX = total block size
+jnz .WriteSubBlock             ; Repeat if block size remain
+
 dec r12
 jnz .WriteBlock                ; Cycle for blocks
+
 ;--- Positioning pointer to position=0 ---
 mov rdi,rbx                    ; Parm#1 = File descriptor, handle
 xor esi,esi                    ; Parm#2 = File offset, high = 0
@@ -118,19 +129,30 @@ mov r13,[r14+40]               ; R13 = Measurement counter
 ;--- Prepare parameters for READ operation cycle ---
 mov r12,[r14+16]               ; R12 = Block count
 ;--- Read source file ---
+
 .ReadBlock:
-mov rdi,rbx                    ; Parm#1 = File descriptor, handle
-lea rsi,[r15+2048]             ; Parm#2 = Pointer to buffer
+lea rsi,[r15+2048]             ; Parm#2 = RSI = Pointer to buffer
 and rsi,0FFFFFFFFFFFFF000h     ; Required 4KB page alignment
 add rsi,00000000000001000h     ; Alignment possible: size reserved
-mov rdx,[r14+08]               ; Parm#3 = Buffer size, byte count per call
+mov rdx,[r14+08]               ; Parm#3 = RDX = Buffer size, byte count per call
+
+.ReadSubBlock:
+mov rdi,rbx                    ; Parm#1 = RDI = File descriptor, handle
 mov eax,SYS_READ               ; Function code = Read from file
+push rdx rsi
 syscall
+pop rsi rdx
 test rax,rax                   ; Check RAX = Status
 jz .Skip_Operation             ; Go if error read file, length = 0
 js .Skip_Operation             ; Go if error read file, length < 0, status
+
+add rsi,rax                    ; Advance RSI = pointer by returned size
+sub rdx,rax                    ; Subtract returned size from RDX = total block size
+jnz .ReadSubBlock              ; Repeat if block size remain
+
 dec r12
 jnz .ReadBlock                 ; Cycle for blocks
+
 ;--- Positioning pointer to position=0 ---
 mov rdi,rbx                    ; Parm#1 = File descriptor, handle
 xor esi,esi                    ; Parm#2 = File offset, high = 0
@@ -185,27 +207,50 @@ mov r13,[r14+40]               ; R13 = Measurement counter
 mov r12,[r14+16]               ; R12 = Block count
 ;--- Copy source file to destination cycle ---
 .CopyBlock:
+lea rsi,[r15+2048]             ; Parm#2 = RSI = Pointer to buffer
+and rsi,0FFFFFFFFFFFFF000h     ; Required 4KB page alignment
+add rsi,00000000000001000h     ; Alignment possible: size reserved
+mov rdx,[r14+08]               ; Parm#3 = RDX = Buffer size, byte count per call
+
 ;--- Read phase, source file ---
-mov rdi,rbx                    ; Parm#1 = Source file descriptor, handle
-lea rsi,[r15+2048]             ; Parm#2 = Pointer to buffer
-mov rdx,[r14+08]               ; Parm#3 = Buffer size, byte count per call
+.CopyReadSubBlock:
+mov rdi,rbx                    ; Parm#1 = RDI = Source file descriptor, handle
 mov eax,SYS_READ               ; Function code = Read from file
+push rdx rsi
 syscall
+pop rsi rdx
 test rax,rax                   ; Check RAX = Status
 jz .Skip_Operation             ; Go if error READ file, length = 0
 js .Skip_Operation             ; Go if error READ file, length < 0, status
+
+add rsi,rax                    ; Advance RSI = pointer by returned size
+sub rdx,rax                    ; Subtract returned size from RDX = total block size
+jnz .CopyReadSubBlock          ; Repeat if block size remain
+
 ;--- Write phase, destination cycle ---
-mov rdi,rbp                    ; Parm#1 = Destination descriptor, handle
-lea rsi,[r15+2048]             ; Parm#2 = Pointer to buffer
-mov rdx,[r14+08]               ; Parm#3 = Buffer size, byte count per call
+lea rsi,[r15+2048]             ; Parm#2 = RSI = Pointer to buffer
+and rsi,0FFFFFFFFFFFFF000h     ; Required 4KB page alignment
+add rsi,00000000000001000h     ; Alignment possible: size reserved
+mov rdx,[r14+08]               ; Parm#3 = RDX = Buffer size, byte count per call
+
+.CopyWriteSubBlock:
+mov rdi,rbp                    ; Parm#1 = RDI = Destination descriptor, handle
 mov eax,SYS_WRITE              ; Function code = Write to file
+push rsi rdx
 syscall
+pop rdx rsi
 test rax,rax                   ; Check RAX = Status
 jz .Skip_Operation             ; Go if error WRITE file, length = 0
 js .Skip_Operation             ; Go if error WRITE file, length < 0, status
+
+add rsi,rax                    ; Advance RSI = pointer by returned size
+sub rdx,rax                    ; Subtract returned size from RDX = total block size
+jnz .CopyWriteSubBlock         ; Repeat if block size remain
+
 ;--- Cycle for Read/Write phases ---
 dec r12
-jnz .CopyBlock                         ; Cycle for blocks
+jnz .CopyBlock                 ; Cycle for blocks
+
 ;--- Positioning pointer to position=0 ---
 ;--- Source ---
 mov rdi,rbx                    ; Parm#1 = Source file descriptor, handle

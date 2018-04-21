@@ -132,7 +132,7 @@ mov [rdi-56],rax
 lea rcx,[rdi-16]
 call [GetSystemTimeAsFileTime]         ; Return time stamp, units = 100 ns 
 ;--- Measurement cycle for READ ---
-mov r14,[rsi+40]
+mov r14,[rsi+40]                       ; R14 = Measurement cycles count
 .ReadMeasurement:
 ;--- Prepare parameters for READ operation cycle ---
 mov r13,[rsi+16]                       ; R13 = Block count
@@ -141,7 +141,7 @@ mov r13,[rsi+16]                       ; R13 = Block count
 ;--- Cycle for blocks by operation scenario ---
 .ReadBlock:
 mov r12,[rsi+08]                       ; R12 = Block size
-mov r15,[rdi+56-56]                    ; R15 = Buffer offset for sub-blocks
+mov r15,[rdi+64-56]                    ; R15 = Buffer offset for sub-blocks
 ;--- Cycle for sub-blocks by API ---
 .ReadSubBlock:
 mov rcx,rbx                            ; RCX = Parm#1 = Target file handle
@@ -218,7 +218,7 @@ mov r13,[rsi+16]                       ; R13 = Block count
 ;--- Cycle for blocks by operation scenario ---
 .CopyBlock:
 mov r12,[rsi+08]                       ; R12 = Block size
-mov r15,[rdi+56-56]                    ; R15 = Buffer offset for sub-blocks
+mov r15,[rdi+64-56]                    ; R15 = Buffer offset for sub-blocks
 
 ;--- Cycle for sub-blocks by API ---
 .CopyReadSubBlock:
@@ -269,6 +269,7 @@ jnz .CopyWriteSubBlock                 ; Cycle for sub-blocks per API call
 ;--- Cycle for Read/Write phases, blocks by operation scenario ---
 dec r13
 jnz .CopyBlock                         ; Cycle for blocks
+
 ;--- Positioning pointer to position=0 ---
 ;--- Source ---
 mov rcx,rbx                           ; RCX = Parm#1 = Target file handle

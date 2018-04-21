@@ -576,7 +576,7 @@ Parm16_CopySpeed           DB  'Copy speed',0
 ErrorPhaseString           DB  'Disk benchmarks failed',0Dh,0Ah
                            DB  'Error phase: ',0
 ErrorStatusString          DB  'Error status: ',0
-ProductID                  DB  'NativeBench v0.21 for Windows x64',0
+ProductID                  DB  'NativeBench v0.22 for Windows x64',0
 NameKernel32               DB  'KERNEL32.DLL',0
 NameVirtualAllocExNuma     DB  'VirtualAllocExNuma',0
 NameSetThreadAffinityMask  DB  'SetThreadAffinityMask',0

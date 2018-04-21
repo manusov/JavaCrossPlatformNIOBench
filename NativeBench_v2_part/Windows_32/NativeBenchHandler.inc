@@ -152,7 +152,7 @@ mov [edi+04],eax
 .ReadBlock:
 mov eax,[esi+08]              ; Block size
 mov [edi+00],eax
-mov eax,[edi+68-56]           ; Buffer offset for sub-blocks
+mov eax,[edi+72-56]           ; Buffer offset for sub-blocks
 mov [edi+76-56],eax
 ;--- Cycle for sub-blocks by API ---
 .ReadSubBlock:
@@ -228,7 +228,7 @@ mov [edi+04],eax
 ;--- Cycle for blocks by operation scenario ---
 mov eax,[esi+08]              ; Block size
 mov [edi+00],eax
-mov eax,[edi+68-56]           ; Buffer offset for sub-blocks
+mov eax,[edi+72-56]           ; Buffer offset for sub-blocks
 mov [edi+76-56],eax
 
 ;--- Cycle for sub-blocks by API ---

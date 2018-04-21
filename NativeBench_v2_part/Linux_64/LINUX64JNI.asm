@@ -21,10 +21,10 @@ SYS_SETMEMPOLICY = 238    ; Note alternative codes
 SYS_GETMEMPOLICY = 239    ; Note alternative codes
 
 format ELF64
-;--- Debug entry point ---
+;--- Debug entry points ---
 public checkPAL  as  'Java_JNITESTLINUX64_checkPAL'
 public entryPAL  as  'Java_JNITESTLINUX64_entryPAL'
-;--- Production entry point ---
+;--- Production entry points ---
 public checkPAL  as  'Java_niobench_PAL_checkPAL'
 public entryPAL  as  'Java_niobench_PAL_entryPAL'
 
