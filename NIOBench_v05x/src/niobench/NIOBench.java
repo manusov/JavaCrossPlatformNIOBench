@@ -4,6 +4,7 @@ NIOBench, file I/O Benchmark utility. (C)2018 IC Book Labs
 Main class module, application initializing and dialogue window.
 
 NOTE FROM VERSION V0.17 USE JDK7 MODE.
+JDK8 from v0.53.
 
 TODO:
 BUG 1. MUST CHECK RETURN FROM METHODS transferTo() , transferFrom(),
