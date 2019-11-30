@@ -20,22 +20,25 @@ Near roadmap.
 3)+  Native method for get random array
      ( win 32/64, linux 32/64 ).
 4)+  Inspect existed classes.
+5)+  Connect charts (drawings) child window. First verify at constant patterns.
+6)+  Connect log child window. First verify at constant patterns.
+7)+  Connect tables child window. First verify at constant patterns.
 
-5)   Connect charts (drawings) child window. First verify at constant patterns.
+8)   Design tabbed panel.
 
-6)   Connect tables child window. First verify at constant patterns.
-7)   Design tabbed panel.
-8)   Design channels test panel.
-9)   Design IOPS-oriented address randomization, must be valid for
+9)   Design channels test panel.
+10)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
-10)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
+11)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
      First at channels.
-11)  Archives benchmark.
-12)  Native MBPS support.
-13)  Native IOPS support.
-14)  Other scenarios applications.
-10)  Tools handlers: exit, save report, about.
-11)  ...
+12)  Archives benchmark.
+13)  Native MBPS support.
+14)  Native IOPS support.
+15)  Other scenarios applications.
+16)  Tools handlers: exit, save report, about.
+17)  Inspect public, default, protected, private status for all classes.
+18)  Tooltips and mnemonics.
+19)  ...
 
 
 ---
@@ -54,6 +57,7 @@ Near roadmap.
 
 package niobenchrefactoring;
 
+import java.math.BigDecimal;
 import niobenchrefactoring.controller.HandlerAbout;
 import niobenchrefactoring.model.HelperDelay;
 import niobenchrefactoring.model.IOscenario;
@@ -67,7 +71,15 @@ import niobenchrefactoring.resources.About;
 import niobenchrefactoring.resources.PAL;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import static niobenchrefactoring.model.HelperDelay.delay;
+import opendraw.OpenDraw;
 import static niobenchrefactoring.resources.IOPB.extractStringFromOPB;
+import niobenchrefactoring.view.Application;
+import openlog.OpenLog;
+import opentable.EntryDetail;
+import opentable.EntryStatistics;
+import opentable.NumericEntry;
+import opentable.OpenTable;
 
 public class NIOBenchRefactoring 
 {
@@ -177,7 +189,7 @@ public static void main(String[] args)
     dialog.setVisible( true );
 */
 
-        
+/*        
     PAL pal = new PAL();
     int loadStatus = pal.loadUserModeLibrary();
     int runStatus = -1;
@@ -240,7 +252,112 @@ public static void main(String[] args)
             System.out.println();
             }
         }
+*/
     
+
+
+/*        
+    String s1 = "Start drawings...";
+    System.out.println( s1 );
+    JFrame.setDefaultLookAndFeelDecorated( true );
+    JDialog.setDefaultLookAndFeelDecorated( true );
+    OpenDraw draw = new OpenDraw( null, "Draw test only." );
+    OpenLog log = new OpenLog( null, "Log test only." );
+    OpenTable table = new OpenTable( null, "Table test only." );
+    draw.open();
+    log.open();
+    table.open();
+    log.write( s1 + "\r\n" );
+    log.repaint();
+    draw.getController().getModel().startModel();
+    BigDecimal[] value = new BigDecimal[]
+        { 
+        new BigDecimal( 0.0 ),
+        new BigDecimal( 950.0 ),
+        new BigDecimal( 500.0 ),
+        null  // this skipped, for second pass
+            
+        };
+    int[] n = draw.getController().getModel().getMaximumIndexes();
+    int m = n[0];
+    // first pass of draw
+    for( int i=0; i<m; i++ )
+        {
+        value[0] = new BigDecimal( i+1 );
+        value[1] = value[1].subtract( BigDecimal.ONE );
+        value[2] = value[2].add( new BigDecimal( 12.0 ) );
+        draw.getController().getModel().updateValue( value );
+        draw.getController().getModel().rescaleYmax();
+        draw.getController().getView().getPanel().repaint();
+        delay( 40 );
+        }
+    String s2 = "Draw pass#1 done.";
+    System.out.println( s2 );
+    log.write( s2 + "\r\n" );
+    log.repaint();
+    draw.getController().getModel().resetCount();
+    value = new BigDecimal[]
+        { 
+        new BigDecimal( 0.0 ),    // X
+        null,                     // Y1 = READ skipped, draw at previous pass
+        null,                     // Y2 = WRITE skipped, draw at previous pass
+        new BigDecimal( 400.0 )   // Y3 = COPY, draw at this pass
+        };
+    // second pass of draw
+    for( int i=0; i<m; i++ )
+        {
+        value[0] = new BigDecimal( i+1 );
+        draw.getController().getModel().updateValue( value );
+        draw.getController().getModel().rescaleYmax();
+        draw.getController().getView().getPanel().repaint();
+        delay( 40 );
+        }
+    draw.getController().getModel().stopModel();
+    String s3 = "Draw pass#2 done.";
+    System.out.println( s3 + "\r\n" );
+    log.write( s3 );
+    log.repaint();
+    
+    EntryStatistics es = new EntryStatistics();
+    EntryDetail ed = 
+            new EntryDetail( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0 );
+    double[] a = new double[]{ 0.0, 0.0, 0.0 };
+    String[][] text = new String[4][4];
+    for( int i=0; i<4; i++ )
+        {
+        for( int j=0; j<4; j++ )
+            {
+            text[j][i] = "TEST(" + i + "," + j + ")";
+            }
+        }
+    es.blockArray = a;
+    es.mbpsArray = a;
+    es.iopsArray = a;
+    es.reservedArray = a;
+    es.blockEntry = ed;
+    es.mbpsEntry = ed;
+    es.iopsEntry = ed;
+    es.reservedEntry = ed;
+    es.statTable = text;
+    double[] a1 = new double[4];
+    BigDecimal b = new BigDecimal(0);
+    BigDecimal[] b1 = new BigDecimal[]{ b, b, b, b };
+    NumericEntry count1 = new NumericEntry( 1, a1, b1  );
+    es.dataArray.add( count1 );
+    table.getTableModel().measurementNotify( es );
+    table.repaint();
+    NumericEntry count2 = new NumericEntry( 1, a1, b1  );
+    es.dataArray.add( count2 );
+    table.getTableModel().measurementNotify( es );
+    table.repaint();
+*/
+        
+    JFrame.setDefaultLookAndFeelDecorated( true );
+    JDialog.setDefaultLookAndFeelDecorated( true );
+    Application a = new Application();
+    a.open();
+        
+        
     
     }
         

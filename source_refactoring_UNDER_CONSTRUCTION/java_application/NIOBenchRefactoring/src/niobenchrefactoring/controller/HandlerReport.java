@@ -9,7 +9,15 @@ save report with system information and previous benchmarks/tests results.
 
 package niobenchrefactoring.controller;
 
-public class HandlerReport 
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+
+public class HandlerReport extends AbstractAction
 {
+
+@Override public void actionPerformed( ActionEvent e )
+    {
+    
+    }
     
 }

@@ -23,12 +23,20 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HandlerAbout 
+public class HandlerAbout extends AbstractAction
 {
 private final static Color LOGO_COLOR = new Color( 143,49,40 );
 private final static Dimension SIZE_BUTTON_HTTP   = new Dimension ( 180, 25 );
 private final static Dimension SIZE_BUTTON_CANCEL = new Dimension ( 89, 25 );
+
+@Override public void actionPerformed( ActionEvent e )
+    {
     
+    }
+
+// TODO, MAKE THIS METHOD PRIVATE, CHANGE PARAMETERS COMMUNICATION,
+// TRANSFER FRAME BY CONSTRUCTOR ? STRINGS BY ABOUT CLASS CALL ?
+
 // Handler for "About" dialogue method, setup GUI
 public JDialog createDialog
     ( JFrame parentWin , String longName , String vendorVersion )

@@ -8,7 +8,15 @@ Operation handler for "Cancel" button: exit from application.
 
 package niobenchrefactoring.controller;
 
-public class HandlerCancel 
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
+
+public class HandlerCancel extends AbstractAction
 {
+
+@Override public void actionPerformed( ActionEvent e )
+    {
     
+    }
+
 }
