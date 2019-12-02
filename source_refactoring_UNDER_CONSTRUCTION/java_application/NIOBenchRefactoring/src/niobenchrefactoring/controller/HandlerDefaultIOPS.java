@@ -10,10 +10,14 @@ random access scenario optimized for performance measurement (IOPS).
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
-public class HandlerDefaultIOPS extends AbstractAction
+public class HandlerDefaultIOPS extends Handler
 {
+public HandlerDefaultIOPS( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
 
 @Override public void actionPerformed( ActionEvent e )
     {

@@ -23,10 +23,10 @@ Near roadmap.
 5)+  Connect charts (drawings) child window. First verify at constant patterns.
 6)+  Connect log child window. First verify at constant patterns.
 7)+  Connect tables child window. First verify at constant patterns.
-
-8)   Design tabbed panel.
+8)+  Design tabbed panel.
 
 9)   Design channels test panel.
+
 10)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
 11)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
@@ -39,6 +39,9 @@ Near roadmap.
 17)  Inspect public, default, protected, private status for all classes.
 18)  Tooltips and mnemonics.
 19)  ...
+20) All 7 scenarios by tabs.
+21) All 12 handlers by buttons.
+
 
 
 ---
@@ -354,7 +357,9 @@ public static void main(String[] args)
         
     JFrame.setDefaultLookAndFeelDecorated( true );
     JDialog.setDefaultLookAndFeelDecorated( true );
-    Application a = new Application();
+    PAL pal = new PAL();
+    pal.loadUserModeLibrary();
+    Application a = new Application( pal );
     a.open();
         
         

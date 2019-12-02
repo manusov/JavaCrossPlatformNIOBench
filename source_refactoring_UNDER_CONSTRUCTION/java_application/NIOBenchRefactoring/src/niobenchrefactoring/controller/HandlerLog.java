@@ -9,14 +9,22 @@ Operation handler for "Log" button: open log window.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import javax.swing.JFrame;
+import openlog.OpenLog;
 
-public class HandlerLog extends AbstractAction
+public class HandlerLog extends Handler
 {
-
+private final OpenLog childLog;
+    
+public HandlerLog( JFrame parentFrame, OpenLog childLog )
+    {
+    super( parentFrame );
+    this.childLog = childLog;
+    }
+    
 @Override public void actionPerformed( ActionEvent e )
     {
-    
+    childLog.open();
     }
     
 }

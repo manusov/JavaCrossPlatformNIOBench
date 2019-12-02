@@ -10,6 +10,7 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
+import javax.swing.JFrame;
 import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.TableSSD;
 
@@ -17,5 +18,18 @@ class PanelSSD extends ApplicationPanel
 {
 @Override String getTabName()                { return "SSD specific"; }
 @Override AbstractTableModel getTableModel() { return new TableSSD(); }
+
+public PanelSSD( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
+
+/*
+Additional build method, 
+not make this operations in constructor because overridable warnings.
+*/
+@Override void build()
+    {
+    }
 
 }

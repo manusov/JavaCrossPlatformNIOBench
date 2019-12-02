@@ -11,10 +11,14 @@ can be used for drawings graphical files generation.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
-public class HandlerLoad extends AbstractAction
+public class HandlerLoad extends Handler
 {
+public HandlerLoad( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
 
 @Override public void actionPerformed( ActionEvent e )
     {

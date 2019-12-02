@@ -10,6 +10,7 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
+import javax.swing.JFrame;
 import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.TableScatterGather;
 
@@ -19,5 +20,18 @@ class PanelScatterGather extends ApplicationPanel
 String getTabName() { return "NIO scatter-gather"; }
 @Override 
 AbstractTableModel getTableModel() { return new TableScatterGather(); }
+
+public PanelScatterGather( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
+
+/*
+Additional build method, 
+not make this operations in constructor because overridable warnings.
+*/
+@Override void build()
+    {
+    }
 
 }

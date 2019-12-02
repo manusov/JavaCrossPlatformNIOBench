@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
 import niobenchrefactoring.controller.HandlerAbout;
 import niobenchrefactoring.controller.HandlerCancel;
 import niobenchrefactoring.controller.HandlerClear;
@@ -34,13 +35,35 @@ import niobenchrefactoring.controller.HandlerReport;
 import niobenchrefactoring.controller.HandlerRun;
 import niobenchrefactoring.controller.HandlerTable;
 import niobenchrefactoring.resources.About;
+import niobenchrefactoring.resources.PAL;
+import opendraw.OpenDraw;
+import openlog.OpenLog;
+import opentable.OpenTable;
 
 public class Application extends JFrame
 {
+/*
+Global objects
+*/    
+private final PAL pal;
+/*
+GUI window geometry constants    
+*/
 private final static int X_SIZE = 520;
 private final static int Y_SIZE = 590;
 private final static Dimension SIZE_PROGRESS = new Dimension ( 230, 25 );
-
+/*
+Openable child windows.
+*/
+private final OpenLog childLog = 
+        new OpenLog( this, About.getShortName() + " - Log" );
+private final OpenTable childTable = 
+        new OpenTable( this, About.getShortName() + " - Statistics" );
+private final OpenDraw childDraw =
+        new OpenDraw( this, About.getShortName() + " - Charts" );
+/*
+GUI window components
+*/
 private final JTable table = new JTable();
 private final JScrollPane tableScroll = new JScrollPane( table );
 private final JTabbedPane tabs;
@@ -48,16 +71,20 @@ private final DefaultBoundedRangeModel progressModel =
                         new DefaultBoundedRangeModel( 0, 0, 0, 100 );
 private final JProgressBar progress = new JProgressBar( progressModel );
 private final String progressString = "Please run...";
-
+/*
+Panels for scenarios, selected by tabs
+*/
 private final ApplicationPanel[] panels =
-    { new PanelChannel(),
-      new PanelAsyncChannel(),
-      new PanelScatterGather(),
-      new PanelMemoryMapped(),
-      new PanelArchives(),
-      new PanelNative(),
-      new PanelSSD() };
-
+    { new PanelChannel       ( this ) ,
+      new PanelAsyncChannel  ( this ) ,
+      new PanelScatterGather ( this ) ,
+      new PanelMemoryMapped  ( this ) ,
+      new PanelArchives      ( this ) ,
+      new PanelNative        ( this ) ,
+      new PanelSSD           ( this ) };
+/*
+Buttons with it text labels
+*/
 private final JButton[] buttons =
     { new JButton( "Log   >" ),
       new JButton( "Table >" ),
@@ -71,21 +98,25 @@ private final JButton[] buttons =
       new JButton( "Clear" ),
       new JButton( "Cancel" ),
       new JButton( "Run" ) };
-
+/*
+Handlers for buttons functions
+*/
 private final AbstractAction[] handlers =
-    { new HandlerLog(),
-      new HandlerTable(),
-      new HandlerDraw(),
-      new HandlerDefaultMBPS(),
-      new HandlerDefaultIOPS(),
-      new HandlerAbout(),
-      new HandlerLoad(),
-      new HandlerGraph(),
-      new HandlerReport(),
-      new HandlerClear(),
-      new HandlerCancel(),
-      new HandlerRun() };
-
+    { new HandlerLog         ( this, childLog   ) ,
+      new HandlerTable       ( this, childTable ) ,
+      new HandlerDraw        ( this, childDraw  ) ,
+      new HandlerDefaultMBPS ( this ) ,
+      new HandlerDefaultIOPS ( this ) ,
+      new HandlerAbout       ( this ) ,
+      new HandlerLoad        ( this ) ,
+      new HandlerGraph       ( this ) ,
+      new HandlerReport      ( this ) ,
+      new HandlerClear       ( this ) ,
+      new HandlerCancel      ( this ) ,
+      new HandlerRun         ( this ) };
+/*
+Constants for buttons addressing and allocation by Spring Layout
+*/
 private final static int COL_UP     = 0;     // up right corner, open buttons
 private final static int COL_DOWN   = 2;
 private final static int ROW1_LEFT  = 3;     // down buttons: defaults
@@ -97,12 +128,15 @@ private final static int RUN_ID     = 11;
 /*
 GUI window constructor
 */
-public Application()
+public Application( PAL pal )
     {
     super( About.getShortName() );
+    this.pal = pal;
     tabs = new JTabbedPane();
     for ( ApplicationPanel panel : panels )
         {
+        panel.pal = pal;
+        panel.build();
         tabs.add( panel, panel.getTabName() );
         }
     for( int i=0; i<buttons.length; i++ )
@@ -119,17 +153,7 @@ public void open()
     SpringLayout sl = new SpringLayout();
     Container c = getContentPane();
     c.setLayout( sl );
-    
-    int index = tabs.getSelectedIndex();
-    if ( ( index >= 0 )&&( index < panels.length ) )
-        {
-        table.setModel( panels[index].getTableModel() );
-        
-        }
-    
-    progress.setStringPainted( true );
-    progress.setString( progressString );
-
+    selectionHelper();
     
     // positioning up right buttons, this buttons used for open child windows
     for( int i=COL_UP; i<=COL_DOWN; i++ )
@@ -216,13 +240,18 @@ public void open()
                       SpringLayout.EAST, c );
     add( buttons[RUN_ID] );
     
-    // positioning progress bar
+    // customize and positioning progress bar
+    progress.setPreferredSize( SIZE_PROGRESS );
+    progress.setStringPainted( true );
+    progress.setString( progressString );
     sl.putConstraint( SpringLayout.NORTH, progress,  0,
                       SpringLayout.NORTH, buttons[RUN_ID] );
     sl.putConstraint( SpringLayout.EAST,  progress, -4,
                       SpringLayout.WEST , buttons[RUN_ID] );
-    progress.setPreferredSize( SIZE_PROGRESS );
     add( progress );
+    
+    // add listener for selected tab change
+    tabs.addChangeListener( ( ChangeEvent e ) -> { selectionHelper(); } );
             
     // setup GUI window
     setDefaultCloseOperation( EXIT_ON_CLOSE );
@@ -235,4 +264,19 @@ public void open()
     setResizable( true );
     setVisible( true );
     }
+
+/*
+Helpers
+*/
+
+private void selectionHelper()
+    {
+    int index = tabs.getSelectedIndex();
+    if ( ( index >= 0 )&&( index < panels.length ) )
+        {
+        table.setModel( panels[index].getTableModel() );
+        table.repaint();
+        }
+    }
+
 }

@@ -23,25 +23,20 @@ import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HandlerAbout extends AbstractAction
+public class HandlerAbout extends Handler
 {
 private final static Color LOGO_COLOR = new Color( 143,49,40 );
 private final static Dimension SIZE_BUTTON_HTTP   = new Dimension ( 180, 25 );
 private final static Dimension SIZE_BUTTON_CANCEL = new Dimension ( 89, 25 );
 
-@Override public void actionPerformed( ActionEvent e )
+public HandlerAbout( JFrame parentFrame )
     {
-    
+    super( parentFrame );
     }
 
-// TODO, MAKE THIS METHOD PRIVATE, CHANGE PARAMETERS COMMUNICATION,
-// TRANSFER FRAME BY CONSTRUCTOR ? STRINGS BY ABOUT CLASS CALL ?
-
-// Handler for "About" dialogue method, setup GUI
-public JDialog createDialog
-    ( JFrame parentWin , String longName , String vendorVersion )
+@Override public void actionPerformed( ActionEvent event )
     {
-    final JDialog dialog = new JDialog( parentWin, "About", true );
+    JDialog dialog = new JDialog( parentFrame, "About", true );
     dialog.setDefaultCloseOperation( DISPOSE_ON_CLOSE );
     // Create GUI components
     SpringLayout sl1 = new SpringLayout();
@@ -84,12 +79,17 @@ public JDialog createDialog
     p1.add( b1 );
     p1.add( b2 );
     // Action listener for web button
-    b1.addActionListener( ( ActionEvent ae1 ) -> 
+    b1.addActionListener( ( ActionEvent e1 ) -> 
         {
         if(Desktop.isDesktopSupported())
             {   // web access
-            try { Desktop.getDesktop().browse(new URI( sHttp )); }
-            catch ( IOException | URISyntaxException ex1 ) { } 
+            try 
+                { 
+                Desktop.getDesktop().browse(new URI( sHttp ) ); 
+                }
+            catch ( IOException | URISyntaxException e2 )
+                { 
+                } 
             }
         });
     // Action listener for cancel button
@@ -101,7 +101,8 @@ public JDialog createDialog
     dialog.setContentPane( p1 );
     dialog.setSize( 300, 150 );
     dialog.setResizable( false );
-    return dialog;  
+    dialog.setLocationRelativeTo( parentFrame );
+    dialog.setVisible( true );
     }
 }
 

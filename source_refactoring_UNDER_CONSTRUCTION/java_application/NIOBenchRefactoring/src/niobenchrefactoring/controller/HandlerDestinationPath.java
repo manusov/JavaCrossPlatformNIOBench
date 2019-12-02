@@ -3,24 +3,19 @@ NIOBench. Mass storage and file I/O benchmark utility.
 (C)2020 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
-Operation handler for "Clear" button: clear previous results.
+Operation handler for "Browse" button for destination path: select path.
 */
 
 package niobenchrefactoring.controller;
 
-import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 
-public class HandlerClear extends Handler
+public class HandlerDestinationPath extends HandlerSourcePath
 {
-public HandlerClear( JFrame parentFrame )
+public HandlerDestinationPath
+        ( JFrame parentFrame, String name, JTextField field )
     {
-    super( parentFrame );
+    super( parentFrame, name, field );
     }
-
-@Override public void actionPerformed( ActionEvent e )
-    {
-    
-    }
-    
 }

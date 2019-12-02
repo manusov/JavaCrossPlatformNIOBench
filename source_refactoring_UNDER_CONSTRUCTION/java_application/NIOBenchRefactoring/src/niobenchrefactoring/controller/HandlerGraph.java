@@ -10,11 +10,15 @@ save graphics image after previous drawings benchmarks/tests results.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
-public class HandlerGraph extends AbstractAction
+public class HandlerGraph extends Handler
 {
-
+public HandlerGraph( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
+    
 @Override public void actionPerformed( ActionEvent e )
     {
     

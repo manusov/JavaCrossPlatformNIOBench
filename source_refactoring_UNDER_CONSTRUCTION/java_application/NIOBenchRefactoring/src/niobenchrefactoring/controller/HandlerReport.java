@@ -10,11 +10,15 @@ save report with system information and previous benchmarks/tests results.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import javax.swing.JFrame;
 
-public class HandlerReport extends AbstractAction
+public class HandlerReport extends Handler
 {
-
+public HandlerReport( JFrame parentFrame )
+    {
+    super( parentFrame );
+    }
+    
 @Override public void actionPerformed( ActionEvent e )
     {
     
