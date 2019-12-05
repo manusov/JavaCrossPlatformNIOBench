@@ -15,6 +15,7 @@ import java.awt.Toolkit;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -43,9 +44,10 @@ import opentable.OpenTable;
 public class Application extends JFrame
 {
 /*
-Global objects
+Global objects with getters, used by handlers
 */    
 private final PAL pal;
+public PAL getPAL() { return pal; }
 /*
 GUI window geometry constants    
 */
@@ -53,7 +55,7 @@ private final static int X_SIZE = 520;
 private final static int Y_SIZE = 590;
 private final static Dimension SIZE_PROGRESS = new Dimension ( 230, 25 );
 /*
-Openable child windows.
+Openable child windows with getters, used by handlers
 */
 private final OpenLog childLog = 
         new OpenLog( this, About.getShortName() + " - Log" );
@@ -61,6 +63,10 @@ private final OpenTable childTable =
         new OpenTable( this, About.getShortName() + " - Statistics" );
 private final OpenDraw childDraw =
         new OpenDraw( this, About.getShortName() + " - Charts" );
+// getters
+public OpenLog   getChildLog()   { return childLog;   }
+public OpenTable getChildTable() { return childTable; }
+public OpenDraw  getChildDraw()  { return childDraw;  }
 /*
 GUI window components
 */
@@ -74,14 +80,15 @@ private final String progressString = "Please run...";
 /*
 Panels for scenarios, selected by tabs
 */
-private final ApplicationPanel[] panels =
-    { new PanelChannel       ( this ) ,
-      new PanelAsyncChannel  ( this ) ,
-      new PanelScatterGather ( this ) ,
-      new PanelMemoryMapped  ( this ) ,
-      new PanelArchives      ( this ) ,
-      new PanelNative        ( this ) ,
-      new PanelSSD           ( this ) };
+private final ApplicationPanel[] panels;
+/*
+Current selected panel store and getter, used by buttons handlers
+*/
+private ApplicationPanel selectedPanel;
+public ApplicationPanel getSelectedPanel()
+    {
+    return selectedPanel;
+    }
 /*
 Buttons with it text labels
 */
@@ -102,9 +109,9 @@ private final JButton[] buttons =
 Handlers for buttons functions
 */
 private final AbstractAction[] handlers =
-    { new HandlerLog         ( this, childLog   ) ,
-      new HandlerTable       ( this, childTable ) ,
-      new HandlerDraw        ( this, childDraw  ) ,
+    { new HandlerLog         ( this ) ,
+      new HandlerTable       ( this ) ,
+      new HandlerDraw        ( this ) ,
       new HandlerDefaultMBPS ( this ) ,
       new HandlerDefaultIOPS ( this ) ,
       new HandlerAbout       ( this ) ,
@@ -123,6 +130,9 @@ private final static int ROW1_LEFT  = 3;     // down buttons: defaults
 private final static int ROW1_RIGHT = 4;
 private final static int ROW2_LEFT  = 5;     // other down buttons:
 private final static int ROW2_RIGHT = 10;    // About ... Cancel
+
+private final static int DEFAULT_ID = 3;     // first run-deactivated
+private final static int CANCEL_ID  = 10;    // not deactivated when run
 private final static int RUN_ID     = 11;
 
 /*
@@ -132,10 +142,20 @@ public Application( PAL pal )
     {
     super( About.getShortName() );
     this.pal = pal;
+    // this constructors must call when valid PAL reference
+    panels = new ApplicationPanel[]
+        { new PanelChannel       ( this ) ,
+          new PanelAsyncChannel  ( this ) ,
+          new PanelScatterGather ( this ) ,
+          new PanelMemoryMapped  ( this ) ,
+          new PanelArchives      ( this ) ,
+          new PanelNative        ( this ) ,
+          new PanelSSD           ( this ) };
+    selectedPanel = panels[0];
+    // tabbed panels and common (used for all panels) buttons
     tabs = new JTabbedPane();
     for ( ApplicationPanel panel : panels )
         {
-        panel.pal = pal;
         panel.build();
         tabs.add( panel, panel.getTabName() );
         }
@@ -268,7 +288,6 @@ public void open()
 /*
 Helpers
 */
-
 private void selectionHelper()
     {
     int index = tabs.getSelectedIndex();
@@ -276,7 +295,90 @@ private void selectionHelper()
         {
         table.setModel( panels[index].getTableModel() );
         table.repaint();
+        selectedPanel = panels[index];
         }
+    }
+
+/*
+Support callbacks from "Run" button handler
+*/
+
+private int saveCloseOperation;
+private boolean[] saveButtonsEnable;
+private boolean[] saveTabsEnable;
+private String saveRunButtonText;
+private final static String STOP_BUTTON_TEXT = "Stop";
+
+public void disableGuiBeforeRun()
+    {
+    saveCloseOperation = this.getDefaultCloseOperation();
+    this.setDefaultCloseOperation( DO_NOTHING_ON_CLOSE );
+    saveButtonsEnable = disableHelper( buttons, DEFAULT_ID, CANCEL_ID );
+    saveTabsEnable = disableHelper( new JComponent[]{ tabs } );
+    saveRunButtonText = buttons[RUN_ID].getText();
+    buttons[RUN_ID].setText( STOP_BUTTON_TEXT );
+    }
+
+public void enableGuiAfterRun()
+    {
+    buttons[RUN_ID].setText( saveRunButtonText );
+    enableHelper( saveTabsEnable, new JComponent[]{ tabs } );
+    enableHelper( saveButtonsEnable, buttons, DEFAULT_ID, CANCEL_ID );
+    this.setDefaultCloseOperation( saveCloseOperation );
+    }
+
+private boolean[] disableHelper( JComponent[] c )
+    {
+    return disableHelper( c, 0, Integer.MAX_VALUE );
+    }
+
+private boolean[] disableHelper( JComponent[] c, int min, int max )
+    {
+    boolean[] b = new boolean [c.length];
+    for( int i=0; i<c.length; i++ )
+        {
+        b[i] = c[i].isEnabled();
+        if ( ( i >= min )&&( i <= max ) )
+            {
+            c[i].setEnabled( false );
+            c[i].repaint();
+            c[i].revalidate();
+            }
+        }
+    return b;
+    }
+
+private void enableHelper( boolean[] b, JComponent[] c )
+    {
+    enableHelper( b, c, 0, Integer.MAX_VALUE );
+    }
+
+private void enableHelper( boolean[] b, JComponent[] c, int min, int max )
+    {
+    for( int i=0; i<c.length; i++ )
+        {
+        if ( ( i >= min )&&( i <= max ) )
+            {
+            c[i].setEnabled( b[i] );
+            c[i].repaint();
+            c[i].revalidate();
+            }
+        }
+    }
+
+public void updateProgress( int percentage )
+    {
+    progressModel.setValue( percentage );
+    progress.setString ( progressModel.getValue() + "%" );
+    progress.repaint();
+    progress.revalidate();
+    }
+
+public void updateProgress( String message )
+    {
+    progress.setString ( message );
+    progress.repaint();
+    progress.revalidate();
     }
 
 }

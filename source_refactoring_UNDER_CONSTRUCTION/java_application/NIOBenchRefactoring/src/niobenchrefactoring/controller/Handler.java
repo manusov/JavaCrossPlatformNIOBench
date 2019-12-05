@@ -9,15 +9,15 @@ Parent class for operation handlers.
 package niobenchrefactoring.controller;
 
 import javax.swing.AbstractAction;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
 
 abstract public class Handler extends AbstractAction 
 {
-final JFrame parentFrame;
+final Application application;
 
-public Handler( JFrame parentFrame )
+public Handler( Application application )
     {
-    this.parentFrame = parentFrame;
+    this.application = application;
     }
 
 }

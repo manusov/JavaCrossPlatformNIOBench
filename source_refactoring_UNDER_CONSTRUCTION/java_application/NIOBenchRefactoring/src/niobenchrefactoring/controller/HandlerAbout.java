@@ -22,6 +22,7 @@ import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import java.net.URI;
 import java.net.URISyntaxException;
+import niobenchrefactoring.view.Application;
 
 public class HandlerAbout extends Handler
 {
@@ -29,14 +30,14 @@ private final static Color LOGO_COLOR = new Color( 143,49,40 );
 private final static Dimension SIZE_BUTTON_HTTP   = new Dimension ( 180, 25 );
 private final static Dimension SIZE_BUTTON_CANCEL = new Dimension ( 89, 25 );
 
-public HandlerAbout( JFrame parentFrame )
+public HandlerAbout( Application application )
     {
-    super( parentFrame );
+    super( application );
     }
 
 @Override public void actionPerformed( ActionEvent event )
     {
-    JDialog dialog = new JDialog( parentFrame, "About", true );
+    JDialog dialog = new JDialog( application, "About", true );
     dialog.setDefaultCloseOperation( DISPOSE_ON_CLOSE );
     // Create GUI components
     SpringLayout sl1 = new SpringLayout();
@@ -101,7 +102,7 @@ public HandlerAbout( JFrame parentFrame )
     dialog.setContentPane( p1 );
     dialog.setSize( 300, 150 );
     dialog.setResizable( false );
-    dialog.setLocationRelativeTo( parentFrame );
+    dialog.setLocationRelativeTo( application );
     dialog.setVisible( true );
     }
 }

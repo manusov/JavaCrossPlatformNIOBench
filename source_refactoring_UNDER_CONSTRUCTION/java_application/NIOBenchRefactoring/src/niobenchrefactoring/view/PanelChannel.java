@@ -12,26 +12,27 @@ package niobenchrefactoring.view;
 
 import java.awt.Container;
 import java.awt.Dimension;
-import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.controller.HandlerDestinationPath;
 import niobenchrefactoring.controller.HandlerSourcePath;
+import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.IOscenarioChannel;
 import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.resources.PAL;
 
 public class PanelChannel extends ApplicationPanel 
 {
 /*
-Application Panel common functionality, defined by parent class    
+Application Panel common functionality, include defined by parent class    
 */
-@Override String getTabName()                { return "NIO channels";     }
-@Override AbstractTableModel getTableModel() { return new TableChannel(); }
+private final AbstractTableModel tableModel = new TableChannel();
+@Override String getTabName() { return "NIO channels"; }
+@Override public AbstractTableModel getTableModel() { return tableModel; }
 
 /*
 GUI window geometry constants    
@@ -68,7 +69,7 @@ private final JTextField[] texts =
     { new JTextField() ,
       new JTextField() };
 private final JButton[] buttons  = new JButton[TEXT_COUNT];
-private final JComboBox[]  boxes = new JComboBox[COMBO_COUNT];
+private final JComboBox[] boxes = new JComboBox[COMBO_COUNT];
 /*
 Handlers for buttons functions
 */
@@ -76,11 +77,7 @@ private final static String NAME_SRC =
     "SOURCE drive and directory for benchmarks";
 private final static String NAME_DST = 
     "DESTINATION drive and directory for benchmarks";
-private final HandlerSourcePath[] panelButtonsHandlers =
-    { new HandlerSourcePath
-            ( parentFrame, NAME_SRC, texts[UP_FIRST] ) ,
-      new HandlerDestinationPath
-            ( parentFrame, NAME_DST, texts[UP_LAST] ) };
+private final HandlerSourcePath[] panelButtonsHandlers;
 /*
 Constants for labels, text fields and combo boxes
 addressing and allocation by Spring Layout
@@ -94,7 +91,7 @@ private final static int RIGHT_DOWN = 15;
 /*
 Text fields and combos arrays addressing
 */
-private final static int TEXT_COUNT = 14;
+private final static int TEXT_COUNT = 2;
 private final static int COMBO_COUNT = 14;
 private final static int TEXT_FIRST = 0;
 private final static int COMBO_FIRST = 0;
@@ -103,12 +100,6 @@ private final static int COMBO_MIDDLE = 7;
 Support combo boxes set of available values
 */
 // select performance scenario
-private enum SCENARIO { MBPS, IOPS };
-private SCENARIO scenario = SCENARIO.MBPS;
-void setScenario( SCENARIO scenario )
-    {
-    this.scenario = scenario;
-    }
 // support sizes for files and blocks
 private final static int K = 1024;
 private final static int M = 1024*1024;
@@ -159,7 +150,8 @@ private final static String SET_DATA_PATTERN[] =
     { "Zeroes", "Ones", "Sequental", "Software RNG", "Hardware RNG" };
 // address randomization option
 private final static int ID_ADDRESS_PATTERN = 5;
-private final static int DEFAULT_ADDRESS_PATTERN = 0;
+private final static int DEFAULT_ADDRESS_MBPS = 0;
+private final static int DEFAULT_ADDRESS_IOPS = 2;
 private final static String SET_ADDRESS_PATTERN[] =
     { "Sequental", "Batterfly", "Software RNG", "Hardware RNG" };
 // read-write mode option
@@ -205,9 +197,13 @@ private final static int SET_COPY_DELAY[] = SET_READ_DELAY;
 /*
 Panel constructor
 */
-public PanelChannel( JFrame parentFrame )
+public PanelChannel( Application application )
     {
-    super( parentFrame );
+    super( application );
+    // this constructors must call when valid APPLICATION reference
+    panelButtonsHandlers = new HandlerSourcePath[]
+        { new HandlerSourcePath ( application, NAME_SRC, texts[UP_FIRST] ) ,
+          new HandlerDestinationPath( application, NAME_DST, texts[UP_LAST] ) };
     }
 
 /*
@@ -254,7 +250,6 @@ not make this operations in constructor because overridable warnings.
                           SpringLayout.NORTH, labels[i] );
         sl.putConstraint( SpringLayout.WEST, buttons[j], 4, 
                           SpringLayout.EAST, texts[j] );
-        panelButtonsHandlers[j].pal = pal;
         buttons[j].addActionListener( panelButtonsHandlers[j] );
         add( buttons[j++] );
         }
@@ -319,35 +314,54 @@ not make this operations in constructor because overridable warnings.
                           SpringLayout.EAST, labels[i] );
         add( boxes[j++] );
         }
-    
     /*
     Assign default values for combo boxes
     first combo box with index = 0 : file size
     */
+    setDefaults( SCENARIO.MBPS );
+    
+    }
+
+/*
+Public method for initializing at start and re-initializing by buttons:
+"Default MBPS" , "Default IOPS".
+This method can be called from buttons handlers.
+*/
+@Override public void setDefaults( SCENARIO scenario )
+    {
+    this.scenario = scenario;
+    
+    for( JComboBox box : boxes )
+        {
+        box.removeAllItems();
+        }
+    
     if ( scenario == SCENARIO.MBPS )
         {
-        helperComboSize ( ID_FILE_SIZE,
-                          SET_FILE_SIZE_BYTES, DEFAULT_FILE_SIZE_MBPS );
-        helperComboSize ( ID_BLOCK_SIZE,
-                          SET_BLOCK_SIZE_BYTES, DEFAULT_BLOCK_SIZE_MBPS );
-        helperComboCount( ID_FILE_COUNT,
-                          SET_FILE_COUNT, DEFAULT_FILE_COUNT_MBPS );
+        helperComboSize  ( ID_FILE_SIZE,
+                           SET_FILE_SIZE_BYTES, DEFAULT_FILE_SIZE_MBPS );
+        helperComboSize  ( ID_BLOCK_SIZE,
+                           SET_BLOCK_SIZE_BYTES, DEFAULT_BLOCK_SIZE_MBPS );
+        helperComboCount ( ID_FILE_COUNT,
+                           SET_FILE_COUNT, DEFAULT_FILE_COUNT_MBPS );
+        helperComboString( ID_ADDRESS_PATTERN,
+                           SET_ADDRESS_PATTERN, DEFAULT_ADDRESS_MBPS );
         }
     else
         {
-        helperComboSize ( ID_FILE_SIZE,
-                          SET_FILE_SIZE_BYTES, DEFAULT_FILE_SIZE_IOPS );
-        helperComboSize ( ID_BLOCK_SIZE,
-                          SET_BLOCK_SIZE_BYTES, DEFAULT_BLOCK_SIZE_IOPS );
-        helperComboCount( ID_FILE_COUNT,
-                          SET_FILE_COUNT, DEFAULT_FILE_COUNT_IOPS );
+        helperComboSize  ( ID_FILE_SIZE,
+                           SET_FILE_SIZE_BYTES, DEFAULT_FILE_SIZE_IOPS );
+        helperComboSize  ( ID_BLOCK_SIZE,
+                           SET_BLOCK_SIZE_BYTES, DEFAULT_BLOCK_SIZE_IOPS );
+        helperComboCount ( ID_FILE_COUNT,
+                           SET_FILE_COUNT, DEFAULT_FILE_COUNT_IOPS );
+        helperComboString( ID_ADDRESS_PATTERN,
+                           SET_ADDRESS_PATTERN, DEFAULT_ADDRESS_IOPS );
         }
     helperComboCount ( ID_THREAD_COUNT,
                        SET_THREAD_COUNT, DEFAULT_THREAD_COUNT );
     helperComboString( ID_DATA_PATTERN,
                        SET_DATA_PATTERN, DEFAULT_DATA_PATTERN );
-    helperComboString( ID_ADDRESS_PATTERN,
-                       SET_ADDRESS_PATTERN, DEFAULT_ADDRESS_PATTERN );
     helperComboString( ID_READ_WRITE,
                        SET_READ_WRITE, DEFAULT_READ_WRITE );
     helperComboString( ID_FAST_COPY,
@@ -364,6 +378,17 @@ not make this operations in constructor because overridable warnings.
                        SET_WRITE_DELAY, DEFAULT_WRITE_DELAY );
     helperComboTime  ( ID_COPY_DELAY,
                        SET_COPY_DELAY, DEFAULT_COPY_DELAY );
+    }
+
+
+/*
+Public method for clear benchmarks results by button: "Clear".
+This method can be called from button handler.
+*/
+@Override public void clearResults()
+    {
+    // TODO.
+
     }
 
 /*
@@ -437,6 +462,155 @@ private void helperComboTime( int id, int[] valuesArray, int selection )
         boxes[id].addItem( " " + s );
         }
     boxes[id].setSelectedIndex( selection );
+    }
+
+/*
+Support callbacks from "Run" button handler
+*/
+
+private boolean[] saveButtonsEnable;
+private boolean[] saveBoxesEnable;
+private boolean[] saveTextsEnable;
+private boolean[] saveLabelsEnable;
+
+@Override public void disableGuiBeforeRun()
+    {
+    saveButtonsEnable = disableHelper( buttons );
+    saveBoxesEnable = disableHelper( boxes );
+    saveTextsEnable = disableHelper( texts );
+    saveLabelsEnable = disableHelper( labels );
+    }
+
+@Override public void enableGuiAfterRun()
+    {
+    enableHelper( saveLabelsEnable, labels );
+    enableHelper( saveTextsEnable, texts );
+    enableHelper( saveBoxesEnable, boxes );
+    enableHelper( saveButtonsEnable, buttons );
+    }
+
+private boolean[] disableHelper( JComponent[] c )
+    {
+    boolean[] b = new boolean [c.length];
+    for( int i=0; i<c.length; i++ )
+        {
+        b[i] = c[i].isEnabled();
+        c[i].setEnabled( false );
+        c[i].repaint();
+        c[i].revalidate();
+        }
+    return b;
+    }
+
+private void enableHelper( boolean[] b, JComponent[] c )
+    {
+    for( int i=0; i<c.length; i++ )
+        {
+        c[i].setEnabled( b[i] );
+        c[i].repaint();
+        c[i].revalidate();
+        }
+    }
+
+@Override public String optionSourcePath()
+    { return texts[UP_FIRST].getText(); }
+
+@Override public String optionDestinationPath()
+    { return texts[UP_LAST].getText(); }
+
+@Override public int optionFileSize()
+    { return helperValue( ID_FILE_SIZE, SET_FILE_SIZE_BYTES ); }
+
+@Override public int optionBlockSize()
+    { return helperValue( ID_BLOCK_SIZE, SET_BLOCK_SIZE_BYTES ); }
+        
+@Override public int optionFileCount()
+    { return helperValue( ID_FILE_COUNT, SET_FILE_COUNT ); }
+        
+@Override public int optionThreadCount()
+    { return helperValue( ID_THREAD_COUNT, SET_THREAD_COUNT ); }
+        
+@Override public int optionDataMode()
+    { return helperIndex( ID_DATA_PATTERN ); }
+        
+@Override public int optionAddressMode()
+    { return helperIndex( ID_ADDRESS_PATTERN ); }
+        
+@Override public int optionRwMode()
+    { return helperIndex( ID_READ_WRITE ); }
+        
+@Override public int optionFastCopy()
+    { return helperIndex( ID_FAST_COPY ); }
+        
+@Override public int optionReadSync()
+    { return helperIndex( ID_READ_SYNC ); }
+
+@Override public int optionWriteSync()
+    { return helperIndex( ID_WRITE_SYNC ); }
+
+@Override public int optionCopySync()
+    { return helperIndex( ID_COPY_SYNC ); }
+        
+@Override public int optionReadDelay()
+    { return helperValue( ID_READ_DELAY, SET_READ_DELAY ); }
+        
+@Override public int optionWriteDelay()
+    { return helperValue( ID_WRITE_DELAY, SET_WRITE_DELAY ); }
+        
+@Override public int optionCopyDelay()
+    { return helperValue( ID_COPY_DELAY, SET_COPY_DELAY ); }
+
+private int helperValue( int id, int[] valuesArray )
+    {
+    int index = helperIndex( id );
+    int value = -1;
+    if ( ( index >= 0 )&&( index < valuesArray.length ) )
+        {
+        value = valuesArray[index];
+        }
+    return value;
+    }
+
+private int helperIndex( int id )
+    {
+    return boxes[id].getSelectedIndex();
+    }
+
+/*
+Build IO scenario with options settings, defined in this panel
+*/
+@Override public IOscenario buildIOscenario()
+    {
+        
+            /*        
+        public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
+                   String pathDst, String prefixDst, String postfixDst,
+                   int fileCount, int fileSize, int blockSize, int threadCount,
+                   boolean readSync, boolean writeSync, boolean copySync,
+                   boolean dataSparse, boolean fastCopy, 
+                   int readWriteMode, int addressMode, int dataMode,
+                   int readDelay, int writeDelay, int copyDelay,
+                   byte[] dataBlock )
+        */
+
+        
+    IOscenario io = new IOscenarioChannel
+            (
+            optionSourcePath(),      null, null,
+            optionDestinationPath(), null, null,
+            optionFileCount(),
+            optionFileSize(),
+            optionBlockSize(),
+            optionThreadCount(),
+            optionReadSync() > 0, optionWriteSync() > 0, optionCopySync() > 0,
+            optionWriteSync() > 0,
+            optionFastCopy() > 0,
+            optionRwMode(), optionAddressMode(), optionDataMode(),
+            optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
+            null
+            );
+    
+    return io;
     }
 
 }

@@ -9,22 +9,23 @@ Operation handler for "Table" button: open statistics table window.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
 import opentable.OpenTable;
 
 public class HandlerTable extends Handler
 {
 private final OpenTable childTable;
     
-public HandlerTable( JFrame parentFrame, OpenTable childTable )
+public HandlerTable( Application application )
     {
-    super( parentFrame );
-    this.childTable = childTable;
+    super( application );
+    this.childTable = application.getChildTable();
     }
     
 @Override public void actionPerformed( ActionEvent e )
     {
-    childTable.open();
+    if ( childTable != null )
+        childTable.open();
     }
     
 }

@@ -10,18 +10,21 @@ random access scenario optimized for performance measurement (IOPS).
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
+import niobenchrefactoring.view.ApplicationPanel;
+import niobenchrefactoring.view.ApplicationPanel.SCENARIO;
 
 public class HandlerDefaultIOPS extends Handler
 {
-public HandlerDefaultIOPS( JFrame parentFrame )
+public HandlerDefaultIOPS( Application application )
     {
-    super( parentFrame );
+    super( application );
     }
 
 @Override public void actionPerformed( ActionEvent e )
     {
-    
+    ApplicationPanel selectedPanel = application.getSelectedPanel();
+    if ( selectedPanel != null )
+        selectedPanel.setDefaults( SCENARIO.IOPS );
     }
-    
 }

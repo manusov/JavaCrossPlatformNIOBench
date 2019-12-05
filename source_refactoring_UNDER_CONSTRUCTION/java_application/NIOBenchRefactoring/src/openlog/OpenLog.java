@@ -106,6 +106,15 @@ public void overWrite( String s )
         tx.setText( s );
     }
 
+// method get text
+public String getText()
+    {
+    if ( tx != null )
+        return tx.getText();
+    else
+        return null;
+    }
+
 // this point for stop drawings
 private class ChildWindowListener extends WindowAdapter 
     {

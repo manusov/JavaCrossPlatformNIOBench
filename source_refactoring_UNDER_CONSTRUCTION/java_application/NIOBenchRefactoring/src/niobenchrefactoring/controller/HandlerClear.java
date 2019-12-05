@@ -9,18 +9,20 @@ Operation handler for "Clear" button: clear previous results.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
+import niobenchrefactoring.view.ApplicationPanel;
 
 public class HandlerClear extends Handler
 {
-public HandlerClear( JFrame parentFrame )
+public HandlerClear( Application application )
     {
-    super( parentFrame );
+    super( application );
     }
 
 @Override public void actionPerformed( ActionEvent e )
     {
-    
+    ApplicationPanel selectedPanel = application.getSelectedPanel();
+    if ( selectedPanel != null )
+        selectedPanel.clearResults();
     }
-    
 }

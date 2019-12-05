@@ -24,38 +24,52 @@ Near roadmap.
 6)+  Connect log child window. First verify at constant patterns.
 7)+  Connect tables child window. First verify at constant patterns.
 8)+  Design tabbed panel.
-
-9)   Design channels test panel.
-
-10)  Design IOPS-oriented address randomization, must be valid for
+9)+  Design channels test panel.
+10)+ Base functionality for buttons: 
+     Open Log, Open Table, Open Drawings,
+     Text report, Graphics save, 
+     Default MBPS, Default IOPS, Clear, About, Cancel. 
+     
+11)  Run scenario for channels. Yet limited options support. Get report.
+12)  Debug function Load report.
+13)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
-11)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
+14)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
      First at channels.
-12)  Archives benchmark.
-13)  Native MBPS support.
-14)  Native IOPS support.
-15)  Other scenarios applications.
-16)  Tools handlers: exit, save report, about.
-17)  Inspect public, default, protected, private status for all classes.
-18)  Tooltips and mnemonics.
-19)  ...
-20) All 7 scenarios by tabs.
-21) All 12 handlers by buttons.
+15)  Options restrictions for channels.
 
-
+... develop by tabs: same for all 7 scenarios ...
+... inspect by buttons: service functions ...
 
 ---
-1) TODO. 
-   MULTI-THREAD CAN BE SUPPORT FOR ALL SCENARIO BY UNIFIED WAY (?),
-   SUPPORT MULTI-THREAD FOR EACH READ-WRITE METHOD IS TOO COMPLEX.
-   PLUS, CAN COMBINE DIFFERENT IO METHODS IF SUPPORTED BY ALL SCENARIO.
-   CAN IMPLEMENT SERVER LOAD MODEL.
-2) TODO. 
-   CHECK ISINTERRUPTED FOR ALL IOTASKS.
-3) NOTE.
-   Classic MBPS and IOPS measurement first actual for NATIVE mode.
+Research notes.
+---
+ Archives benchmark.
+ Native MBPS support.
+ Native IOPS support.
+ Other scenarios applications.
+ Tools handlers: exit, save report, about.
+ Inspect public, default, protected, private status for all classes.
+ Tooltips and mnemonics.
+ ...
+ Verify all 7 scenarios by tabs.
+ Verify all 12 handlers by buttons.
+
+---
+Remember notes.
+---
+ MULTI-THREAD CAN BE SUPPORT FOR ALL SCENARIO BY UNIFIED WAY (?),
+ SUPPORT MULTI-THREAD FOR EACH READ-WRITE METHOD IS TOO COMPLEX.
+ PLUS, CAN COMBINE DIFFERENT IO METHODS IF SUPPORTED BY ALL SCENARIO.
+ CAN IMPLEMENT SERVER LOAD MODEL.
+ TODO. 
+ CHECK ISINTERRUPTED FOR ALL IOTASKS.
+ NOTE.
+ Classic MBPS and IOPS measurement first actual for NATIVE mode.
+
 
 */
+
 
 
 package niobenchrefactoring;
@@ -74,6 +88,7 @@ import niobenchrefactoring.resources.About;
 import niobenchrefactoring.resources.PAL;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import niobenchrefactoring.controller.RunApplication;
 import static niobenchrefactoring.model.HelperDelay.delay;
 import opendraw.OpenDraw;
 import static niobenchrefactoring.resources.IOPB.extractStringFromOPB;
@@ -354,15 +369,18 @@ public static void main(String[] args)
     table.getTableModel().measurementNotify( es );
     table.repaint();
 */
-        
+
+/*        
     JFrame.setDefaultLookAndFeelDecorated( true );
     JDialog.setDefaultLookAndFeelDecorated( true );
     PAL pal = new PAL();
     pal.loadUserModeLibrary();
     Application a = new Application( pal );
     a.open();
-        
-        
+*/
+
+    RunApplication ra = new RunApplication();
+    ra.run();
     
     }
         

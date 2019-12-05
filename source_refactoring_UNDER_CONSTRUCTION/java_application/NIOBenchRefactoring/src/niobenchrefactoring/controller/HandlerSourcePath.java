@@ -10,21 +10,22 @@ package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 import niobenchrefactoring.resources.PAL;
+import niobenchrefactoring.view.Application;
 
 public class HandlerSourcePath extends Handler
 {
+private final PAL pal;
 private final String name;
 private final JTextField field;
-public PAL pal;
 private final static JFileChooser CHOOSER = new JFileChooser();
 
 public HandlerSourcePath
-        ( JFrame parentFrame, String name, JTextField field  )
+        ( Application application, String name, JTextField field  )
     {
-    super( parentFrame );
+    super( application );
+    this.pal = application.getPAL();
     this.name = name;
     this.field = field;
     }
@@ -37,22 +38,24 @@ public HandlerSourcePath
     CHOOSER.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
     CHOOSER.setAcceptAllFileFilterUsed( false );
     // Show dialogue window
-    int res = CHOOSER.showOpenDialog( null );
+    int selection = CHOOSER.showOpenDialog( null );
     // Interpreting file choosing results
-    if( res == JFileChooser.APPROVE_OPTION )
+    if( selection == JFileChooser.APPROVE_OPTION )
         { 
         String s2 = "" + CHOOSER.getSelectedFile();
         s1 = s2;
-        int i=s1.length()-1;
-        char a = s1.toCharArray()[i];
-        int b = pal.getBinaryType();
-        if ( ( ( b == 0 )|( b == 1 ) )&( a != '\\' ) )
+        char a = s1.toCharArray()[s1.length() - 1];
+        if ( pal != null )
             {
-            s1 = s1 + "\\"; 
-            }
-        if ( ( ( b == 2 )|( b == 3 ) )&( a != '/' ) )
-            {
-            s1 = s1 + "/";  
+            int b = pal.getBinaryType();
+            if ( ( ( b == 0 )|( b == 1 ) )&( a != '\\' ) )
+                {
+                s1 = s1 + "\\"; 
+                }
+            if ( ( ( b == 2 )|( b == 3 ) )&( a != '/' ) )
+                {
+                s1 = s1 + "/";  
+                }
             }
         }
     field.setText( s1 );

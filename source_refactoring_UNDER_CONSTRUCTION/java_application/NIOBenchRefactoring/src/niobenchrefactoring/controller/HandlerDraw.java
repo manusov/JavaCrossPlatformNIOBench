@@ -9,22 +9,23 @@ Operation handler for "Draw" button: open draw charts window, Y=F(X).
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
 import opendraw.OpenDraw;
 
 public class HandlerDraw extends Handler
 {
 private final OpenDraw childDraw;    
     
-public HandlerDraw( JFrame parentFrame, OpenDraw childDraw )
+public HandlerDraw( Application application )
     {
-    super( parentFrame );
-    this.childDraw = childDraw;
+    super( application );
+    this.childDraw = application.getChildDraw();
     }
 
 @Override public void actionPerformed( ActionEvent e )
     {
-    childDraw.open();
+    if ( childDraw != null )
+        childDraw.open();
     }
     
 }

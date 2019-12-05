@@ -14,18 +14,21 @@ sequental access scenario optimized for bandwidth measurement (MBPS).
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFrame;
+import niobenchrefactoring.view.Application;
+import niobenchrefactoring.view.ApplicationPanel;
 
 public class HandlerDefaultMBPS extends Handler
 {
-public HandlerDefaultMBPS( JFrame parentFrame )
+public HandlerDefaultMBPS( Application application )
     {
-    super( parentFrame );
+    super( application );
     }
 
 @Override public void actionPerformed( ActionEvent e )
     {
-    
+    ApplicationPanel selectedPanel = application.getSelectedPanel();
+    if ( selectedPanel != null )
+        selectedPanel.setDefaults( ApplicationPanel.SCENARIO.MBPS );
     }
     
 }
