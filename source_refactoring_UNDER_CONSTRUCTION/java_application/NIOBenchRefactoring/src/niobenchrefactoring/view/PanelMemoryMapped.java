@@ -10,15 +10,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableMapped;
 
 public class PanelMemoryMapped extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableMapped();
+private final TableChannel tableModel = new TableMapped();
 @Override String getTabName() { return "NIO memory mapped"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelMemoryMapped( Application application )
     {

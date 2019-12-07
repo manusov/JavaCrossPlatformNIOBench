@@ -121,22 +121,27 @@ Run performance scenario
         iotRead  = new IOtaskChannelRead( this );
         }
     
-    if ( readWriteMode != READ_ONLY )
+    if ( ( readWriteMode != READ_ONLY ) && errorCheck() )
         {
-        delay( writeDelay );
+        preDelay( writeDelay, WRITE_DELAY_NAME );
         threadHelper( iotWrite );
-        delay( copyDelay );
+        }
+    
+    if ( ( readWriteMode != READ_ONLY ) && errorCheck() )
+        {
+        preDelay( copyDelay, COPY_DELAY_NAME );
         threadHelper( iotCopy );
         }
     
-    if ( readWriteMode != WRITE_ONLY )
+    if ( ( readWriteMode != WRITE_ONLY ) && errorCheck() )
         {
-        delay( readDelay );
+        preDelay( readDelay, READ_DELAY_NAME );
         threadHelper( iotRead );
         }
     
     if ( readWriteMode == READ_WRITE )
         {
+        setSync( 0, lastError, DELETE_ID, DELETE_NAME );
         /*
         Phase = Delete, note about files not deleted in WRITE_ONLY mode.
         Note delete operation cycles for all files is not interruptable.
@@ -145,6 +150,20 @@ Run performance scenario
         delete( pathsDst, channelsDst );
         }
     }
+
+/*
+Helper for interrupt when error
+*/
+boolean errorCheck()
+    {
+    if ( lastError == null )
+        return true;
+    else
+        {
+        return lastError.flag;
+        }
+    }
+
 
 /*
 Helper for run thread and wait it termination
@@ -158,6 +177,32 @@ private void threadHelper( Thread t )
         HelperDelay.delay( 150 );
         if ( ! t.isAlive() )
             postCount--;
+        }
+    }
+
+/*
+Helper for time delay with seconds visualization
+*/
+void preDelay( int milliseconds, String name )
+    {
+    if ( milliseconds > 0 )
+        {
+        int seconds = milliseconds / 1000;
+        milliseconds = milliseconds % 1000;
+        int i = 0;
+        if ( seconds > 0 )
+            {  // delay integer count of seconds
+            for( i=0; i<seconds; i++ )
+                {
+                setSync( i, lastError, DELAY_ID, name );
+                delay( 1000 );
+                }
+            }
+        if ( milliseconds > 0 )
+            {  // delay tail
+            setSync( i, lastError, DELAY_ID, name );
+            delay( milliseconds );
+            }
         }
     }
 

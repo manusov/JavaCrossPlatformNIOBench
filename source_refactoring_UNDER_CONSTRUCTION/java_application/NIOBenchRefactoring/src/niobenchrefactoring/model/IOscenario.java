@@ -41,6 +41,20 @@ public final static int TOTAL_READ_ID  = 3;
 public final static int TOTAL_WRITE_ID = 4;
 public final static int TOTAL_COPY_ID  = 5;
 public final static int ID_COUNT = 6;
+// additional phases and states for indication
+public final static int STARTING_ID  = 6;
+public final static int DELAY_ID  = 7;
+public final static int DELETE_ID  = 8;
+public final static int COMPLETE_ID  = 9;
+public final static int ERROR_ID  = 10;
+public final static int HALTED_ID  = -1;
+/*
+Names for phases progress visualization
+*/
+public final static String READ_DELAY_NAME  = "Read pre-delay";
+public final static String WRITE_DELAY_NAME = "Write pre-delay";
+public final static String COPY_DELAY_NAME  = "Copy pre-delay";
+public final static String DELETE_NAME      = "Delete temporary files";
 /*
 Options constants definitions, read-write modes    
 */
@@ -149,7 +163,7 @@ this fields directly accessed and updated by IO tasks.
 */
 int phaseID = -1;
 String phaseName = "";
-double percentage = 0.0;
+// double percentage = 0.0;
 StatusEntry lastError;
 /*
 Constructor for options settings by internal defaults
@@ -240,7 +254,7 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
         {
         this.dataBlock = new byte[blockSize];
         for( int i=0; i<blockSize; i++ )
-            dataBlock[i] = 0;
+            this.dataBlock[i] = 0;
         }
     else
         {
@@ -306,10 +320,11 @@ public String getPhaseName()
 /*
 Asynchronous get current percentage
 */
-public double getPercentage()
-    {
-    return percentage;
-    }
+// public double getPercentage()
+//     {
+//     return percentage;
+//     }
+
 /*
 Asynchronous get last error
 */
@@ -341,13 +356,27 @@ void setSync( int count, StatusEntry se, int id, String name  )
     {
     if ( id >= 0 )
         {
-        StateAsync a = statistics.receive( id );
-        StateSync s = new StateSync
-            ( count, se, id, name, 
-              a.current, a.min, a.max, a.average, a.median );
+        StateSync sc;
+        if ( id < ID_COUNT )
+            {
+            StateAsync a = statistics.receive( id );
+            if ( a != null )
+                {
+                sc = new StateSync( count, se, id, name,
+                    a.current, a.min, a.max, a.average, a.median );
+                }
+            else
+                {
+                sc = new StateSync( count, se, id, name );
+                }
+            }
+        else
+            {
+            sc = new StateSync( count, se, id, name );
+            }
         synchronized( syncQueue )
             {
-            syncQueue.add( s );
+            syncQueue.add( sc );
             }
         }
     }

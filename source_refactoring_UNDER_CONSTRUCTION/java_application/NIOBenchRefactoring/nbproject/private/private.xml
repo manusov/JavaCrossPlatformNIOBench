@@ -3,11 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/view/PanelChannel.java</file>
-            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/view/ApplicationPanel.java</file>
-            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/view/Application.java</file>
-            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOscenarioChannel.java</file>
+            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/TableChannel.java</file>
             <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/controller/HandlerRun.java</file>
+            <file>file:/C:/Users/Manusov/Documents/UPDATED/source_refactoring_UNDER_CONSTRUCTION/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/StatisticsModel.java</file>
         </group>
     </open-files>
 </project-private>

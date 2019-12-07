@@ -10,15 +10,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableScatterGather;
 
 class PanelScatterGather extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableScatterGather();
+private final TableChannel tableModel = new TableScatterGather();
 @Override String getTabName() { return "NIO scatter-gather"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelScatterGather( Application application )
     {

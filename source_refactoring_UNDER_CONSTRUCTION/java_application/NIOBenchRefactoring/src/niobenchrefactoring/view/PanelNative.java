@@ -10,15 +10,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableNative;
 
 class PanelNative extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableNative();
+private final TableChannel tableModel = new TableNative();
 @Override String getTabName() { return "Native OS API"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelNative( Application application )
     {

@@ -21,8 +21,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 public class IOtaskChannelCopy extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO channel single thread MBPS, Copy";
+private final static String IOTASK_NAME = "Copy/ST/NIO channel";
 
 /*
 Constructor stores IO scenario object
@@ -118,7 +117,8 @@ Run IO task
         iosc.delete( iosc.pathsSrc, iosc.channelsSrc );
         iosc.delete( iosc.pathsDst, iosc.channelsDst );
         iosc.lastError = 
-            new StatusEntry( false, "Copy error: " + e.getMessage() );
+            new StatusEntry( false, "Copy: " + e.getMessage() );
+        iosc.setSync( 0, iosc.lastError, COPY_ID, IOTASK_NAME );
         }
     }
 }

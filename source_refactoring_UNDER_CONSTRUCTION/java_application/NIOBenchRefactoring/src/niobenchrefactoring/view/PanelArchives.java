@@ -11,15 +11,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.TableArchives;
+import niobenchrefactoring.model.TableChannel;
 
 class PanelArchives extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableArchives();
+private final TableChannel tableModel = new TableArchives();
 @Override String getTabName() { return "Zip archives"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelArchives( Application application )
     {

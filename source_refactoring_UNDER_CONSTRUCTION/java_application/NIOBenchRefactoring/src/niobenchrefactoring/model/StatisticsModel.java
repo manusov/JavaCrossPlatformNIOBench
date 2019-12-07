@@ -172,7 +172,14 @@ public StateAsync receive( int selector )
             indexMax    = n / 2 + 1;
             median = valuesSorted[indexCenter].value;
             }
-        
+
+        if ( indexMin >= 0 )
+            indexMin = valuesSorted[indexMin].index;
+        if ( indexCenter >= 0 )
+            indexCenter = valuesSorted[indexCenter].index;
+        if ( indexMax >= 0 )
+            indexMax = valuesSorted[indexMax].index;
+
         entry = new StateAsync
             ( valuesOriginal, valuesOriginal[n-1],
               valuesSorted[0].value, valuesSorted[n-1].value, average, median,

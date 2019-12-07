@@ -8,6 +8,7 @@ NIOBench GUI application main window frame with tabbed sub-panels
 
 package niobenchrefactoring.view;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -17,12 +18,15 @@ import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import niobenchrefactoring.controller.HandlerAbout;
 import niobenchrefactoring.controller.HandlerCancel;
 import niobenchrefactoring.controller.HandlerClear;
@@ -35,6 +39,14 @@ import niobenchrefactoring.controller.HandlerLog;
 import niobenchrefactoring.controller.HandlerReport;
 import niobenchrefactoring.controller.HandlerRun;
 import niobenchrefactoring.controller.HandlerTable;
+import static niobenchrefactoring.model.IOscenario.COMPLETE_ID;
+import static niobenchrefactoring.model.IOscenario.COPY_ID;
+import static niobenchrefactoring.model.IOscenario.DELAY_ID;
+import static niobenchrefactoring.model.IOscenario.DELETE_ID;
+import static niobenchrefactoring.model.IOscenario.ERROR_ID;
+import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.STARTING_ID;
+import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import niobenchrefactoring.resources.About;
 import niobenchrefactoring.resources.PAL;
 import opendraw.OpenDraw;
@@ -76,7 +88,10 @@ private final JTabbedPane tabs;
 private final DefaultBoundedRangeModel progressModel = 
                         new DefaultBoundedRangeModel( 0, 0, 0, 100 );
 private final JProgressBar progress = new JProgressBar( progressModel );
-private final String progressString = "Please run...";
+private final static String PROGRESS_STRING = "Please run...";
+private final JLabel operation = new JLabel();
+private final static String OPERATION_STRING = "No actions running";
+
 /*
 Panels for scenarios, selected by tabs
 */
@@ -175,6 +190,14 @@ public void open()
     c.setLayout( sl );
     selectionHelper();
     
+    // centering cells in table
+    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+    renderer.setHorizontalAlignment( SwingConstants.CENTER );
+    for ( int i=0; i<table.getColumnCount(); i++ )
+        { 
+        table.getColumnModel().getColumn(i).setCellRenderer( renderer ); 
+        }
+
     // positioning up right buttons, this buttons used for open child windows
     for( int i=COL_UP; i<=COL_DOWN; i++ )
         {
@@ -263,12 +286,20 @@ public void open()
     // customize and positioning progress bar
     progress.setPreferredSize( SIZE_PROGRESS );
     progress.setStringPainted( true );
-    progress.setString( progressString );
+    progress.setString( PROGRESS_STRING );
     sl.putConstraint( SpringLayout.NORTH, progress,  0,
                       SpringLayout.NORTH, buttons[RUN_ID] );
     sl.putConstraint( SpringLayout.EAST,  progress, -4,
                       SpringLayout.WEST , buttons[RUN_ID] );
     add( progress );
+    
+    // customize and positioning operation name label, left progress indicator
+    defaultOperationString();
+    sl.putConstraint( SpringLayout.NORTH, operation, 36,
+                      SpringLayout.NORTH, progress );
+    sl.putConstraint( SpringLayout.WEST, operation, 15,
+                      SpringLayout.WEST, c );
+    add( operation );
     
     // add listener for selected tab change
     tabs.addChangeListener( ( ChangeEvent e ) -> { selectionHelper(); } );
@@ -379,6 +410,58 @@ public void updateProgress( String message )
     progress.setString ( message );
     progress.repaint();
     progress.revalidate();
+    }
+
+public void defaultOperationString()
+    {
+    updateOperationString( OPERATION_STRING, false, null );
+    }
+
+public void updateOperationString( String message )
+    {
+    updateOperationString( message, true, Color.BLACK );
+    }
+
+public void updateOperationString( String message, boolean enable, Color color )
+    {
+    if ( message == null )
+        message = "N/A";
+    operation.setText( message );
+    operation.setEnabled( enable );
+    if ( color != null )
+        operation.setForeground( color );
+    operation.repaint();
+    operation.revalidate();
+    }
+
+public void updateOperationString( String message, int phase )
+    {
+    boolean enable = true;
+    Color color;
+    switch ( phase )
+        {
+        case READ_ID:
+        case WRITE_ID:
+        case COPY_ID:
+            color = Color.BLUE;
+            break;
+        case DELETE_ID:
+            color = Color.MAGENTA;
+            break;
+        case STARTING_ID:
+        case COMPLETE_ID:
+        case DELAY_ID:
+            color = Color.BLACK;
+            break;
+        case ERROR_ID:
+            color = Color.RED;
+            break;
+        default:  // this includes HALTED_ID
+            enable = false;
+            color = Color.BLACK;
+            break;
+        }
+    updateOperationString( message, enable, color );
     }
 
 }

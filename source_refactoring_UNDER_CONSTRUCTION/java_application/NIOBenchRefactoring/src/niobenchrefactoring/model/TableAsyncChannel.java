@@ -19,4 +19,16 @@ public class TableAsyncChannel extends TableChannel
           { "Average, Read"   , "-" , "-" , "-" } ,
           { "Write"           , "-" , "-" , "-" } };
     }
+
+/*
+Update table for each measured value from Report Monitor.
+*/
+@Override public void measurementNotify( StateAsync[] async )
+    {
+    
+    
+    // notify changes
+    fireTableDataChanged();
+    }
+
 }

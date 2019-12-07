@@ -21,8 +21,7 @@ import static java.nio.file.StandardOpenOption.SPARSE;
 
 class IOtaskChannelWrite extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO channel single thread MBPS, Write";
+private final static String IOTASK_NAME = "Write/ST/NIO channel";
 
 /*
 Constructor stores IO scenario object
@@ -97,7 +96,8 @@ Run IO task
         {
         iosc.delete( iosc.pathsSrc, iosc.channelsSrc );
         iosc.lastError =
-            new StatusEntry( false, "Write error: " + e.getMessage() );
+            new StatusEntry( false, "Write: " + e.getMessage() );
+        iosc.setSync( 0, iosc.lastError, WRITE_ID, IOTASK_NAME );
         }
     }
 }

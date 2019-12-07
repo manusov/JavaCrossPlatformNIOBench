@@ -11,5 +11,18 @@ package niobenchrefactoring.model;
 
 public class TableNative extends TableChannel
 {
+
+
+/*
+Update table for each measured value from Report Monitor.
+*/
+@Override public void measurementNotify( StateAsync[] async )
+    {
+    
+    
+    // notify changes
+    fireTableDataChanged();
+    }
+
     
 }

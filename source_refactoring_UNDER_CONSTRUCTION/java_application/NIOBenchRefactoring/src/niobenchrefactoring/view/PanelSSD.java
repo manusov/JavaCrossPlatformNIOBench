@@ -10,15 +10,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableSSD;
 
 class PanelSSD extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableSSD();
+private final TableChannel tableModel = new TableSSD();
 @Override String getTabName() { return "SSD specific"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelSSD( Application application )
     {

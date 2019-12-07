@@ -10,15 +10,15 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.TableAsyncChannel;
+import niobenchrefactoring.model.TableChannel;
 
 public class PanelAsyncChannel extends ApplicationPanel 
 {
-private final AbstractTableModel tableModel = new TableAsyncChannel();
+private final TableChannel tableModel = new TableAsyncChannel();
 @Override String getTabName() { return "NIO async channels"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 public PanelAsyncChannel( Application application )
     {

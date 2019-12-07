@@ -16,8 +16,7 @@ import java.io.IOException;
 
 public class IOtaskChannelRead extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO channel single thread MBPS, Read";
+private final static String IOTASK_NAME = "Read/ST/NIO channel";
 
 /*
 Constructor stores IO scenario object
@@ -65,7 +64,8 @@ Run IO task
         iosc.delete( iosc.pathsSrc, iosc.channelsSrc );
         iosc.delete( iosc.pathsDst, iosc.channelsDst );
         iosc.lastError = 
-            new StatusEntry( false, "Read error: " + e.getMessage() );
+            new StatusEntry( false, "Read: " + e.getMessage() );
+        iosc.setSync( 0, iosc.lastError, READ_ID, IOTASK_NAME );
         }
     }
 }

@@ -10,8 +10,8 @@ as tabbed sub-panels.
 package niobenchrefactoring.view;
 
 import javax.swing.JPanel;
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.TableChannel;
 
 public abstract class ApplicationPanel extends JPanel
 {
@@ -29,7 +29,7 @@ abstract void build();
 
 abstract public void setDefaults( SCENARIO scenario );
 abstract public void clearResults();
-abstract public AbstractTableModel getTableModel();
+abstract public TableChannel getTableModel();
 
 // support "Run" button
 abstract public void disableGuiBeforeRun();

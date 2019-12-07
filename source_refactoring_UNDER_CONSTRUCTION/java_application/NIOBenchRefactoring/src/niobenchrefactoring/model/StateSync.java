@@ -30,4 +30,18 @@ StateSync
     this.median = median;
     this.phaseName = phaseName;
     }
+
+StateSync( int count, StatusEntry statusEntry, int phaseID, String phaseName )
+    {
+    this.count = count;
+    this.statusEntry = statusEntry;
+    this.phaseID = phaseID;
+    this.current = Double.NaN;
+    this.min = Double.NaN;
+    this.max = Double.NaN;
+    this.average = Double.NaN;
+    this.median = Double.NaN;
+    this.phaseName = phaseName;
+    }
+
 }

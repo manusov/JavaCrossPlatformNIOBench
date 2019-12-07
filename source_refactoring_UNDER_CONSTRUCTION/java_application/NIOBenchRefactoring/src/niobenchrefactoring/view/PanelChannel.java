@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.controller.HandlerDestinationPath;
 import niobenchrefactoring.controller.HandlerSourcePath;
 import niobenchrefactoring.model.IOscenario;
@@ -30,9 +29,9 @@ public class PanelChannel extends ApplicationPanel
 /*
 Application Panel common functionality, include defined by parent class    
 */
-private final AbstractTableModel tableModel = new TableChannel();
+private final TableChannel tableModel = new TableChannel();
 @Override String getTabName() { return "NIO channels"; }
-@Override public AbstractTableModel getTableModel() { return tableModel; }
+@Override public TableChannel getTableModel() { return tableModel; }
 
 /*
 GUI window geometry constants    
@@ -110,7 +109,9 @@ private final static String UNITS_M = " MB";
 private final static int SECOND = 1000;
 private final static int MINUTE = 1000*60;
 private final static String UNITS_MS = " ms";
+private final static String UNITS_SECOND  = " second";
 private final static String UNITS_SECONDS = " seconds";
+private final static String UNITS_MINUTE  = " minute";
 private final static String UNITS_MINUTES = " minutes";
 // file size option
 private final static int ID_FILE_SIZE = 0;
@@ -132,7 +133,7 @@ private final static int SET_BLOCK_SIZE_BYTES[] =
 // file count option
 private final static int ID_FILE_COUNT = 2;
 private final static int DEFAULT_FILE_COUNT_MBPS = 9;
-private final static int DEFAULT_FILE_COUNT_IOPS = 23;
+private final static int DEFAULT_FILE_COUNT_IOPS = 21;
 private final static int SET_FILE_COUNT[] = 
     { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
       20, 40, 50, 100, 500, 1000, 5000, 10000, 50000, 100000,
@@ -445,12 +446,12 @@ private void helperComboTime( int id, int[] valuesArray, int selection )
         if ( value % MINUTE == 0 )
             {
             value /= MINUTE;
-            units = UNITS_MINUTES;
+            units = ( value == 1 ) ? UNITS_MINUTE : UNITS_MINUTES;
             }
         else if ( value % SECOND == 0 )
             {
             value /= SECOND;
-            units = UNITS_SECONDS;
+            units = ( value == 1 ) ? UNITS_SECOND : UNITS_SECONDS;
             }
         else
             {
@@ -581,36 +582,26 @@ Build IO scenario with options settings, defined in this panel
 */
 @Override public IOscenario buildIOscenario()
     {
-        
-            /*        
-        public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
-                   String pathDst, String prefixDst, String postfixDst,
-                   int fileCount, int fileSize, int blockSize, int threadCount,
-                   boolean readSync, boolean writeSync, boolean copySync,
-                   boolean dataSparse, boolean fastCopy, 
-                   int readWriteMode, int addressMode, int dataMode,
-                   int readDelay, int writeDelay, int copyDelay,
-                   byte[] dataBlock )
-        */
-
-        
-    IOscenario io = new IOscenarioChannel
-            (
-            optionSourcePath(),      null, null,
-            optionDestinationPath(), null, null,
-            optionFileCount(),
-            optionFileSize(),
-            optionBlockSize(),
-            optionThreadCount(),
-            optionReadSync() > 0, optionWriteSync() > 0, optionCopySync() > 0,
-            optionWriteSync() > 0,
-            optionFastCopy() > 0,
-            optionRwMode(), optionAddressMode(), optionDataMode(),
-            optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
-            null
-            );
-    
-    return io;
+    IOscenario ios = new IOscenarioChannel
+        ( // String pathSrc, String prefixSrc, String postfixSrc,
+          optionSourcePath(),      null, null,
+          // String pathDst, String prefixDst, String postfixDst,
+          optionDestinationPath(), null, null,
+          // int fileCount, int fileSize, int blockSize,
+          optionFileCount(), optionFileSize(), optionBlockSize(),
+          // int threadCount,
+          optionThreadCount(),
+          // boolean readSync, boolean writeSync, boolean copySync,
+          optionReadSync() > 0, optionWriteSync() > 0, optionCopySync() > 0,
+          // boolean dataSparse, boolean fastCopy, 
+          optionWriteSync() > 0, optionFastCopy() > 0,
+          // int readWriteMode, int addressMode, int dataMode,
+          optionRwMode(), optionAddressMode(), optionDataMode(),
+          // int readDelay, int writeDelay, int copyDelay,
+          optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
+          // byte[] dataBlock
+          null );
+    return ios;
     }
 
 }

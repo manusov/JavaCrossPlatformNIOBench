@@ -29,14 +29,33 @@ Near roadmap.
      Open Log, Open Table, Open Drawings,
      Text report, Graphics save, 
      Default MBPS, Default IOPS, Clear, About, Cancel. 
-     
-11)  Run scenario for channels. Yet limited options support. Get report.
+---
+
+11)  Run scenario for CHANNELS. Yet limited options support. Get report.
+      a) + progress indicator
+      b) + label left progress indicator, status, operation name or error name
+      c) + add "starting..." state to phases nomenclature for label
+      d) + add delays to phases nomenclature for label, verify delays options
+      e) + add delete files phase to phases nomenclature for label
+      f) + add halted state to phases nomenclature for label
+      g) + add errors to phases nomenclature for label, error modeling
+      h) table at main window
+      i) update openable log
+      j) update openable table
+      k) update openable draw
+      l) interruptable
+      m) options restrictions for channels
+
+---
 12)  Debug function Load report.
+
 13)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
+
 14)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
      First at channels.
-15)  Options restrictions for channels.
+
+15)  Options restrictions for child classes, overridable method.
 
 ... develop by tabs: same for all 7 scenarios ...
 ... inspect by buttons: service functions ...
@@ -66,6 +85,10 @@ Remember notes.
  CHECK ISINTERRUPTED FOR ALL IOTASKS.
  NOTE.
  Classic MBPS and IOPS measurement first actual for NATIVE mode.
+ Thread helper delays can corrupt performance measurement results.
+ Plus ASYNC_PAUSE, inspect all waiting delays.
+ Write sync and Copy sync options interpretetion incorrect.
+ HandlerBrowse - select directory by one click, now two.
 
 
 */
