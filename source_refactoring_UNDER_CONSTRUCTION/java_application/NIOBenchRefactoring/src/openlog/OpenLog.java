@@ -115,7 +115,9 @@ public String getText()
         return null;
     }
 
-// this point for stop drawings
+/*
+This point for close text log window
+*/        
 private class ChildWindowListener extends WindowAdapter 
     {
     @Override public void windowClosing( WindowEvent e )

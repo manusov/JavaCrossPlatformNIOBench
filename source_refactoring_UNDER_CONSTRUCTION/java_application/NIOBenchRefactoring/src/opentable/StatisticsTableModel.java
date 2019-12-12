@@ -10,17 +10,22 @@ package opentable;
 
 import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
+import static niobenchrefactoring.model.IOscenario.COPY_ID;
+import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+import niobenchrefactoring.model.StateSync;
 
 public class StatisticsTableModel extends AbstractTableModel 
 {
 public StatisticsTableModel()
     {
-    rowsValues = initValues;
+    blank( 0 );
     }
 
 // clear table for next measurement session, n = measurement entries count
-protected void blank( int n ) 
-    { 
+final void blank( int n ) 
+    {
+    maxIndex = n;
     rowsValues = new String[ n + 5 ][ getColumnCount() ];
     int i;
     for( i=0; i<n; i++ )
@@ -29,12 +34,14 @@ protected void blank( int n )
         s[0] = "" + ( i + 1 );
         rowsValues[i] = s;
         }
-    
-    // rowsValues[i] = blankValues;
-    System.arraycopy( blankValues, 0, rowsValues[i], 0, blankValues.length );
-    
-    if ( n == 0 ) rowsValues[i][0] = "#";
-    else rowsValues[i][0] = "";
+    if ( n == 0 )
+        rowsValues[i][0] = "#";
+    else
+        rowsValues[i][0] = "";
+    for( int j=1; j<rowsValues[i].length; j++ )
+        {
+        rowsValues[i][j] = "";
+        }
     i++;  // skip 1 string
     
     for( int j=1; j<5; j++ )
@@ -46,23 +53,18 @@ protected void blank( int n )
     }
 
 // table model class fields
-private final String[] COLUMNS_NAMES = 
-    { "Iteration", "Size" , "MBPS" , "IOPS", "Reserved" };
+private final String[] COLUMNS_NAMES = { "Iteration", "Read", "Write", "Copy" };
 private String[][] rowsValues = null;
-private final String[] blankValues =
-        { ""         , "" ,  "" ,  "",  ""  };
 private final String[][] initValues =
-    { 
-        { "#"        , "-" , "-" , "-", "-" } ,
-        { "Median"   , "-" , "-" , "-", "-" } ,
-        { "Average"  , "-" , "-" , "-", "-" } ,
-        { "Minimum"  , "-" , "-" , "-", "-" } ,
-        { "Maximum"  , "-" , "-" , "-", "-" } ,
-    };
+    { { "#"        , "-" , "-" , "-" } ,
+      { "Median"   , "-" , "-" , "-" } ,
+      { "Average"  , "-" , "-" , "-" } ,
+      { "Minimum"  , "-" , "-" , "-" } ,
+      { "Maximum"  , "-" , "-" , "-" } , };
 // table model this application-specific public methods
-protected String[] getColumnsNames()          { return COLUMNS_NAMES; }
-protected String[][] getRowsValues()          { return rowsValues;    }
-protected void setRowsValues( String[][] s )  { rowsValues = s;       }
+String[] getColumnsNames()          { return COLUMNS_NAMES; }
+String[][] getRowsValues()          { return rowsValues;    }
+void setRowsValues( String[][] s )  { rowsValues = s;       }
 // table model standard required public methods
 @Override public int getColumnCount()    { return COLUMNS_NAMES.length; }
 @Override public int getRowCount()       { return rowsValues.length;    }
@@ -91,38 +93,42 @@ protected void setRowsValues( String[][] s )  { rowsValues = s;       }
 @Override public boolean isCellEditable( int row, int column )
     { return false; }
 
-// update table for each measured value from Report Monitor.
-public void measurementNotify( EntryStatistics ests )
+
+private int maxIndex;
+
+/*
+Update table for each measured value
+*/
+public void notifySync( StateSync sync )
     {
-    // write new data string
-    int count = ests.dataArray.size();
-    rowsValues = new String[ count + 1 + 4 ][ getColumnCount() ];
-    for( int i=0; i<count; i++ )
+    int index = sync.count - 1;
+    if ( ( index >= 0 ) && ( index < maxIndex ) )
         {
-        rowsValues[i][0] = "" + ests.dataArray.get( i ).num;
-        rowsValues[i][1] = String.format
-            ( "%.1f K" , ests.dataArray.get( i ).doubles[0] / 1024.0 );
-        rowsValues[i][2] =  String.format
-            ( "%.3f" , ests.dataArray.get( i ).doubles[1] );
-        rowsValues[i][3] =  String.format
-            ( "%.3f" , ests.dataArray.get( i ).doubles[2] );
-        rowsValues[i][4] =  String.format
-            ( "%.3f" , ests.dataArray.get( i ).doubles[3] );
-        }
-    // write empty string
-    System.arraycopy
-        ( blankValues, 0, rowsValues[count], 0, blankValues.length );
-    // write statistics, last 4 strings
-    for( int i=0; i<4; i++ )
-        {
-        rowsValues[i+1+count][0] = initValues[i+1][0];
-        for ( int j=0; j<4; j++ )
+        switch ( sync.phaseID )
             {
-            rowsValues[i+1+count][j+1] = ests.statTable[j][i];
+            case READ_ID:
+                valueHelper( sync, index, 1 );
+                break;
+            case WRITE_ID:
+                valueHelper( sync, index, 2 );
+                break;
+            case COPY_ID:
+                valueHelper( sync, index, 3 );
+                break;
             }
         }
     // notify changes
     fireTableDataChanged();
+    }
+
+private void valueHelper( StateSync sync , int row, int column )
+    {
+    int n = rowsValues.length;
+    rowsValues[row][column] = String.format( "%.2f", sync.current );
+    rowsValues[n-4][column] = String.format( "%.2f", sync.median );
+    rowsValues[n-3][column] = String.format( "%.2f", sync.average );
+    rowsValues[n-2][column] = String.format( "%.2f", sync.min );
+    rowsValues[n-1][column] = String.format( "%.2f", sync.max );
     }
 
 }

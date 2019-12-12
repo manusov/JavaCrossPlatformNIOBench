@@ -90,7 +90,7 @@ public void open()
     }
 
 /*
-This point for stop drawings
+This point for close charts drawings window
 */
 private class ChildWindowListener extends WindowAdapter 
     {

@@ -113,7 +113,9 @@ public void open()
         }
     }
 
-// this point for stop drawings
+/*
+This point for close statistics table window
+*/
 private class ChildWindowListener extends WindowAdapter 
     {
     @Override public void windowClosing( WindowEvent e )

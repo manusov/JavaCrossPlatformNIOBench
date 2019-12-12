@@ -152,6 +152,11 @@ public FunctionModel( FunctionControllerInterface x )
             {
             tempScale += DEFAULT_SCALE_DELTA;
             }
+        
+        // prevent overflow
+        if ( tempScale == 0 )
+            tempScale = DEFAULT_SCALE_DELTA;
+        
         scale = tempScale;
         }
     }
