@@ -26,6 +26,7 @@ public ApplicationPanel( Application application )
 
 abstract String getTabName();
 abstract void build();
+abstract void buildRestrictions();
 
 abstract public void setDefaults( SCENARIO scenario );
 abstract public void clearResults();
@@ -52,4 +53,5 @@ abstract public int optionWriteDelay();
 abstract public int optionCopyDelay();
 
 abstract public IOscenario buildIOscenario();
+abstract public String reportIOscenario();
 }

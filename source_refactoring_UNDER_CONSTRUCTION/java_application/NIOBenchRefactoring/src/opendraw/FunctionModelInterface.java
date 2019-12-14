@@ -19,8 +19,11 @@ public BigDecimal[][] getFunction();  // get function array { x, y1, ,,, yn }
 public int[] getCurrentIndexes();     // get current indexes per each y-array
 public int[] getMaximumIndexes();     // get maximum indexes per each y-array
 
+/*
 public void startModel();             // start model, reset defaults
 public void stopModel();              // stop model, yet reserved, no actions
+*/
+public void blankModel();             // blank data, reset to defaults
 
 public String     getXname();          // get name for X axis units
 public String[]   getYnames();         // get names array for Y, per functions

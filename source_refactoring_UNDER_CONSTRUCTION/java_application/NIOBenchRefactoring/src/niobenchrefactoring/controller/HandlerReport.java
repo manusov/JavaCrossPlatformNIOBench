@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.AbstractTableModel;
 import niobenchrefactoring.resources.About;
 import niobenchrefactoring.view.Application;
 
@@ -35,11 +34,7 @@ public HandlerReport( Application application )
     // get objects for save
     String logText = 
         application.getChildLog().getText();
-    AbstractTableModel briefTable =
-        application.getSelectedPanel().getTableModel();
-    AbstractTableModel detailTable = 
-        application.getChildTable().getTableModel();
-        
+
     // initializing file operations context
     CHOOSER.setDialogTitle( "SAVE REPORT - select directory" );
     FileNameExtensionFilter filter = 
@@ -92,7 +87,6 @@ public HandlerReport( Application application )
             data.append( "\r\n\r\n" );
 
             // brief report, text same as openable full report
-            data.append( "TEXT LOG.\r\n" );
             if ( logText != null )
                 {
                 int n = logText.length();
@@ -121,16 +115,7 @@ public HandlerReport( Application application )
                         }
                     }
                 }
-            data.append( "\r\n\r\n" );
             
-            // brief table
-            data.append( "BRIEF STATISTICS.\r\n" );
-            saveTable( briefTable, data );
-            
-            // openable full table
-            data.append( "DETAIL STATISTICS.\r\n" );
-            saveTable( detailTable, data );
-
             // save text report
             String fileData = data.toString();
             int status = 0;
@@ -164,81 +149,4 @@ public HandlerReport( Application application )
             }
         }
     }
-    
-/*
-Helper method for save table
-*/
-private void saveTable( AbstractTableModel table, StringBuilder data )
-    {
-    if ( table != null )
-        {
-        int columns = table.getColumnCount();
-        int rows = table.getRowCount();
-        int colSize;
-        int[] maxColSizes = new int[columns];
-        int maxColSize = 13;
-        // Get column names lengths
-        for ( int i=0; i<columns; i++ )
-            {
-            maxColSizes[i] = table.getColumnName(i).length(); 
-            }
-        // Get column maximum lengths
-        for ( int j=0; j<rows; j++ )
-            {
-            for ( int i=0; i<columns; i++ )
-                {
-                colSize = (( String )( table.getValueAt( j, i ) )).length();
-                if ( colSize > maxColSizes[i] )
-                    {
-                    maxColSizes[i] = colSize; 
-                    }
-                }
-            }
-        for ( int i=0; i<maxColSizes.length; i++ ) 
-            {
-            maxColSize += maxColSizes[i];
-            }
-        // Write table up
-        for ( int i=0; i<columns; i++ )
-            {
-            data.append( " " );
-            data.append( table.getColumnName( i ) );
-            colSize = maxColSizes[i] - table.getColumnName( i ).length() + 1;
-            for ( int k=0; k<colSize; k++ )
-                {
-                data.append( " " );
-                }
-            }
-        // Write horizontal line
-        data.append("\r\n" );
-        for ( int i=0; i<maxColSize; i++ )
-            {
-            data.append( "-" );
-            }
-        data.append("\r\n" );
-    // Write table content
-    for (int j=0; j<rows; j++)         // this cycle for rows
-        {
-        for (int i=0; i<columns; i++)  // this cycle for columns
-            {
-            data.append( " " );
-            data.append( table.getValueAt( j, i ) );
-            colSize = maxColSizes[i] - 
-                ( ( String )table.getValueAt( j, i )).length() + 1;
-            for ( int k=0; k<colSize; k++ )
-                {
-                data.append( " " );
-                }
-            }
-            data.append( "\r\n" );
-        }
-        // Write horizontal line
-        for ( int i=0; i<maxColSize; i++ )
-            {
-            data.append( "-" );
-            }
-        data.append( "\r\n\r\n" );
-        }
-    }
-
 }

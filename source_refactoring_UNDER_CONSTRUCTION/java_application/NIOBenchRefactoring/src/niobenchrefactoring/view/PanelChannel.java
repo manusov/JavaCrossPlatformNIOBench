@@ -159,7 +159,8 @@ private final static String SET_ADDRESS_PATTERN[] =
 private final static int ID_READ_WRITE = 6;
 private final static int DEFAULT_READ_WRITE = 0;
 private final static String SET_READ_WRITE[] =
-    { "Read/Write", "Read only", "Write only" };
+    { "Read/Write no mix", "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
+      "Read only", "Write only" };
 // fast copy option
 private final static int ID_FAST_COPY = 7;
 private final static int DEFAULT_FAST_COPY = 1;
@@ -324,6 +325,18 @@ not make this operations in constructor because overridable warnings.
     }
 
 /*
+Customize panel with combo boxes, by restrictions for options settings,
+static restrictions: disable some options,
+dynamic restrictions: automatically update option X after modify option Y,
+for example, automatically update destination path after modify source path,
+set block size not above file size.
+*/
+@Override void buildRestrictions()
+    {
+    
+    }
+
+/*
 Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from buttons handlers.
@@ -388,8 +401,7 @@ This method can be called from button handler.
 */
 @Override public void clearResults()
     {
-    // TODO.
-
+    // Reserved for panel-specific clear, additional to HandlerClear action.
     }
 
 /*
@@ -602,6 +614,52 @@ Build IO scenario with options settings, defined in this panel
           // byte[] dataBlock
           null );
     return ios;
+    }
+
+/*
+Return text information about options settings at start IO scenario
+*/
+@Override public String reportIOscenario()
+    {
+    String s = "\r\n--- NIO Channels IO scenario options ---\r\n";
+    StringBuilder sb = new StringBuilder( s );
+    int n = labels.length;
+    int maxLabel = 0;
+    for ( JLabel label : labels )
+        {
+        int m = label.getText().length();
+        if ( m > maxLabel )
+            {
+            maxLabel = m;
+            }
+        }
+    for ( int i=0; i<n; i++ )
+        {
+        int j = sb.length();
+        sb.append( labels[i].getText() );
+        j = sb.length() - j;
+        for( ; j<maxLabel; j++ )
+            {
+            sb.append( " " );
+            }
+        sb.append( " : " );
+        if ( i < TEXT_COUNT )
+            {
+            sb.append( texts[i].getText() );
+            }
+        else if ( i < TEXT_COUNT + COMBO_COUNT )
+            {
+            s = (String)( boxes[i - TEXT_COUNT].getSelectedItem() );
+            sb.append( s.trim() );
+            }
+        else
+            {
+            sb.append( "?" );
+            }
+        sb.append( "\r\n" );
+        }
+    sb.append( "\r\n" );
+    return sb.toString();
     }
 
 }

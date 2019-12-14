@@ -48,7 +48,7 @@ public FunctionModel( FunctionControllerInterface x )
     return new int[] { maxCount, maxCount, maxCount };
     }
 
-
+/*
 @Override public void startModel() 
     {
     scale = DEFAULT_SCALE_BASE;
@@ -58,6 +58,15 @@ public FunctionModel( FunctionControllerInterface x )
 
 @Override public void stopModel()
     {
+    // Reserved for operations at stop model
+    }
+*/
+
+@Override public void blankModel() 
+    {
+    scale = DEFAULT_SCALE_BASE;
+    for( int i=0; i<currentCounts.length; i++ )
+        currentCounts[i] = 0;
     }
 
 @Override public String getXname()

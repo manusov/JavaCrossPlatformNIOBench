@@ -30,8 +30,15 @@ Near roadmap.
      Text report, Graphics save, 
      Default MBPS, Default IOPS, Clear, About, Cancel. 
 ---
-
-11)  Run scenario for CHANNELS. Yet limited options support. Get report.
+11)  Debug function Load report.
+      a) table with options settings for save report at run moment - to log
+      b) replace html colored string to "M" string for report with medians - no
+      c) don't use tables for log, create and save text log, all to log
+      d) verify report save
+      e) design report load, update table and drawings as f(text)
+      f) "clear" key.
+---
+12)  Run scenario for CHANNELS. Yet limited options support. Get report.
       a) + progress indicator
       b) + label left progress indicator, status, operation name or error name
       c) + add "starting..." state to phases nomenclature for label
@@ -41,24 +48,18 @@ Near roadmap.
       g) + add errors to phases nomenclature for label, error modeling
       h) + table at main window
       i) + update openable log
-      j) update openable table
-      k) update openable draw
+      j) + update openable table
+      k) + update openable draw
       l) interruptable
       m) options restrictions for channels
-
 ---
-
-12)  Debug function Load report.
-
 13)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
-
+     Include mixed read/write load.
+     Separate mix option or add to Read/Write option ?
 14)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
      First at channels.
-
 15)  Options restrictions for child classes, overridable method.
-
-
 ------
 
 ... develop by tabs: same for all 7 scenarios ...

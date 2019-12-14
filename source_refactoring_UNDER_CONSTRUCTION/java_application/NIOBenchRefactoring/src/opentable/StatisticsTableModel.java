@@ -3,7 +3,7 @@ NIOBench. Mass storage and file I/O benchmark utility.
 (C)2020 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
-Log and statistics Table Model for memory benchmark, openable window.
+Log and statistics Table Model for storage benchmark, openable window.
 */
 
 package opentable;
@@ -13,10 +13,13 @@ import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.READ_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+import niobenchrefactoring.model.StateAsync;
 import niobenchrefactoring.model.StateSync;
 
 public class StatisticsTableModel extends AbstractTableModel 
 {
+final static String MARK_STRING = "<html><b><font color=blue>";
+    
 public StatisticsTableModel()
     {
     blank( 0 );
@@ -61,10 +64,11 @@ private final String[][] initValues =
       { "Average"  , "-" , "-" , "-" } ,
       { "Minimum"  , "-" , "-" , "-" } ,
       { "Maximum"  , "-" , "-" , "-" } , };
+
 // table model this application-specific public methods
-String[] getColumnsNames()          { return COLUMNS_NAMES; }
-String[][] getRowsValues()          { return rowsValues;    }
-void setRowsValues( String[][] s )  { rowsValues = s;       }
+final String[] getColumnsNames()          { return COLUMNS_NAMES; }
+final String[][] getRowsValues()          { return rowsValues;    }
+final void setRowsValues( String[][] s )  { rowsValues = s;       }
 // table model standard required public methods
 @Override public int getColumnCount()    { return COLUMNS_NAMES.length; }
 @Override public int getRowCount()       { return rowsValues.length;    }
@@ -75,6 +79,7 @@ void setRowsValues( String[][] s )  { rowsValues = s;       }
     else
         return "?";
     }
+
 @Override public String getValueAt( int row, int column )
     { 
     if ( ( row < rowsValues.length ) && ( column < COLUMNS_NAMES.length ) )
@@ -129,6 +134,53 @@ private void valueHelper( StateSync sync , int row, int column )
     rowsValues[n-3][column] = String.format( "%.2f", sync.average );
     rowsValues[n-2][column] = String.format( "%.2f", sync.min );
     rowsValues[n-1][column] = String.format( "%.2f", sync.max );
+    }
+
+/*
+Update table for medians elements marking
+*/
+public void notifyMedians( StateAsync[] async )
+    {
+    if ( async != null )
+        {
+        for( int i=0; i<async.length; i++ )
+            {
+            if( async[i] != null )
+                {
+                switch ( i )
+                    {
+                    case READ_ID:
+                        medianHelper( async[i], 1 );
+                        break;
+                    case WRITE_ID:
+                        medianHelper( async[i], 2 );
+                        break;
+                    case COPY_ID:
+                        medianHelper( async[i], 3 );
+                        break;
+                    }
+                }
+            }
+        // notify changes
+        fireTableDataChanged();
+        }
+    }
+
+private void medianHelper( StateAsync async, int column )
+    {
+    markHelper( async.medianIndexCenter, column );
+    markHelper( async.medianIndexMin,    column );
+    markHelper( async.medianIndexMax,    column );
+    }
+
+private void markHelper( int row, int column )
+    {
+    if ( row >= 0 )
+        {
+        String s = getValueAt( row, column );
+        s = MARK_STRING + s ;
+        setValueAt( s, row, column );
+        }
     }
 
 }

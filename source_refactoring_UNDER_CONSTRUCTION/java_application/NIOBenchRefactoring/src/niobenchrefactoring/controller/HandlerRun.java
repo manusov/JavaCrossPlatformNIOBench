@@ -11,6 +11,7 @@ package niobenchrefactoring.controller;
 import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 import java.util.Date;
+import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.HelperDelay.delay;
 import niobenchrefactoring.model.IOscenario;
 import static niobenchrefactoring.model.IOscenario.COMPLETE_ID;
@@ -37,6 +38,7 @@ import opendraw.FunctionModelInterface;
 import opendraw.OpenDraw;
 import openlog.OpenLog;
 import opentable.OpenTable;
+import opentable.ReportTableModel;
 import opentable.StatisticsTableModel;
 
 public class HandlerRun extends Handler
@@ -131,9 +133,11 @@ private class ThreadRun extends Thread
         */
         Date date = new Date();
         long t1 = date.getTime();
-        String msg = "Benchmark runs at " + date.toString() + "\r\n";
+        String msg = String.format
+            ( "--- Benchmark runs at %s ---\r\n", date.toString() );
         logHelper( msg );
-        childDrawModel.startModel();
+        // childDrawModel.startModel();
+        childDrawModel.blankModel();
         int fileCount = panel.optionFileCount();
         if ( fileCount > 0 )
             {
@@ -269,18 +273,19 @@ private class ThreadRun extends Thread
             application.updateOperationString( "Test complete.", COMPLETE_ID );
             }
         /*
-        Send benchmark start message with time to text log, get milliseconds
+        Send benchmark done message with time to text log, get milliseconds
         */
         date = new Date();
         long t2 = date.getTime();
         double seconds = ( t2 - t1 ) / 1000.0;
         msg = String.format
-            ( "Benchmark done at %s\r\n" + 
+            ( "--- Benchmark done at %s ---\r\n" + 
               "Duration include service time is %.3f seconds\r\n",  
               date.toString(), seconds );
         logHelper( msg );
         /*
-        get integral time measurement results and write to text log
+        Get integral time measurement results and write to text log.
+        Mark medians in the statistics table.
         */
         StateAsync[] async = ios.getAsync();
         if ( async != null )
@@ -306,13 +311,34 @@ private class ThreadRun extends Thread
                         }
                     }
                 }
-            String s = String.format
-                ( "Total scenario %s:\r\n" +
-                  "Read = %.3f , Write = %.3f , Copy = %.3f\r\n\r\n", 
+            // test results to log
+            msg = String.format
+                ( "Total scenario %s include files cycle overhead:\r\n" +
+                  "Read = %.3f , Write = %.3f , Copy = %.3f\r\n", 
                   unitsString, totalRead, totalWrite, totalCopy );
-            logHelper( s );
+            logHelper( msg );
+            
+            // IO scenario options to log
+            msg = panel.reportIOscenario();
+            logHelper( msg );
+            
+            // update medians in the openable table
+            tableMedianHelper( async );
+            
+            // sequental results table to log
+            msg = "--- Measurements ---\r\n";
+            StringBuilder sb = new StringBuilder( msg );
+            ReportTableModel rtm = new ReportTableModel( childTableModel );
+            tableToStringHelper( rtm, sb );
+            logHelper( sb.toString() );
+            
+            // summary table to log
+            msg = "--- Summary ---\r\n";
+            sb = new StringBuilder( msg );
+            tableToStringHelper( table, sb );
+            logHelper( sb.toString() );
             }
-        childDrawModel.stopModel();
+        // childDrawModel.stopModel();
         /*
         Done, restore GUI state
         */
@@ -321,6 +347,87 @@ private class ThreadRun extends Thread
         runStop = false;
         }
     }
+
+/*
+Convert table model to text data, return as StringBuilder
+*/
+private void tableToStringHelper( AbstractTableModel table, StringBuilder sb )
+    {
+    if ( table != null )
+        {
+        int columns = table.getColumnCount();
+        int rows = table.getRowCount();
+        int colSize;
+        int[] maxColSizes = new int[columns];
+        int maxColSize = 13;
+        // Get column names lengths
+        for ( int i=0; i<columns; i++ )
+            {
+            maxColSizes[i] = ( table.getColumnName(i).trim() ).length(); 
+            }
+        // Get column maximum lengths
+        for ( int j=0; j<rows; j++ )
+            {
+            for ( int i=0; i<columns; i++ )
+                {
+                colSize = ( ( ( String )
+                              ( table.getValueAt( j, i ) ) ).trim() ).length();
+                if ( colSize > maxColSizes[i] )
+                    {
+                    maxColSizes[i] = colSize; 
+                    }
+                }
+            }
+        for ( int i=0; i<maxColSizes.length; i++ ) 
+            {
+            maxColSize += maxColSizes[i];
+            }
+        // Write table up
+        for ( int i=0; i<columns; i++ )
+            {
+            sb.append( " " );
+            sb.append( ( table.getColumnName( i ) ).trim() );
+            sb.append( " " );
+            colSize = maxColSizes[i] - 
+                    ( table.getColumnName( i ).trim() ).length() + 1;
+            for ( int k=0; k<colSize; k++ )
+                {
+                sb.append( " " );
+                }
+            }
+        // Write horizontal line
+        sb.append("\r\n" );
+        for ( int i=0; i<maxColSize; i++ )
+            {
+            sb.append( "-" );
+            }
+        sb.append("\r\n" );
+    // Write table content
+    for (int j=0; j<rows; j++)         // this cycle for rows
+        {
+        for (int i=0; i<columns; i++)  // this cycle for columns
+            {
+            sb.append( " " );
+            sb.append( ((String)( table.getValueAt( j, i ) )).trim() );
+            sb.append( " " );
+            colSize = maxColSizes[i] - 
+                ( ( ( String )table.getValueAt( j, i )).trim() ).length() + 1;
+            for ( int k=0; k<colSize; k++ )
+                {
+                sb.append( " " );
+                }
+            }
+            sb.append( "\r\n" );
+        }
+        // Write horizontal line
+        for ( int i=0; i<maxColSize; i++ )
+            {
+            sb.append( "-" );
+            }
+        sb.append( "\r\n\r\n" );
+        }
+    }
+
 
 private void logHelper( String s )
     {
@@ -346,6 +453,18 @@ private void tableHelper( StateSync sync )
         childTable.repaint();
         childTable.revalidate();
         }
+    }
+
+private void tableMedianHelper( StateAsync[] async )
+    {
+    if ( ( childTable != null )&&( childTableModel != null ) )
+        {
+        if ( async != null )
+            {
+            childTableModel.notifyMedians( async );
+            }
+        }
+    tableHelper( null );
     }
 
 private void drawHelper( BigDecimal[] bd )

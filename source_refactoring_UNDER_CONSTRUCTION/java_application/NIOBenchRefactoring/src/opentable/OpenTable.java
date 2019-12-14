@@ -76,6 +76,12 @@ public void blankTable( int n )
         }
     }
 
+// method overload for blank and remove statistics lines
+public void blankTable()
+    {
+    blankTable( 0 );
+    }
+
 // method gets table model, used for text report
 public StatisticsTableModel getTableModel()
     {

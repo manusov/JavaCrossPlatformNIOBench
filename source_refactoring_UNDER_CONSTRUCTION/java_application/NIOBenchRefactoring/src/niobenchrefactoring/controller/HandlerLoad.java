@@ -18,7 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.view.Application;
+import niobenchrefactoring.view.ApplicationPanel;
+import opendraw.OpenDraw;
+import openlog.OpenLog;
+import opentable.OpenTable;
 
 public class HandlerLoad extends Handler
 {
@@ -43,21 +48,21 @@ public HandlerLoad( Application application )
     int select = CHOOSER.showOpenDialog( application );
     // load file, build list of strings
     boolean loaded = false;
-    CopyOnWriteArrayList<String> report = null;
+    CopyOnWriteArrayList<String> reportStrings = null;
     if( select == JFileChooser.APPROVE_OPTION )
         {
         String filePath = CHOOSER.getSelectedFile().getPath();
-        report = new CopyOnWriteArrayList<>();
+        reportStrings = new CopyOnWriteArrayList<>();
                 File file = new File( filePath );
         try ( FileReader fileReader = 
                 new FileReader( file ); 
               BufferedReader bufferedReader = 
                 new BufferedReader( fileReader ); )
             {
-            report.clear();
+            reportStrings.clear();
             String line;
             while ( ( line = bufferedReader.readLine() ) != null )
-                report.add( line );
+                reportStrings.add( line );
             loaded = true;
             }
         catch ( Exception e1 )
@@ -66,30 +71,37 @@ public HandlerLoad( Application application )
             }
         }
     // interpreting list of strings, if loaded successfully
-    if ( ( loaded ) && ( report != null ) )
+    if ( ( loaded ) && ( reportStrings != null ) )
         {
-            
-/*
-
-TODO. UNDER CONSTRUCTION, ADAPTATION FROM MPE SHELL.
-            
-        ReportToGuiListener listener = new ReportToGuiListener( mglst );
-        OpStatus status = new OpStatus( true, "OK" );
-        listener.dataHandler( report, status );  // report parsing
-        // set progress indicator to 100 percents
-        JProgressBar progressBar = mglst.getMpeGui().getProgressBar();
-        DefaultBoundedRangeModel progressModel = ( DefaultBoundedRangeModel )
-            progressBar.getModel();
-        ActionRun ar = mglst.getMpeGui().getTaskShell();
-        ar.progressUpdate( progressModel, progressBar, 100 );
-        // re-initializing GUI (combo boxes) by system information,
-        // extracted from loaded report
-        mglst.getMpeGui().updateGuiBySysInfo();
-*/
-
+        // initializing GUI global objects
+        TableChannel summaryTable = null;
+        ApplicationPanel panel = application.getSelectedPanel();
+        if ( panel != null )
+            {
+            summaryTable = panel.getTableModel();
+            }
+        OpenLog log = application.getChildLog();
+        OpenTable table = application.getChildTable();
+        OpenDraw draw = application.getChildDraw();
         
-            
-            
+        // start cycle for interpreting strings of text report
+        StringBuilder sb = new StringBuilder
+            ( "Log data now loaded from text report file.\r\n" );
+        int n = reportStrings.size();
+        for( int i=0; i<n; i++ )
+            {
+            String s = ( reportStrings.get( i ) ).trim();
+            sb.append( "\r\n" );
+            sb.append( s );
+            }
+        
+        if ( log != null )
+            {
+            log.overWrite( sb.toString() );
+            log.repaint();
+            log.revalidate();
+            }
+        
         // message box about report loaded successfully
         JOptionPane.showMessageDialog
             ( application, "Report loaded successfully", "LOAD REPORT",
@@ -106,3 +118,110 @@ TODO. UNDER CONSTRUCTION, ADAPTATION FROM MPE SHELL.
     }
     
 }
+
+
+/*
+
+        // initializing GUI global objects
+        TableChannel summaryTable = null;
+        String[][] summaryStrings = null;
+        boolean[] summaryMatches = null;
+        int summaryRows = 0;
+        int summaryColumns = 1;
+        ApplicationPanel panel = application.getSelectedPanel();
+        if ( panel != null )
+            {
+            summaryTable = panel.getTableModel();
+            }
+        OpenLog log = application.getChildLog();
+        OpenTable table = application.getChildTable();
+        OpenDraw draw = application.getChildDraw();
+        
+        // get compare patterns for summary table
+        if ( summaryTable != null )
+            {
+            summaryRows = summaryTable.getRowCount();
+            summaryColumns = summaryTable.getColumnCount();
+            summaryStrings = new String[summaryRows][summaryColumns];
+            summaryMatches = new boolean[summaryRows];
+            for( int i=0; i<summaryRows; i++ )
+                {
+                for( int j=0; j<summaryColumns; j++ )
+                    {
+                    if ( j == 0 )
+                        {
+                        summaryStrings[i][j] = 
+                                ( summaryTable.getValueAt( i, j ) ).trim();
+                        }
+                    else
+                        {
+                        summaryStrings[i][j] = "?";
+                        }
+                    }
+                }
+            }
+        // start cycle for interpreting strings of text report
+        StringBuilder sb = new StringBuilder
+            ( "Log data now loaded from text report file.\r\n" );
+        int n = reportStrings.size();
+        for( int i=0; i<n; i++ )
+            {
+            String s = ( reportStrings.get( i ) ).trim();
+            // provide data for summary table at main window by load result
+            for( int j=0; j<summaryRows; j++ )
+                {
+                String s0 = ( summaryStrings[j][0] ).trim();
+                if ( ( s.startsWith( s0 ) )       &&
+                     ( s.length() > s0.length() ) &&
+                     ( ! summaryMatches[j] ) )
+                    {
+                    String s1 = s.substring( s0.length() );
+                    String[] words = s1.split( " " );
+                    int matchCount = 0;
+                    String[] matchStore = new String[summaryColumns - 1];
+                    for ( String word : words ) 
+                        {
+                        String s2 = word.trim();
+                        if ( ( s2.length() > 1 ) &&
+                             ( Character.isDigit( s2.charAt( 0 ) ) ) )
+                            {
+                            matchStore[matchCount] = s2;
+                            matchCount++;
+                            
+                            System.out.println( s2 );
+                            
+                            }
+                        if ( matchCount == matchStore.length )
+                            {
+                            summaryMatches[j] = true;
+                            System.arraycopy( matchStore, 0, 
+                                              summaryStrings[j], 1,
+                                              matchCount );
+                            }
+                        }
+                    if ( summaryMatches[j] )
+                        break;
+                    }
+                }
+            // provide data for text log openable window by load result
+            sb.append( "\r\n" );
+            sb.append( s );
+            // provide data for table openable window by load result
+            
+            // provide data for performance draw. openable win. by load result
+            
+            }
+        // cycle done, update summary table at main window by load result
+        
+        // update text log openable window by load result
+        if ( log != null )
+            {
+            log.overWrite( sb.toString() );
+            log.repaint();
+            log.revalidate();
+            }
+        // update results table openable window by load result
+        
+        // update performance drawings openable window by load result
+
+*/

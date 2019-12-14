@@ -31,6 +31,19 @@ not make this operations in constructor because overridable warnings.
 */
 @Override void build()
     {
+        
+    }
+
+/*
+Customize panel with combo boxes, by restrictions for options settings,
+static restrictions: disable some options,
+dynamic restrictions: automatically update option X after modify option Y,
+for example, automatically update destination path after modify source path,
+set block size not above file size.
+*/
+@Override void buildRestrictions()
+    {
+    
     }
 
 /*
@@ -48,7 +61,7 @@ This method can be called from button handler.
 */
 @Override public void clearResults()
     {
-    // TODO.
+    // Reserved for panel-specific clear, additional to HandlerClear action.
     }
 
 /*
@@ -81,6 +94,15 @@ Build IO scenario with options settings, defined in this panel
     {
     
     return null;
+    }
+
+/*
+Return text information about options settings at start IO scenario
+*/
+@Override public String reportIOscenario()
+    {
+        
+    return "";
     }
 
 }
