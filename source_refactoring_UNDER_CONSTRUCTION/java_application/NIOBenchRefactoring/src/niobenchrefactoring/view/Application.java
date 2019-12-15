@@ -178,6 +178,17 @@ public Application( PAL pal )
         {
         buttons[i].addActionListener( handlers[i] );
         }
+    
+    // ========== DEBUG LOCKS ==========
+    tabs.setEnabledAt( 1, false );
+    tabs.setEnabledAt( 2, false );
+    tabs.setEnabledAt( 3, false );
+    tabs.setEnabledAt( 4, false );
+    tabs.setEnabledAt( 5, false );
+    tabs.setEnabledAt( 6, false );
+    buttons[4].setEnabled( false );
+    // ========== END OF DEBUG LOCKS ==========
+    
     }
 
 /*

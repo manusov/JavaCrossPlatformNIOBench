@@ -18,21 +18,22 @@ public class HandlerSourcePath extends Handler
 {
 private final PAL pal;
 private final String name;
-private final JTextField field;
+private final JTextField field1, field2;
 private final static JFileChooser CHOOSER = new JFileChooser();
 
-public HandlerSourcePath
-        ( Application application, String name, JTextField field  )
+public HandlerSourcePath( Application application, String name, 
+                          JTextField field1, JTextField field2 )
     {
     super( application );
     this.pal = application.getPAL();
     this.name = name;
-    this.field = field;
+    this.field1 = field1;
+    this.field2 = field2;
     }
 
 @Override public void actionPerformed( ActionEvent e )
     {
-    String s1 = field.getText();
+    String s1 = field1.getText();
     // Setup component for file selection
     CHOOSER.setDialogTitle( name );
     CHOOSER.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );
@@ -58,7 +59,12 @@ public HandlerSourcePath
                 }
             }
         }
-    field.setText( s1 );
-    field.repaint();
+    field1.setText( s1 );
+    field1.repaint();
+    if ( field2 != null )
+        {
+        field2.setText( s1 );
+        field2.repaint();
+        }
     }
 }

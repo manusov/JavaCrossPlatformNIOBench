@@ -13,9 +13,9 @@ import niobenchrefactoring.view.Application;
 
 public class HandlerDestinationPath extends HandlerSourcePath
 {
-public HandlerDestinationPath
-        ( Application application, String name, JTextField field )
+public HandlerDestinationPath( Application application, String name, 
+                               JTextField field )
     {
-    super( application, name, field );
+    super( application, name, field, null );
     }
 }

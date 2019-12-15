@@ -223,7 +223,7 @@ private class ThreadRun extends Thread
                 tableHelper( sync );
                 // support openable drawings table
                 BigDecimal[] bd = new BigDecimal[] 
-                    { new BigDecimal( sync.count ), null, null, null };
+                    { new BigDecimal( sync.count - 1 ), null, null, null };
                 
                 if ( sync.phaseID != previousID )
                     {

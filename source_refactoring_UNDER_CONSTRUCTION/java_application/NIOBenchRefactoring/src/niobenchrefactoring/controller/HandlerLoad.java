@@ -14,16 +14,23 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.view.Application;
 import niobenchrefactoring.view.ApplicationPanel;
+import opendraw.FunctionController;
+import opendraw.FunctionModelInterface;
 import opendraw.OpenDraw;
 import openlog.OpenLog;
 import opentable.OpenTable;
+import opentable.StatisticsTableModel;
 
 public class HandlerLoad extends Handler
 {
@@ -73,15 +80,53 @@ public HandlerLoad( Application application )
     // interpreting list of strings, if loaded successfully
     if ( ( loaded ) && ( reportStrings != null ) )
         {
+        // objects for parameters extract
+        int summaryCount = 0;
+        String[] summaryKeys = null;
+        String[][] summaryValues = null;
+        int downCount = 0;
+        StatisticsTableModel tableModel = null;
+        String[] downKeys = null;
+        String[][] downValues = null;
+        ArrayList<Measure> measureValues = new ArrayList<>();
+            
         // initializing GUI global objects
         TableChannel summaryTable = null;
         ApplicationPanel panel = application.getSelectedPanel();
         if ( panel != null )
             {
             summaryTable = panel.getTableModel();
+            if ( summaryTable != null )
+                {
+                int rows = summaryTable.getRowCount();
+                int columns = summaryTable.getColumnCount();
+                summaryKeys = new String[rows];
+                summaryValues = new String[rows][columns - 1];
+                for( int i=0; i<rows; i++ )
+                    {
+                    summaryKeys[i] = summaryTable.getValueAt( i, 0 );
+                    }
+                }
             }
         OpenLog log = application.getChildLog();
         OpenTable table = application.getChildTable();
+        if ( table != null )
+            {
+            tableModel = table.getTableModel();
+            if ( ( tableModel != null ) && ( tableModel.getRowCount() >= 4 ) )
+                {
+                int rows = tableModel.getRowCount();
+                int columns = tableModel.getColumnCount();
+                downKeys = new String[4];
+                downValues = new String[4][columns - 1];
+                int j = rows - 4;
+                for( int i=0; i<4; i++ )
+                    {
+                    downKeys[i] = tableModel.getValueAt( j, 0 );
+                    j++;
+                    }
+                }
+            }
         OpenDraw draw = application.getChildDraw();
         
         // start cycle for interpreting strings of text report
@@ -90,16 +135,120 @@ public HandlerLoad( Application application )
         int n = reportStrings.size();
         for( int i=0; i<n; i++ )
             {
+            // raw text store
             String s = ( reportStrings.get( i ) ).trim();
             sb.append( "\r\n" );
             sb.append( s );
+            // summary table store
+            if ( ( summaryKeys != null ) &&
+                 ( summaryCount < summaryKeys.length ) )
+                {
+                String[] values = summaryHelper( s, summaryKeys[summaryCount] );
+                if ( ( values != null ) && 
+                     ( values.length == summaryValues[summaryCount].length ) )
+                    {
+                    summaryValues[summaryCount] = values;
+                    summaryCount++;
+                    }
+                }
+            // results table down summary rows store
+            if ( ( downKeys != null ) && 
+                 ( downCount < downKeys.length ) )
+                {
+                String[] values = summaryHelper( s, downKeys[downCount] );
+                if ( ( values != null ) && 
+                     ( values.length == downValues[downCount].length ) )
+                    {
+                    downValues[downCount] = values;
+                    downCount++;
+                    }
+                
+                }
+            // results table store, this also used as drawings values store
+            Measure measure = measureHelper( s );
+            if ( measure != null )
+                {
+                measureValues.add( measure );
+                }
             }
         
+        // update main window summary table by load results
+        if ( ( summaryTable != null ) && ( summaryValues != null ) )
+            {
+            summaryTable.clear();
+            for( int i=0; i<summaryValues.length; i++ )
+                {
+                for( int j=0; j<summaryValues[i].length; j++ )
+                    {
+                    summaryTable.setValueAt( summaryValues[i][j], i, j+1 );
+                    }
+                }
+            }
+        // update openable text log by load results
         if ( log != null )
             {
             log.overWrite( sb.toString() );
             log.repaint();
             log.revalidate();
+            }
+        // update openable results table by load results
+        if ( ( table != null ) && ( tableModel != null ) )
+            {
+            int measureCount = measureValues.size();
+            table.blankTable( measureCount );
+            for ( int i=0; i<measureCount; i++ )
+                {
+                Measure measure = measureValues.get( i );
+                String[] s = measure.texts;
+                if ( s.length == tableModel.getColumnCount() )
+                    {
+                    for( int j=0; j<s.length; j++ )
+                        {
+                        tableModel.setValueAt( measure.texts[j], i, j );
+                        if ( ( j > 0 ) && ( measure.medians[j-1] ) )
+                            {
+                            tableModel.markMedian( i, j );
+                            }
+                        }
+                    }
+                }
+            int tableCount = tableModel.getRowCount() - 4;
+            for( int i=0; i<4; i++ )
+                {
+                if ( downValues[i].length == tableModel.getColumnCount() - 1 )
+                    {
+                    for ( int j=0; j<downValues[i].length; j++ ) 
+                        {
+                        tableModel.setValueAt
+                                ( downValues[i][j], tableCount, j+1 );
+                        }
+                    tableCount++;
+                    }
+                }
+            table.repaint();
+            table.revalidate();
+            }
+        // update openable performance drawings by load results
+        FunctionController fc = draw.getController();
+        if ( fc != null )
+            {
+            FunctionModelInterface fim = fc.getModel();
+            if ( fim != null )
+                {
+                int measureCount = measureValues.size();
+                fim.blankModel();
+                fim.rescaleXmax( measureCount );
+                for( int i=0; i<measureCount; i++ )
+                    {
+                    Measure measure = measureValues.get( i );
+                    BigDecimal[] bd = measure.numbers;
+                    bd[0] = bd[0].subtract( BigDecimal.ONE );
+                    fim.updateValue( bd );
+                    fim.rescaleYmax();
+                    }
+                draw.repaint();
+                draw.revalidate();
+                }
             }
         
         // message box about report loaded successfully
@@ -113,115 +262,100 @@ public HandlerLoad( Application application )
             ( application, "Load report failed", "ERROR",
             JOptionPane.ERROR_MESSAGE ); 
         }
-        
-
     }
-    
-}
-
 
 /*
-
-        // initializing GUI global objects
-        TableChannel summaryTable = null;
-        String[][] summaryStrings = null;
-        boolean[] summaryMatches = null;
-        int summaryRows = 0;
-        int summaryColumns = 1;
-        ApplicationPanel panel = application.getSelectedPanel();
-        if ( panel != null )
-            {
-            summaryTable = panel.getTableModel();
-            }
-        OpenLog log = application.getChildLog();
-        OpenTable table = application.getChildTable();
-        OpenDraw draw = application.getChildDraw();
-        
-        // get compare patterns for summary table
-        if ( summaryTable != null )
-            {
-            summaryRows = summaryTable.getRowCount();
-            summaryColumns = summaryTable.getColumnCount();
-            summaryStrings = new String[summaryRows][summaryColumns];
-            summaryMatches = new boolean[summaryRows];
-            for( int i=0; i<summaryRows; i++ )
-                {
-                for( int j=0; j<summaryColumns; j++ )
-                    {
-                    if ( j == 0 )
-                        {
-                        summaryStrings[i][j] = 
-                                ( summaryTable.getValueAt( i, j ) ).trim();
-                        }
-                    else
-                        {
-                        summaryStrings[i][j] = "?";
-                        }
-                    }
-                }
-            }
-        // start cycle for interpreting strings of text report
-        StringBuilder sb = new StringBuilder
-            ( "Log data now loaded from text report file.\r\n" );
-        int n = reportStrings.size();
-        for( int i=0; i<n; i++ )
-            {
-            String s = ( reportStrings.get( i ) ).trim();
-            // provide data for summary table at main window by load result
-            for( int j=0; j<summaryRows; j++ )
-                {
-                String s0 = ( summaryStrings[j][0] ).trim();
-                if ( ( s.startsWith( s0 ) )       &&
-                     ( s.length() > s0.length() ) &&
-                     ( ! summaryMatches[j] ) )
-                    {
-                    String s1 = s.substring( s0.length() );
-                    String[] words = s1.split( " " );
-                    int matchCount = 0;
-                    String[] matchStore = new String[summaryColumns - 1];
-                    for ( String word : words ) 
-                        {
-                        String s2 = word.trim();
-                        if ( ( s2.length() > 1 ) &&
-                             ( Character.isDigit( s2.charAt( 0 ) ) ) )
-                            {
-                            matchStore[matchCount] = s2;
-                            matchCount++;
-                            
-                            System.out.println( s2 );
-                            
-                            }
-                        if ( matchCount == matchStore.length )
-                            {
-                            summaryMatches[j] = true;
-                            System.arraycopy( matchStore, 0, 
-                                              summaryStrings[j], 1,
-                                              matchCount );
-                            }
-                        }
-                    if ( summaryMatches[j] )
-                        break;
-                    }
-                }
-            // provide data for text log openable window by load result
-            sb.append( "\r\n" );
-            sb.append( s );
-            // provide data for table openable window by load result
-            
-            // provide data for performance draw. openable win. by load result
-            
-            }
-        // cycle done, update summary table at main window by load result
-        
-        // update text log openable window by load result
-        if ( log != null )
-            {
-            log.overWrite( sb.toString() );
-            log.repaint();
-            log.revalidate();
-            }
-        // update results table openable window by load result
-        
-        // update performance drawings openable window by load result
-
+Helpers
 */
+
+private final static Pattern SUMMARY_PATTERN = 
+        Pattern.compile( "\\W*\\d+(,|\\.)*\\d+\\W*" );
+
+private String[] summaryHelper( String s, String key )
+    {
+    String[] result = null;
+    s = s.trim();
+    key = key.trim();
+    if ( s.startsWith( key ) )
+        {
+        s = s.substring( key.length() );
+        Matcher findMatcher = SUMMARY_PATTERN.matcher( s );
+        ArrayList<String> list = new ArrayList<>();
+        while ( findMatcher.find() )
+            {
+            list.add( findMatcher.group().trim() );
+            }
+        result = list.toArray( new String[list.size()] );
+        }
+    if ( ( result != null )&&( result.length == 3 ) )
+        return result;
+    else
+        return null;
+    }
+
+/*
+This class for extracted measure value, 
+note for extracted summary value used String[]    
+*/
+private class Measure
+    {
+    final String[]     texts;
+    final BigDecimal[] numbers;
+    final boolean[]    medians;
+    Measure( int n, int m )
+        {
+        texts   = new String[n];
+        numbers = new BigDecimal[n];
+        medians = new boolean[m];
+        }
+    }
+
+private final static String SPLIT_PATTERN = "\\s+";
+
+private final static Pattern INDEX_PATTERN = 
+        Pattern.compile( "\\W*\\d+\\W*" );
+
+private final static Pattern VALUE_PATTERN = 
+        Pattern.compile( "\\W*\\d+(,|\\.)*\\d+\\W*" );
+
+private final static Pattern MEDIAN_PATTERN = 
+        Pattern.compile( "\\W*M\\W*" );
+
+private Measure measureHelper( String s )
+    {
+    Measure result = null;
+    int countNumbers = 0;
+    String[] subs = ( s.trim() ).split( SPLIT_PATTERN );
+    if ( ( subs != null )&&( subs.length >= 4 )&&( subs.length <= 7 ) )
+        {
+        Matcher indexMatcher = INDEX_PATTERN.matcher( subs[0] );
+        if ( indexMatcher.matches() )
+            {
+            result = new Measure( 4, 3 );
+            result.texts[0] = subs[0];
+            result.numbers[0] = new BigDecimal( subs[0] );
+            for ( int i=1; i<subs.length; i++ )
+                {
+                Matcher valueMatcher = VALUE_PATTERN.matcher( subs[i] );
+                if ( valueMatcher.matches() )
+                    {
+                    countNumbers++;
+                    result.texts[countNumbers] = subs[i];
+                    result.numbers[countNumbers] = new BigDecimal( subs[i] );
+                    }
+                else
+                    {
+                    Matcher medianMatcher = MEDIAN_PATTERN.matcher( subs[i] );
+                    if ( medianMatcher.matches() )
+                        {
+                        result.medians[countNumbers - 1] = true;
+                        }
+                    }
+                }
+            }
+        }
+    return result;
+    }
+
+
+}

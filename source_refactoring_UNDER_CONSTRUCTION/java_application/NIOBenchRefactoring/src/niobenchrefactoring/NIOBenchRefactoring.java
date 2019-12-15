@@ -31,12 +31,14 @@ Near roadmap.
      Default MBPS, Default IOPS, Clear, About, Cancel. 
 ---
 11)  Debug function Load report.
-      a) table with options settings for save report at run moment - to log
-      b) replace html colored string to "M" string for report with medians - no
-      c) don't use tables for log, create and save text log, all to log
-      d) verify report save
-      e) design report load, update table and drawings as f(text)
-      f) "clear" key.
+      a) + table with options settings for save report at run moment - to log
+      b) + replace html colored string to "M" str. for report with medians
+      c) + don't use tables for log, create and save text log, all to log
+      d) + verify report save
+      e) + "clear" key.
+
+      f) design report load, update table and drawings as f(text)
+      
 ---
 12)  Run scenario for CHANNELS. Yet limited options support. Get report.
       a) + progress indicator

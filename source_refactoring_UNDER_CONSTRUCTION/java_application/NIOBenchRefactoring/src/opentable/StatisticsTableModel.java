@@ -183,4 +183,14 @@ private void markHelper( int row, int column )
         }
     }
 
+/*
+This method used for mark medians after report load by "Load" button
+*/
+public void markMedian( int row, int column )
+    {
+    String s = getValueAt( row, column );
+    s = MARK_STRING + s;
+    setValueAt( s, row, column );
+    }
+
 }

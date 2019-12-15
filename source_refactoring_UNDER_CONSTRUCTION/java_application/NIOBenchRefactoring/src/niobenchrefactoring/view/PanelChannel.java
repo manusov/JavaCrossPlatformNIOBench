@@ -204,8 +204,10 @@ public PanelChannel( Application application )
     super( application );
     // this constructors must call when valid APPLICATION reference
     panelButtonsHandlers = new HandlerSourcePath[]
-        { new HandlerSourcePath ( application, NAME_SRC, texts[UP_FIRST] ) ,
-          new HandlerDestinationPath( application, NAME_DST, texts[UP_LAST] ) };
+        { new HandlerSourcePath 
+            ( application, NAME_SRC, texts[UP_FIRST], texts[UP_LAST] ) ,
+          new HandlerDestinationPath
+            ( application, NAME_DST, texts[UP_LAST] ) };
     }
 
 /*
@@ -322,6 +324,19 @@ not make this operations in constructor because overridable warnings.
     */
     setDefaults( SCENARIO.MBPS );
     
+    
+    // ========== DEBUG LOCKS ==========
+    labels[5].setEnabled( false );
+    labels[6].setEnabled( false );
+    labels[7].setEnabled( false );
+    labels[8].setEnabled( false );
+    labels[10].setEnabled( false );
+    boxes[3].setEnabled( false );
+    boxes[4].setEnabled( false );
+    boxes[5].setEnabled( false );
+    boxes[6].setEnabled( false );
+    boxes[8].setEnabled( false );
+    // ========== END OF DEBUG LOCKS ==========
     }
 
 /*
