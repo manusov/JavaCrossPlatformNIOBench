@@ -59,7 +59,9 @@ public class Application extends JFrame
 Global objects with getters, used by handlers
 */    
 private final PAL pal;
-public PAL getPAL() { return pal; }
+private final int palWidth;
+public PAL getPAL()      { return pal;      }
+public int getPALwidth() { return palWidth; }
 /*
 GUI window geometry constants    
 */
@@ -153,10 +155,11 @@ private final static int RUN_ID     = 11;
 /*
 GUI window constructor
 */
-public Application( PAL pal )
+public Application( PAL pal, int palWidth )
     {
     super( About.getShortName() );
     this.pal = pal;
+    this.palWidth = palWidth;
     // this constructors must call when valid PAL reference
     panels = new ApplicationPanel[]
         { new PanelChannel       ( this ) ,
@@ -164,7 +167,7 @@ public Application( PAL pal )
           new PanelScatterGather ( this ) ,
           new PanelMemoryMapped  ( this ) ,
           new PanelArchives      ( this ) ,
-          new PanelNative        ( this ) ,
+          new PanelNative        ( this ) ,  // index=5, is f(hardware)
           new PanelSSD           ( this ) };
     selectedPanel = panels[0];
     // tabbed panels and common (used for all panels) buttons
@@ -178,7 +181,12 @@ public Application( PAL pal )
         {
         buttons[i].addActionListener( handlers[i] );
         }
-    
+    // Lock "Native OS API" tab if native library not loaded
+    if ( palWidth < 0 )
+        {
+        tabs.setEnabledAt( 5, false );
+        }
+
     // ========== DEBUG LOCKS ==========
     tabs.setEnabledAt( 1, false );
     tabs.setEnabledAt( 2, false );

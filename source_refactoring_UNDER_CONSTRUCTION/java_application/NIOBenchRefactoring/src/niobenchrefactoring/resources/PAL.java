@@ -30,6 +30,12 @@ private static int binaryType = -1;
 private static boolean binaryValid = false;
 private static File library;
 
+// Public constant for native functions select and status encoding
+public final static int GET_LIBRARY_NAME = 0;
+public final static int GET_LIBRARY_INFO = 1;
+public final static int GET_RANDOM_DATA = 0;
+public final static int JRE32_UNDER_OS64 = 33;
+
 // Methods for get native platform detection results
 // Binaries types: 0=Win32, 1=Win64, 2=Linux32, 3=Linux64, ... , -1=Unknown
 public int getBinaryType()      { return binaryType;  }

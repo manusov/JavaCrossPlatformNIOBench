@@ -12,10 +12,14 @@ package niobenchrefactoring.view;
 
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import niobenchrefactoring.controller.HandlerDestinationPath;
@@ -23,9 +27,33 @@ import niobenchrefactoring.controller.HandlerSourcePath;
 import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.IOscenarioChannel;
 import niobenchrefactoring.model.TableChannel;
+import niobenchrefactoring.resources.About;
+import niobenchrefactoring.resources.IOPB;
+import static niobenchrefactoring.resources.IOPB.extractStringFromOPB;
+import niobenchrefactoring.resources.PAL;
+import static niobenchrefactoring.resources.PAL.GET_LIBRARY_INFO;
+import static niobenchrefactoring.resources.PAL.GET_LIBRARY_NAME;
+import static niobenchrefactoring.resources.PAL.GET_RANDOM_DATA;
+import static niobenchrefactoring.resources.PAL.JRE32_UNDER_OS64;
 
 public class PanelChannel extends ApplicationPanel 
 {
+/*
+Support native platform    
+*/
+private final PAL pal;
+private final int palWidth;
+private String libraryName;
+private int libraryFlags;
+/*
+Support array with block data.
+This array changed when changed combo boxes "Data" and "Block", means changed
+when block-data generation required. Plus, when initialization.
+But array generation not required after "Run" button press.
+Note about random data generation after "Run" button press can corrupt
+performance characteristics.
+*/
+private byte[] dataBlock = null;
 /*
 Application Panel common functionality, include defined by parent class    
 */
@@ -147,6 +175,12 @@ private final static int SET_THREAD_COUNT[] =
 // data randomization option
 private final static int ID_DATA_PATTERN = 4;
 private final static int DEFAULT_DATA_PATTERN = 0;
+
+private final static int ZERO_DATA_PATTERN      = 0;
+private final static int ONE_DATA_PATTERN       = 1;
+private final static int SEQUENTAL_DATA_PATTERN = 2;
+private final static int SOFTWARE_DATA_PATTERN  = 3;
+private final static int HARDWARE_DATA_PATTERN  = 4;
 private final static String SET_DATA_PATTERN[] =
     { "Zeroes", "Ones", "Sequental", "Software RNG", "Hardware RNG" };
 // address randomization option
@@ -159,7 +193,8 @@ private final static String SET_ADDRESS_PATTERN[] =
 private final static int ID_READ_WRITE = 6;
 private final static int DEFAULT_READ_WRITE = 0;
 private final static String SET_READ_WRITE[] =
-    { "Read/Write no mix", "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
+    { "Read/Write no mix", 
+      "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
       "Read only", "Write only" };
 // fast copy option
 private final static int ID_FAST_COPY = 7;
@@ -197,11 +232,27 @@ private final static int DEFAULT_COPY_DELAY = DEFAULT_READ_DELAY;
 private final static int SET_COPY_DELAY[] = SET_READ_DELAY;
 
 /*
+Text strings and variables required for support
+Random Numbers Generation (RNG) options and native library absence option
+*/
+private final static String WRONG_HRNG =
+        "<html><font color=gray>Hardware RNG<html><font color=red> ?";
+private final static String SLOW_HRNG =
+        "<html>Hardware RNG<html><font color=green> ?";
+private static enum RNG_STATUS  { OK , WRONG_CPU, WRONG_OS, WRONG_JRE }
+private static enum MODE_STATUS { OK , WRONG_OS }
+private static RNG_STATUS runStatus   = RNG_STATUS.OK;
+private static MODE_STATUS modeStatus = MODE_STATUS.OK;
+
+/*
 Panel constructor
 */
 public PanelChannel( Application application )
     {
     super( application );
+    // support native platform
+    pal = application.getPAL();
+    palWidth = application.getPALwidth();
     // this constructors must call when valid APPLICATION reference
     panelButtonsHandlers = new HandlerSourcePath[]
         { new HandlerSourcePath 
@@ -216,9 +267,53 @@ not make this operations in constructor because overridable warnings.
 */
 @Override void build()
     {
+    /*
+    Adjust options states by native platform configuration,
+    first, pre-blank detection results
+    */
+    libraryName = null;
+    libraryFlags = 0;
+    // check OS support by native library exist
+    if ( palWidth <= 0 )
+        {  // this branch for native library not available for current OS
+        runStatus = RNG_STATUS.WRONG_OS;
+        modeStatus = MODE_STATUS.WRONG_OS;
+        SET_DATA_PATTERN[HARDWARE_DATA_PATTERN] = WRONG_HRNG;
+        }
+    else
+        {  // this branch for native library loaded successfully
+        int size = 4096/8;
+        long[] data = new long[size];
+        int status = pal.entryBinary( null, data, GET_LIBRARY_NAME, size );
+        if ( status != 0 )
+            {
+            libraryName = extractStringFromOPB( data );
+            }
+        status = pal.entryBinary( null, data, GET_LIBRARY_INFO, size );
+        if ( status != 0 )
+            {
+            libraryFlags = (int)( data[0] & 0xFFFFFFFFL );
+            }
+        boolean rdrandAvailable = ( ( libraryFlags & 1 ) != 0 );
+        if ( ! rdrandAvailable )
+            {  // this branch for RDRAND not supported by current CPU
+            runStatus = RNG_STATUS.WRONG_CPU;
+            SET_DATA_PATTERN[HARDWARE_DATA_PATTERN] = WRONG_HRNG;
+            }
+        else if ( palWidth == JRE32_UNDER_OS64 )
+            {  // this branch for RDRAND supported, but JRE32 under Win64
+            runStatus = RNG_STATUS.WRONG_JRE;
+            SET_DATA_PATTERN[HARDWARE_DATA_PATTERN] = SLOW_HRNG;
+            }
+        }
+
+    /*
+    Initializing layout
+    */
     SpringLayout sl = new SpringLayout();
     Container c = this;
     c.setLayout( sl );
+    
     /*
     Positioning and add up labels: source and destination paths.
     */
@@ -318,25 +413,195 @@ not make this operations in constructor because overridable warnings.
                           SpringLayout.EAST, labels[i] );
         add( boxes[j++] );
         }
+    
     /*
     Assign default values for combo boxes
     first combo box with index = 0 : file size
     */
     setDefaults( SCENARIO.MBPS );
     
-    
+    /*
+    Add listener for "Data" option support depend on platform feaures,
+    add listener for "Data" and "Block" options, support data block generation,
+    initialization data block.
+    */
+    boxes[ID_DATA_PATTERN].addActionListener( new DataOptionListener() );
+    ActionListener a = new DataBlockBuilderListener();
+    boxes[ID_BLOCK_SIZE].addActionListener( a );
+    boxes[ID_DATA_PATTERN].addActionListener( a );
+    a.actionPerformed( null );
+   
     // ========== DEBUG LOCKS ==========
     labels[5].setEnabled( false );
-    labels[6].setEnabled( false );
     labels[7].setEnabled( false );
     labels[8].setEnabled( false );
     labels[10].setEnabled( false );
     boxes[3].setEnabled( false );
-    boxes[4].setEnabled( false );
     boxes[5].setEnabled( false );
     boxes[6].setEnabled( false );
     boxes[8].setEnabled( false );
     // ========== END OF DEBUG LOCKS ==========
+    }
+
+/*
+JComboBox listener for "Data" option, it required because RDRAND support
+and RDRAND performance is optional and platform-specific, this listener
+can generate errors and warnings messages when hardware mode selected.
+*/
+private class DataOptionListener implements ActionListener
+    {
+    @Override public void actionPerformed ( ActionEvent e )
+        {           
+        int index = boxes[ID_DATA_PATTERN].getSelectedIndex();
+        if ( index == HARDWARE_DATA_PATTERN )
+            {
+            switch( runStatus )
+                {
+                case WRONG_CPU:
+                    {
+                    JOptionPane.showMessageDialog ( null,
+                    "RDRAND instruction not supported by CPU:\n" +
+                    "use software RNG" ,
+                    About.getShortName() , JOptionPane.WARNING_MESSAGE );
+                    boxes[ID_DATA_PATTERN].
+                            setSelectedIndex( SOFTWARE_DATA_PATTERN );
+                    break;
+                    }
+                case WRONG_OS:
+                    {
+                    JOptionPane.showMessageDialog ( null, 
+                    "Native library not loaded:\n" + 
+                    "use software RNG" ,
+                    About.getShortName() , JOptionPane.WARNING_MESSAGE );
+                    boxes[ID_DATA_PATTERN].
+                            setSelectedIndex( SOFTWARE_DATA_PATTERN );
+                    break;
+                    }
+                case WRONG_JRE:
+                    {
+                    JOptionPane.showMessageDialog ( null,
+                    "JRE32 under WOW64 mode detected:\n" +
+                    "hardware RNG performance downgraded" ,
+                    About.getShortName() , JOptionPane.WARNING_MESSAGE );
+                    break;
+                    }
+                }
+            }
+        }
+    }
+
+/*
+JComboBox listener for "Data" and "Block" options.
+Generating array with block data for mass storage I/O test.
+This array changed when changed combo boxes "Data" and "Block", means changed
+when block-data generation required. Plus, when initialization.
+But array generation not required after "Run" button press.
+Note about random data generation after "Run" button press can corrupt
+performance characteristics.
+*/
+private class DataBlockBuilderListener implements ActionListener
+    {
+    private int oldDataIndex = -1;
+    private int oldSizeIndex = -1;
+    
+    @Override public void actionPerformed ( ActionEvent e )
+        {
+        int dataIndex = boxes[ID_DATA_PATTERN].getSelectedIndex();
+        int sizeIndex = boxes[ID_BLOCK_SIZE].getSelectedIndex();
+        
+        // filter for reject same selection handling
+        if ( ( dataIndex == oldDataIndex )&&( sizeIndex == oldSizeIndex ) )
+            {
+            return;        
+            }
+        oldDataIndex = dataIndex;
+        oldSizeIndex = sizeIndex;
+        if ( ( dataIndex < 0 )||( sizeIndex < 0 ) )
+            {
+            return;
+            }
+
+        // selection mismatch from previous, means handling required
+        int size = 0;
+        byte[] data = null;
+        if ( ( dataIndex >= 0 ) && ( sizeIndex >= 0 )              &&
+             ( dataIndex < boxes[ID_DATA_PATTERN].getItemCount() ) &&
+             ( sizeIndex < boxes[ID_BLOCK_SIZE].getItemCount()   ) )
+            {
+            size = SET_BLOCK_SIZE_BYTES[sizeIndex];
+            if ( ( size > 0 )&&( size % 512 == 0 ) )
+                {
+                data = new byte[size];
+                }
+            }
+        
+        if ( ( data != null )&&( dataIndex == ZERO_DATA_PATTERN ) )
+            {
+            for( int i=0; i<size; i++ )
+                {
+                data[i] = 0;
+                }
+            int a = 0;
+            }
+        
+        else if ( ( data != null )&&( dataIndex == ONE_DATA_PATTERN ) )
+            {
+            for( int i=0; i<size; i++ )
+                {
+                data[i] = - 1;
+                }
+            }
+        
+        else if ( ( data != null )&&( dataIndex == SEQUENTAL_DATA_PATTERN ) )
+            {
+            final byte K = 17;
+            byte k = 0;
+            for( int i=0; i<size; i++ )
+                {
+                data[i] = k;
+                if ( ( i % K ) == 0 )
+                    {
+                    k++;
+                    }
+                }
+            }
+        
+        else if ( ( data != null )&&( dataIndex == SOFTWARE_DATA_PATTERN ) )
+            {
+            Random r = new Random();
+            r.nextBytes( data );
+            }
+        
+        else if ( ( data != null )&&( dataIndex == HARDWARE_DATA_PATTERN ) )
+            {
+            int ipbSize = 4096 / 8;
+            int opbSize = size / 8;
+            long[] ipb = new long[ipbSize];
+            long[] opb = new long[opbSize];
+            ipb[0] = GET_RANDOM_DATA;
+            ipb[1] = opbSize;
+            int status = pal.entryBinary( ipb, opb, ipbSize, opbSize );
+            if ( status > 0 )
+                {
+                IOPB.extractBytesFromOPB( opb, data );
+                }
+            else
+                {
+                JOptionPane.showMessageDialog ( null,
+                "Hardware RNG access failed" ,
+                About.getShortName() , JOptionPane.WARNING_MESSAGE );
+                }
+            }
+        
+        else
+            {
+            JOptionPane.showMessageDialog ( null,
+            "Inconsistent request for data block generation" ,
+            About.getShortName() , JOptionPane.WARNING_MESSAGE );
+            }
+        
+        dataBlock = data;
+        }
     }
 
 /*
@@ -460,7 +725,15 @@ private void helperComboString( int id, String[] namesArray, int selection )
     {
     for ( String name : namesArray ) 
         {
-        boxes[id].addItem( " " + name );
+        if ( ! name.startsWith( "<html>" ) )
+            {
+            name = " " + name;
+            }
+        else
+            {
+            name = "<html>&nbsp" + name;
+            }
+        boxes[id].addItem( name );
         }
     boxes[id].setSelectedIndex( selection );
     }
@@ -627,7 +900,7 @@ Build IO scenario with options settings, defined in this panel
           // int readDelay, int writeDelay, int copyDelay,
           optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
           // byte[] dataBlock
-          null );
+          dataBlock );
     return ios;
     }
 

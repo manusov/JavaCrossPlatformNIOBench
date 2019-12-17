@@ -30,5 +30,20 @@ public static String extractStringFromOPB( long[] data )
         }
     return sb.toString();
     }
-    
+
+public static void extractBytesFromOPB( long[] qwords, byte[] bytes )
+    {
+    int k=0;
+    for ( int i=0; i<qwords.length; i++ )
+        {
+        long q = qwords[i];
+        for ( int j=0; j<8; j++ )
+            {
+            bytes[k] = (byte)( q & 0xFF );
+            k++;
+            q >>>= 8;
+            }
+        }
+    }
+
 }

@@ -10,7 +10,7 @@ This class must run CONTROLLER at MODEL/VIEW/CONTROLLER (MVC) functionality.
 
 /*
 
-UNDER CONSTRUCTION. This main module yet sequence of tests
+UNDER CONSTRUCTION. This main module can be used as sequence of tests
 
 Near roadmap.
 ---------------
@@ -26,21 +26,26 @@ Near roadmap.
 8)+  Design tabbed panel.
 9)+  Design channels test panel.
 10)+ Base functionality for buttons: 
-     Open Log, Open Table, Open Drawings,
-     Text report, Graphics save, 
-     Default MBPS, Default IOPS, Clear, About, Cancel. 
----
-11)  Debug function Load report.
+      a) Open Log, Open Table, Open Drawings,
+      b) Text report, Graphics save, 
+      c) Default MBPS, Default IOPS, Clear, About, Cancel. 
+11)+ Service functions: Clear results, Save report, Load report.
       a) + table with options settings for save report at run moment - to log
       b) + replace html colored string to "M" str. for report with medians
       c) + don't use tables for log, create and save text log, all to log
-      d) + verify report save
-      e) + "clear" key.
+      d) + "Clear" key
+      e) + "Report" key, design report save
+      f) + "Load" key, design report load, update table and drawings as f(text).
+12)+ Data randomization scenario include native RDRAND. Combo box = "Data".
+      a) + check status of native library loader, send to application
+      b) + messages for "Data" combo box
+      c) + generation data, send to io scenario.
 
-      f) design report load, update table and drawings as f(text)
-      
+
+13) Unlock and verify "Threads" option.
+
 ---
-12)  Run scenario for CHANNELS. Yet limited options support. Get report.
+14)  Run scenario for CHANNELS. Yet limited options support. Get report.
       a) + progress indicator
       b) + label left progress indicator, status, operation name or error name
       c) + add "starting..." state to phases nomenclature for label
@@ -53,15 +58,19 @@ Near roadmap.
       j) + update openable table
       k) + update openable draw
       l) interruptable
-      m) options restrictions for channels
+      m) options restrictions for channels, instead debug locks.
 ---
-13)  Design IOPS-oriented address randomization, must be valid for
+
+15)  Design IOPS-oriented address randomization, must be valid for
      write/copy/read. Correct tasks names. First verify at channels.
      Include mixed read/write load.
      Separate mix option or add to Read/Write option ?
-14)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
+
+16)  Data randomization for all IO scenarios. Verify as MBPS, IOPS.
      First at channels.
-15)  Options restrictions for child classes, overridable method.
+
+17)  Options restrictions for child classes, overridable method.
+
 ------
 
 ... develop by tabs: same for all 7 scenarios ...
