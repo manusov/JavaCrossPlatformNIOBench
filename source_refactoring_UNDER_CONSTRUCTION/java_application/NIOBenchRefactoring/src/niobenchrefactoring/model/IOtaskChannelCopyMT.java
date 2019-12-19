@@ -23,8 +23,7 @@ import java.util.concurrent.FutureTask;
 
 public class IOtaskChannelCopyMT extends IOtaskChannelWriteMT
 {
-private final static String IOTASK_NAME = 
-    "NIO channel multi thread MBPS, Copy";
+private final static String IOTASK_NAME = "Copy/MT/NIO channel";
     
 /*
 Constructor stores IO scenario object, create executor
@@ -47,12 +46,13 @@ Run IO task
     int j = 0;
     for( int i=0; i<iosc.fileCount; i++ )
         {
-        tasks[i] = new CopyTask( i );
+        tasks[i] = new CopyTask( i, j );
         futureTasks[i] = new FutureTask( tasks[i] );
         j++;
         if ( j >= iosc.threadCount )
             j = 0;
         }
+    
     /*
     Create files, yet zero size, make this work outside of measured interval,
     cycle for required number of files
@@ -108,9 +108,11 @@ File Copy task for parallel execution
 private class CopyTask implements Callable<StatusEntry>
     {
     private final int fileIndex;
-    private CopyTask( int fileIndex )
+    private final int threadIndex;
+    private CopyTask( int fileIndex, int threadIndex )
         {
         this.fileIndex = fileIndex;
+        this.threadIndex = threadIndex;
         }
     @Override public StatusEntry call()
         {
@@ -121,7 +123,8 @@ private class CopyTask implements Callable<StatusEntry>
             int k = 0;
             if ( iosc.fastCopy )
                 {
-                iosc.statistics.startInterval( COPY_ID, System.nanoTime() );
+                iosc.statistics.startInterval
+                        ( threadIndex, COPY_ID, System.nanoTime() );
                 while( k < iosc.fileSize )
                     {
                     k += iosc.channelsSrc[fileIndex].transferTo
@@ -131,11 +134,12 @@ private class CopyTask implements Callable<StatusEntry>
                 if ( iosc.copySync )
                     iosc.channelsDst[fileIndex].force( true );
                 iosc.statistics.sendMBPS
-                    ( COPY_ID, iosc.fileSize, System.nanoTime() );
+                    ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
                 }
             else
                 {
-                iosc.statistics.startInterval( COPY_ID, System.nanoTime() );
+                iosc.statistics.startInterval
+                        ( threadIndex, COPY_ID, System.nanoTime() );
                 while( k < iosc.fileSize )
                     {
                     int n = iosc.blockSize;
@@ -147,7 +151,7 @@ private class CopyTask implements Callable<StatusEntry>
                         iosc.channelsDst[fileIndex].force( true );
                     }
                 iosc.statistics.sendMBPS
-                    ( COPY_ID, iosc.fileSize, System.nanoTime() );
+                    ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
                 }
             }
         catch( IOException e )
@@ -160,7 +164,7 @@ private class CopyTask implements Callable<StatusEntry>
         StatusEntry statusEntry = new StatusEntry( statusFlag, statusString );
         if ( ! statusEntry.flag )
             iosc.lastError = statusEntry;
-        iosc.setSync( fileIndex+1, statusEntry, COPY_ID, IOTASK_NAME );
+        iosc.setSync( statusEntry, COPY_ID, IOTASK_NAME );
         return statusEntry;
         }
     }

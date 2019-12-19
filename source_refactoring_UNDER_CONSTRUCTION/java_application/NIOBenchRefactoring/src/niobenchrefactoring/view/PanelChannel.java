@@ -143,7 +143,7 @@ private final static String UNITS_MINUTE  = " minute";
 private final static String UNITS_MINUTES = " minutes";
 // file size option
 private final static int ID_FILE_SIZE = 0;
-private final static int DEFAULT_FILE_SIZE_MBPS = 16;  // means index of default
+private final static int DEFAULT_FILE_SIZE_MBPS = 13;  // means index of default
 private final static int DEFAULT_FILE_SIZE_IOPS = 3;
 private final static int SET_FILE_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
@@ -152,20 +152,20 @@ private final static int SET_FILE_SIZE_BYTES[] =
       400*1024*1024, 1024*1024*1024, 1536*1024*1024 };
 // block size option
 private final static int ID_BLOCK_SIZE = 1;
-private final static int DEFAULT_BLOCK_SIZE_MBPS = 13;
+private final static int DEFAULT_BLOCK_SIZE_MBPS = 12;
 private final static int DEFAULT_BLOCK_SIZE_IOPS = 3;
 private final static int SET_BLOCK_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
-      16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 
-      512*1024, 1024*1024, 10*1024*1024, 128*1024*1024, 256*1024*1024 };
+      16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024,
+      10*1024*1024, 16*1024*1024, 128*1024*1024, 256*1024*1024 };
 // file count option
 private final static int ID_FILE_COUNT = 2;
 private final static int DEFAULT_FILE_COUNT_MBPS = 9;
-private final static int DEFAULT_FILE_COUNT_IOPS = 21;
+private final static int DEFAULT_FILE_COUNT_IOPS = 16;
 private final static int SET_FILE_COUNT[] = 
     { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-      20, 40, 50, 100, 500, 1000, 5000, 10000, 50000, 100000,
-      200000, 500000, 1000000, 2500000, 5000000  };
+      20, 40, 50, 100, 500, 1000, 2000, 5000, 
+      10000, 50000, 100000, 200000, 500000, 1000000, 2500000, 5000000  };
 // thread count option
 private final static int ID_THREAD_COUNT = 3;
 private final static int DEFAULT_THREAD_COUNT = 0;
@@ -186,7 +186,7 @@ private final static String SET_DATA_PATTERN[] =
 // address randomization option
 private final static int ID_ADDRESS_PATTERN = 5;
 private final static int DEFAULT_ADDRESS_MBPS = 0;
-private final static int DEFAULT_ADDRESS_IOPS = 2;
+private final static int DEFAULT_ADDRESS_IOPS = 0; // 2;  // DEBUG LOCK
 private final static String SET_ADDRESS_PATTERN[] =
     { "Sequental", "Batterfly", "Software RNG", "Hardware RNG" };
 // read-write mode option
@@ -385,7 +385,7 @@ not make this operations in constructor because overridable warnings.
         }
 
     /*
-    Positioning and add left labels: additional (timing) options.
+    Positioning and add right labels: additional (timing) options.
     */
     j = COMBO_MIDDLE;
     for( int i=RIGHT_UP; i<=RIGHT_DOWN; i++ )
@@ -432,11 +432,11 @@ not make this operations in constructor because overridable warnings.
     a.actionPerformed( null );
    
     // ========== DEBUG LOCKS ==========
-    labels[5].setEnabled( false );
+    // labels[5].setEnabled( false ); //
     labels[7].setEnabled( false );
     labels[8].setEnabled( false );
     labels[10].setEnabled( false );
-    boxes[3].setEnabled( false );
+    // boxes[3].setEnabled( false ); //
     boxes[5].setEnabled( false );
     boxes[6].setEnabled( false );
     boxes[8].setEnabled( false );

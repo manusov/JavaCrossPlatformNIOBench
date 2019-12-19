@@ -194,7 +194,6 @@ public Application( PAL pal, int palWidth )
     tabs.setEnabledAt( 4, false );
     tabs.setEnabledAt( 5, false );
     tabs.setEnabledAt( 6, false );
-    buttons[4].setEnabled( false );
     // ========== END OF DEBUG LOCKS ==========
     
     }

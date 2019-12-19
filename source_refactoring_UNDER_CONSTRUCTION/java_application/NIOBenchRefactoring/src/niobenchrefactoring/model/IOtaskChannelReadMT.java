@@ -18,8 +18,7 @@ import java.util.concurrent.FutureTask;
 
 public class IOtaskChannelReadMT extends IOtaskChannelWriteMT
 {
-private final static String IOTASK_NAME = 
-    "NIO channel multi thread MBPS, Read";
+private final static String IOTASK_NAME = "Read/MT/NIO channel";
     
 /*
 Constructor stores IO scenario object, create executor
@@ -89,14 +88,15 @@ private class ReadTask implements Callable<StatusEntry>
         try
             {
             int k;
-            iosc.statistics.startInterval( READ_ID, System.nanoTime() );
+            iosc.statistics.startInterval
+                    ( threadIndex, READ_ID, System.nanoTime() );
             do  {
                 iosc.byteBuffer[threadIndex].rewind();
                 k = iosc.channelsSrc[fileIndex].
                         read( iosc.byteBuffer[threadIndex] );
                 } while ( k != -1);
             iosc.statistics.sendMBPS
-                ( READ_ID, iosc.fileSize, System.nanoTime() );
+                ( threadIndex, READ_ID, iosc.fileSize, System.nanoTime() );
             }
         catch( IOException e )
             {
@@ -108,7 +108,7 @@ private class ReadTask implements Callable<StatusEntry>
         StatusEntry statusEntry = new StatusEntry( statusFlag, statusString );
         if ( ! statusEntry.flag )
             iosc.lastError = statusEntry;
-        iosc.setSync( fileIndex+1, statusEntry, READ_ID, IOTASK_NAME );
+        iosc.setSync( statusEntry, READ_ID, IOTASK_NAME );
         return statusEntry;
         }
     }

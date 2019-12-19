@@ -26,8 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class IOtaskChannelWriteMT extends IOtaskChannelWrite
 {
-private final static String IOTASK_NAME = 
-    "NIO channel multi thread MBPS, Write";
+private final static String IOTASK_NAME = "Write/MT/NIO channel";
 
 final IOscenarioChannel iosc;
 final ExecutorService executor;
@@ -130,7 +129,8 @@ private class WriteTask implements Callable<StatusEntry>
         try
             {
             int j = iosc.fileSize;
-            iosc.statistics.startInterval( WRITE_ID, System.nanoTime() );
+            iosc.statistics.startInterval
+                    ( threadIndex, WRITE_ID, System.nanoTime() );
             while( j >= iosc.blockSize )
                 {
                 iosc.byteBuffer[threadIndex].rewind();
@@ -155,7 +155,7 @@ private class WriteTask implements Callable<StatusEntry>
             if ( iosc.writeSync )
                 iosc.channelsSrc[fileIndex].force( true );
             iosc.statistics.sendMBPS
-                ( WRITE_ID, iosc.fileSize, System.nanoTime() );
+                ( threadIndex, WRITE_ID, iosc.fileSize, System.nanoTime() );
             iosc.channelsSrc[fileIndex].close();
             }
         catch( IOException e )
@@ -167,7 +167,7 @@ private class WriteTask implements Callable<StatusEntry>
         StatusEntry statusEntry = new StatusEntry( statusFlag, statusString );
         if ( ! statusEntry.flag )
             iosc.lastError = statusEntry;
-        iosc.setSync( fileIndex+1, statusEntry, WRITE_ID, IOTASK_NAME );
+        iosc.setSync( statusEntry, WRITE_ID, IOTASK_NAME );
         return statusEntry;
         }
     }

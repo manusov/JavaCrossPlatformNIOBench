@@ -165,6 +165,7 @@ int phaseID = -1;
 String phaseName = "";
 // double percentage = 0.0;
 StatusEntry lastError;
+
 /*
 Constructor for options settings by internal defaults
 */    
@@ -205,11 +206,20 @@ public IOscenario()
     pathsSrc = new Path[fileCount];
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
-
-    statistics = new StatisticsModel( ID_COUNT );
+    
+    if ( threadCount < 2 )
+        {
+        statistics = new StatisticsModel( ID_COUNT );
+        }
+    else
+        {
+        statistics = new StatisticsModel( threadCount, ID_COUNT );
+        }
+    
     syncQueue = new LinkedList();
     lastError = new StatusEntry( true, "OK" );
     }
+
 /*
 Constructor for options settings by input parameters
 */
@@ -272,7 +282,15 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
     
-    statistics = new StatisticsModel( ID_COUNT );
+    if ( threadCount < 2 )
+        {
+        statistics = new StatisticsModel( ID_COUNT );
+        }
+    else
+        {
+        statistics = new StatisticsModel( threadCount, ID_COUNT );
+        }
+
     syncQueue = new LinkedList();
     lastError = new StatusEntry( true, "OK" );
     }
@@ -298,6 +316,7 @@ public StatisticsModel getStatistics()
     {
     return statistics;
     }
+
 /*
 Asynchronous get I/O performance statistics
 */
@@ -310,6 +329,7 @@ public StateAsync[] getAsync()
         }
     return entries;    
     }
+
 /*
 Asynchronous get current phase name
 */
@@ -332,6 +352,7 @@ public StatusEntry getLastError()
     {
     return lastError;
     }
+
 /*
 Get entry of synchronous statistics
 */
@@ -349,6 +370,7 @@ public StateSync getSync()
             }
         }
     }
+
 /*
 Add entry of synchronous statistics, also used by child class
 */
@@ -380,9 +402,25 @@ void setSync( int count, StatusEntry se, int id, String name  )
             }
         }
     }
+
+/*
+SetSync method overload for parallel multi-thread execution support,
+*/
+final private int[] orderedCounts = new int[ID_COUNT];
+
+synchronized void setSync( StatusEntry se, int id, String name  )
+    {
+    if ( ( id >= 0 )&&( id < ID_COUNT ) )
+        {
+        orderedCounts[id]++;
+        setSync( orderedCounts[id], se, id, name );
+        }
+    }
+
 /*
 Clear synchronous statistics, also used by child class
 */
+/*
 void clearSync()
     {
     synchronized( syncQueue )
@@ -390,4 +428,5 @@ void clearSync()
         syncQueue.clear();
         }
     }
+*/
 }

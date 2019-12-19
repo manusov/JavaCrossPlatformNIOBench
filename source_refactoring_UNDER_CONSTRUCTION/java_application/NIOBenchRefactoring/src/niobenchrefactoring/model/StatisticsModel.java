@@ -23,7 +23,17 @@ StatisticsModel( int arraysCount )
         {
         arrays[i] = new ArrayList<>();
         }
-    nanoseconds = new long[arraysCount];
+    nanoseconds = new long[1][arraysCount];
+    }
+
+StatisticsModel( int threadsCount, int arraysCount )
+    {
+    arrays = new ArrayList[arraysCount];
+    for( int i=0; i<arraysCount; i++ )
+        {
+        arrays[i] = new ArrayList<>();
+        }
+    nanoseconds = new long[threadsCount][arraysCount];
     }
 
 /*
@@ -35,7 +45,7 @@ public boolean send( int selector, double value )
     boolean b = false;
     synchronized( arrays )
         {
-        if ( ( arrays != null )&&( selector < arrays.length )&&
+        if ( ( arrays != null ) && ( selector < arrays.length ) &&
              ( arrays[selector] != null ) )
             {
             b = arrays[selector].add( value );
@@ -45,17 +55,25 @@ public boolean send( int selector, double value )
     }
 
 /*
-Timer values at start of measured interval, one value per operation ID
+Timer values at start of measured interval, one value per:
+{ thread ID , operation ID }
 */
-private final long[] nanoseconds;
+private final long[][] nanoseconds;
 
 /*
 Send timer value for start of interval
 */
 void startInterval( int selector, long nanoseconds )
     {
-    if ( selector < this.nanoseconds.length )
-        this.nanoseconds[selector] = nanoseconds;
+    if ( selector < this.nanoseconds[0].length )
+        this.nanoseconds[0][selector] = nanoseconds;
+    }
+
+void startInterval( int thread, int selector, long nanoseconds )
+    {
+    if ( ( selector < this.nanoseconds[0].length ) &&
+         ( thread < this.nanoseconds.length ) )
+        this.nanoseconds[thread][selector] = nanoseconds;
     }
 
 /*
@@ -64,9 +82,16 @@ as arguments for calculate megabytes per second
 */
 boolean sendMBPS( int selector, long bytes, long nanoseconds )
     {
-    if ( selector < this.nanoseconds.length )
+    return sendMBPS( 0, selector, bytes, nanoseconds );
+    }
+
+boolean sendMBPS( int thread, int selector, long bytes, long nanoseconds )
+    {
+    if ( ( selector < this.nanoseconds[0].length ) && 
+         ( thread < this.nanoseconds.length ) )
         {
-        double seconds = ( nanoseconds - this.nanoseconds[selector] ) / 1E9;
+        double seconds = 
+                ( nanoseconds - this.nanoseconds[thread][selector] ) / 1E9;
         double megabytes = bytes / 1E6;
         double mbps = megabytes / seconds;
         return send( selector, mbps );
@@ -83,9 +108,17 @@ as arguments for calculate IO transactions per second
 */
 boolean sendIOPS( int selector, long transactions, long nanoseconds )
     {
-    if ( selector < this.nanoseconds.length )
+    return sendIOPS( 0, selector, transactions, nanoseconds );
+    }
+
+boolean sendIOPS
+        ( int thread, int selector, long transactions, long nanoseconds )
+    {
+    if ( ( selector < this.nanoseconds[0].length ) && 
+         ( thread < this.nanoseconds.length ) )
         {
-        double seconds = ( nanoseconds - this.nanoseconds[selector] ) / 1E9;
+        double seconds = 
+                ( nanoseconds - this.nanoseconds[thread][selector] ) / 1E9;
         double iops = transactions / seconds;
         return send( selector, iops );
         }
