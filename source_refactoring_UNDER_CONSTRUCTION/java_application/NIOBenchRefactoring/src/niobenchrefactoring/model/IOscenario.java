@@ -213,7 +213,7 @@ public IOscenario()
         }
     else
         {
-        statistics = new StatisticsModel( threadCount, ID_COUNT );
+        statistics = new StatisticsModel( fileCount, ID_COUNT );
         }
     
     syncQueue = new LinkedList();
@@ -288,7 +288,7 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
         }
     else
         {
-        statistics = new StatisticsModel( threadCount, ID_COUNT );
+        statistics = new StatisticsModel( fileCount, ID_COUNT );
         }
 
     syncQueue = new LinkedList();

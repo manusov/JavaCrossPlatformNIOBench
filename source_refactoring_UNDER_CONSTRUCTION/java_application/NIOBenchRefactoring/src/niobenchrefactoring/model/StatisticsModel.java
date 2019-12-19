@@ -26,14 +26,14 @@ StatisticsModel( int arraysCount )
     nanoseconds = new long[1][arraysCount];
     }
 
-StatisticsModel( int threadsCount, int arraysCount )
+StatisticsModel( int fileThreadsCount, int arraysCount )
     {
     arrays = new ArrayList[arraysCount];
     for( int i=0; i<arraysCount; i++ )
         {
         arrays[i] = new ArrayList<>();
         }
-    nanoseconds = new long[threadsCount][arraysCount];
+    nanoseconds = new long[fileThreadsCount][arraysCount];
     }
 
 /*
@@ -69,11 +69,11 @@ void startInterval( int selector, long nanoseconds )
         this.nanoseconds[0][selector] = nanoseconds;
     }
 
-void startInterval( int thread, int selector, long nanoseconds )
+void startInterval( int fileThread, int selector, long nanoseconds )
     {
     if ( ( selector < this.nanoseconds[0].length ) &&
-         ( thread < this.nanoseconds.length ) )
-        this.nanoseconds[thread][selector] = nanoseconds;
+         ( fileThread < this.nanoseconds.length ) )
+        this.nanoseconds[fileThread][selector] = nanoseconds;
     }
 
 /*
@@ -85,13 +85,13 @@ boolean sendMBPS( int selector, long bytes, long nanoseconds )
     return sendMBPS( 0, selector, bytes, nanoseconds );
     }
 
-boolean sendMBPS( int thread, int selector, long bytes, long nanoseconds )
+boolean sendMBPS( int fileThread, int selector, long bytes, long nanoseconds )
     {
     if ( ( selector < this.nanoseconds[0].length ) && 
-         ( thread < this.nanoseconds.length ) )
+         ( fileThread < this.nanoseconds.length ) )
         {
         double seconds = 
-                ( nanoseconds - this.nanoseconds[thread][selector] ) / 1E9;
+                ( nanoseconds - this.nanoseconds[fileThread][selector] ) / 1E9;
         double megabytes = bytes / 1E6;
         double mbps = megabytes / seconds;
         return send( selector, mbps );
@@ -112,13 +112,13 @@ boolean sendIOPS( int selector, long transactions, long nanoseconds )
     }
 
 boolean sendIOPS
-        ( int thread, int selector, long transactions, long nanoseconds )
+        ( int fileThread, int selector, long transactions, long nanoseconds )
     {
     if ( ( selector < this.nanoseconds[0].length ) && 
-         ( thread < this.nanoseconds.length ) )
+         ( fileThread < this.nanoseconds.length ) )
         {
         double seconds = 
-                ( nanoseconds - this.nanoseconds[thread][selector] ) / 1E9;
+                ( nanoseconds - this.nanoseconds[fileThread][selector] ) / 1E9;
         double iops = transactions / seconds;
         return send( selector, iops );
         }

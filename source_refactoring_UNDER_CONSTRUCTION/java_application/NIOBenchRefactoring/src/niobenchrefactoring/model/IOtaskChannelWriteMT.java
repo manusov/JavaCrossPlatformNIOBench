@@ -130,7 +130,8 @@ private class WriteTask implements Callable<StatusEntry>
             {
             int j = iosc.fileSize;
             iosc.statistics.startInterval
-                    ( threadIndex, WRITE_ID, System.nanoTime() );
+                // ( threadIndex, WRITE_ID, System.nanoTime() );
+                   ( fileIndex, WRITE_ID, System.nanoTime() );
             while( j >= iosc.blockSize )
                 {
                 iosc.byteBuffer[threadIndex].rewind();
@@ -155,7 +156,8 @@ private class WriteTask implements Callable<StatusEntry>
             if ( iosc.writeSync )
                 iosc.channelsSrc[fileIndex].force( true );
             iosc.statistics.sendMBPS
-                ( threadIndex, WRITE_ID, iosc.fileSize, System.nanoTime() );
+                // ( threadIndex, WRITE_ID, iosc.fileSize, System.nanoTime() );
+                   ( fileIndex, WRITE_ID, iosc.fileSize, System.nanoTime() );
             iosc.channelsSrc[fileIndex].close();
             }
         catch( IOException e )

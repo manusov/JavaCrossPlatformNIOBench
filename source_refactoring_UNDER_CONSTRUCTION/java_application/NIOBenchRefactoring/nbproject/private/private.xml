@@ -6,8 +6,6 @@
             <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOscenario.java</file>
             <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOtaskChannelWriteMT.java</file>
             <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/StatisticsModel.java</file>
-            <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/resources/About.java</file>
-            <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/view/PanelChannel.java</file>
             <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOtaskChannelCopyMT.java</file>
             <file>file:/C:/3-java/93-NIOBench-Refactoring-ACTUAL/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOtaskChannelReadMT.java</file>
         </group>

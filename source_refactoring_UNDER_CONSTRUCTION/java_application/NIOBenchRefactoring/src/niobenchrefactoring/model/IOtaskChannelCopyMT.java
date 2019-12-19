@@ -124,7 +124,8 @@ private class CopyTask implements Callable<StatusEntry>
             if ( iosc.fastCopy )
                 {
                 iosc.statistics.startInterval
-                        ( threadIndex, COPY_ID, System.nanoTime() );
+                    // ( threadIndex, COPY_ID, System.nanoTime() );
+                       ( fileIndex, COPY_ID, System.nanoTime() );
                 while( k < iosc.fileSize )
                     {
                     k += iosc.channelsSrc[fileIndex].transferTo
@@ -134,12 +135,14 @@ private class CopyTask implements Callable<StatusEntry>
                 if ( iosc.copySync )
                     iosc.channelsDst[fileIndex].force( true );
                 iosc.statistics.sendMBPS
-                    ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
+                    // ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
+                       ( fileIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
                 }
             else
                 {
                 iosc.statistics.startInterval
-                        ( threadIndex, COPY_ID, System.nanoTime() );
+                    // ( threadIndex, COPY_ID, System.nanoTime() );
+                       ( fileIndex, COPY_ID, System.nanoTime() );
                 while( k < iosc.fileSize )
                     {
                     int n = iosc.blockSize;
@@ -151,7 +154,8 @@ private class CopyTask implements Callable<StatusEntry>
                         iosc.channelsDst[fileIndex].force( true );
                     }
                 iosc.statistics.sendMBPS
-                    ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
+                    // ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
+                       ( fileIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
                 }
             }
         catch( IOException e )

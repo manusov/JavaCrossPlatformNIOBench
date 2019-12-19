@@ -89,14 +89,16 @@ private class ReadTask implements Callable<StatusEntry>
             {
             int k;
             iosc.statistics.startInterval
-                    ( threadIndex, READ_ID, System.nanoTime() );
+                // ( threadIndex, READ_ID, System.nanoTime() );
+                   ( fileIndex, READ_ID, System.nanoTime() );
             do  {
                 iosc.byteBuffer[threadIndex].rewind();
                 k = iosc.channelsSrc[fileIndex].
                         read( iosc.byteBuffer[threadIndex] );
                 } while ( k != -1);
             iosc.statistics.sendMBPS
-                ( threadIndex, READ_ID, iosc.fileSize, System.nanoTime() );
+                // ( threadIndex, READ_ID, iosc.fileSize, System.nanoTime() );
+                   ( fileIndex, READ_ID, iosc.fileSize, System.nanoTime() );
             }
         catch( IOException e )
             {
