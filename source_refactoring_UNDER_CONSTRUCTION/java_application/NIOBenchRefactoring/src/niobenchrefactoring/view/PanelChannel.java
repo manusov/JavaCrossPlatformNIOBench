@@ -53,13 +53,21 @@ But array generation not required after "Run" button press.
 Note about random data generation after "Run" button press can corrupt
 performance characteristics.
 */
-private byte[] dataBlock = null;
+byte[] dataBlock = null;
 /*
 Application Panel common functionality, include defined by parent class    
 */
 private final TableChannel tableModel = new TableChannel();
-@Override String getTabName() { return "NIO channels"; }
-@Override public TableChannel getTableModel() { return tableModel; }
+
+@Override String getTabName() 
+    {
+    return "NIO channels"; 
+    }
+
+@Override public TableChannel getTableModel()
+    {
+    return tableModel; 
+    }
 
 /*
 GUI window geometry constants    
@@ -72,7 +80,7 @@ private final static Dimension SIZE_BUTTON      = new Dimension (  89, 24 );
 /*
 Text labels for combo boxes
 */
-private final JLabel[] labels =
+final JLabel[] labels =
     { new JLabel( "Source path" ),
       new JLabel( "Destination path" ),
       new JLabel( "File" ),
@@ -96,9 +104,9 @@ private final JTextField[] texts =
     { new JTextField() ,
       new JTextField() };
 private final JButton[] buttons  = new JButton[TEXT_COUNT];
-private final JComboBox[] boxes = new JComboBox[COMBO_COUNT];
+final JComboBox[] boxes = new JComboBox[COMBO_COUNT];
 /*
-Handlers for buttons functions
+Handlers for buttons functions and names for dialogue boxes
 */
 private final static String NAME_SRC = 
     "SOURCE drive and directory for benchmarks";
@@ -118,7 +126,7 @@ private final static int RIGHT_DOWN = 15;
 /*
 Text fields and combos arrays addressing
 */
-private final static int TEXT_COUNT = 2;
+final static int TEXT_COUNT = 2;
 private final static int COMBO_COUNT = 14;
 private final static int TEXT_FIRST = 0;
 private final static int COMBO_FIRST = 0;
@@ -142,7 +150,7 @@ private final static String UNITS_SECONDS = " seconds";
 private final static String UNITS_MINUTE  = " minute";
 private final static String UNITS_MINUTES = " minutes";
 // file size option
-private final static int ID_FILE_SIZE = 0;
+final static int ID_FILE_SIZE = 0;
 private final static int DEFAULT_FILE_SIZE_MBPS = 13;  // means index of default
 private final static int DEFAULT_FILE_SIZE_IOPS = 3;
 private final static int SET_FILE_SIZE_BYTES[] =
@@ -151,7 +159,7 @@ private final static int SET_FILE_SIZE_BYTES[] =
       512*1024, 1024*1024, 10*1024*1024, 100*1024*1024, 200*1024*1024,
       400*1024*1024, 1024*1024*1024, 1536*1024*1024 };
 // block size option
-private final static int ID_BLOCK_SIZE = 1;
+final static int ID_BLOCK_SIZE = 1;
 private final static int DEFAULT_BLOCK_SIZE_MBPS = 12;
 private final static int DEFAULT_BLOCK_SIZE_IOPS = 3;
 private final static int SET_BLOCK_SIZE_BYTES[] =
@@ -159,7 +167,7 @@ private final static int SET_BLOCK_SIZE_BYTES[] =
       16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024,
       10*1024*1024, 16*1024*1024, 128*1024*1024, 256*1024*1024 };
 // file count option
-private final static int ID_FILE_COUNT = 2;
+final static int ID_FILE_COUNT = 2;
 private final static int DEFAULT_FILE_COUNT_MBPS = 9;
 private final static int DEFAULT_FILE_COUNT_IOPS = 16;
 private final static int SET_FILE_COUNT[] = 
@@ -167,15 +175,14 @@ private final static int SET_FILE_COUNT[] =
       20, 40, 50, 100, 500, 1000, 2000, 5000, 
       10000, 50000, 100000, 200000, 500000, 1000000, 2500000, 5000000  };
 // thread count option
-private final static int ID_THREAD_COUNT = 3;
+final static int ID_THREAD_COUNT = 3;
 private final static int DEFAULT_THREAD_COUNT = 0;
 private final static int SET_THREAD_COUNT[] =
     { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
       16, 24, 32, 48, 64, 128, 256 };
 // data randomization option
-private final static int ID_DATA_PATTERN = 4;
+final static int ID_DATA_PATTERN = 4;
 private final static int DEFAULT_DATA_PATTERN = 0;
-
 private final static int ZERO_DATA_PATTERN      = 0;
 private final static int ONE_DATA_PATTERN       = 1;
 private final static int SEQUENTAL_DATA_PATTERN = 2;
@@ -184,50 +191,50 @@ private final static int HARDWARE_DATA_PATTERN  = 4;
 private final static String SET_DATA_PATTERN[] =
     { "Zeroes", "Ones", "Sequental", "Software RNG", "Hardware RNG" };
 // address randomization option
-private final static int ID_ADDRESS_PATTERN = 5;
+final static int ID_ADDRESS_PATTERN = 5;
 private final static int DEFAULT_ADDRESS_MBPS = 0;
 private final static int DEFAULT_ADDRESS_IOPS = 0; // 2;  // DEBUG LOCK
 private final static String SET_ADDRESS_PATTERN[] =
     { "Sequental", "Batterfly", "Software RNG", "Hardware RNG" };
 // read-write mode option
-private final static int ID_READ_WRITE = 6;
+final static int ID_READ_WRITE = 6;
 private final static int DEFAULT_READ_WRITE = 0;
 private final static String SET_READ_WRITE[] =
     { "Read/Write no mix", 
       "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
       "Read only", "Write only" };
 // fast copy option
-private final static int ID_FAST_COPY = 7;
+final static int ID_FAST_COPY = 7;
 private final static int DEFAULT_FAST_COPY = 1;
 private final static String SET_FAST_COPY[] =
     { "Disabled", "Enabled" };
 // read synchronization option
-private final static int ID_READ_SYNC = 8;
+final static int ID_READ_SYNC = 8;
 private final static int DEFAULT_READ_SYNC = 0;
 private final static String SET_READ_SYNC[] =
     { "Buffered", "Unbuffered" };
 // write synchronization option
-private final static int ID_WRITE_SYNC = 9;
+final static int ID_WRITE_SYNC = 9;
 private final static int DEFAULT_WRITE_SYNC = 0;
 private final static String SET_WRITE_SYNC[] =
     { "Write back", "Write through", "WT + Sparse"  };
 // copy synchronization option
-private final static int ID_COPY_SYNC = 10;
+final static int ID_COPY_SYNC = 10;
 private final static int DEFAULT_COPY_SYNC = 0;
 private final static String SET_COPY_SYNC[] =
     { "Write back", "Write through", "WT + Sparse"  };
 // read delay option
-private final static int ID_READ_DELAY = 11;
+final static int ID_READ_DELAY = 11;
 private final static int DEFAULT_READ_DELAY = 0;
 private final static int SET_READ_DELAY[] =
     { 0, 1, 5, 10, 100, 500, 1000, 10000, 20000, 30000, 
       60000, 120000, 180000, 240000, 300000 };
 // write delay option
-private final static int ID_WRITE_DELAY = 12;
+final static int ID_WRITE_DELAY = 12;
 private final static int DEFAULT_WRITE_DELAY = DEFAULT_READ_DELAY;
 private final static int SET_WRITE_DELAY[] = SET_READ_DELAY;
 // copy delay option
-private final static int ID_COPY_DELAY = 13;
+final static int ID_COPY_DELAY = 13;
 private final static int DEFAULT_COPY_DELAY = DEFAULT_READ_DELAY;
 private final static int SET_COPY_DELAY[] = SET_READ_DELAY;
 
@@ -429,18 +436,26 @@ not make this operations in constructor because overridable warnings.
     ActionListener a = new DataBlockBuilderListener();
     boxes[ID_BLOCK_SIZE].addActionListener( a );
     boxes[ID_DATA_PATTERN].addActionListener( a );
-    a.actionPerformed( null );
-   
-    // ========== DEBUG LOCKS ==========
-    // labels[5].setEnabled( false ); //
-    labels[7].setEnabled( false );
-    labels[8].setEnabled( false );
-    labels[10].setEnabled( false );
-    // boxes[3].setEnabled( false ); //
-    boxes[5].setEnabled( false );
-    boxes[6].setEnabled( false );
-    boxes[8].setEnabled( false );
-    // ========== END OF DEBUG LOCKS ==========
+    a.actionPerformed( null );  // pre-build data block
+    /*
+    Panel-specific restrictions, disable options, 
+    which not supported or yet not supported by this tab-panel.
+    */
+    buildRestrictions();
+    }
+
+/*
+Customize panel with combo boxes, by restrictions for options settings.
+Differrent panels has different options restrictions.
+*/
+@Override void buildRestrictions()
+    {
+    labels[TEXT_COUNT + ID_ADDRESS_PATTERN].setEnabled( false );
+    labels[TEXT_COUNT + ID_READ_WRITE].setEnabled( false );
+    labels[TEXT_COUNT + ID_READ_SYNC].setEnabled( false );
+    boxes[ID_ADDRESS_PATTERN].setEnabled( false );
+    boxes[ID_READ_WRITE].setEnabled( false );
+    boxes[ID_READ_SYNC].setEnabled( false );
     }
 
 /*
@@ -605,18 +620,6 @@ private class DataBlockBuilderListener implements ActionListener
     }
 
 /*
-Customize panel with combo boxes, by restrictions for options settings,
-static restrictions: disable some options,
-dynamic restrictions: automatically update option X after modify option Y,
-for example, automatically update destination path after modify source path,
-set block size not above file size.
-*/
-@Override void buildRestrictions()
-    {
-    
-    }
-
-/*
 Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from buttons handlers.
@@ -681,7 +684,7 @@ This method can be called from button handler.
 */
 @Override public void clearResults()
     {
-    // Reserved for panel-specific clear, additional to HandlerClear action.
+    // reserved for panel-specific clear, additional to HandlerClear action.
     }
 
 /*
@@ -909,7 +912,7 @@ Return text information about options settings at start IO scenario
 */
 @Override public String reportIOscenario()
     {
-    String s = "\r\n--- NIO Channels IO scenario options ---\r\n";
+    String s = "\r\n--- " + getTabName() + " IO scenario options ---\r\n";
     StringBuilder sb = new StringBuilder( s );
     int n = labels.length;
     int maxLabel = 0;

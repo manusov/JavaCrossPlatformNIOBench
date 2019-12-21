@@ -17,11 +17,11 @@ import java.nio.channels.CompletionHandler;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.WRITE;
 import java.util.concurrent.CountDownLatch;
+import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 
 public class IOtaskAsyncChannelWrite extends IOtask
 {
-private final static String IOTASK_NAME =
-    "NIO asynchronous channel MBPS, Write";
+private final static String IOTASK_NAME = "Write NIO async channel";
 
 IOtaskAsyncChannelWrite( IOscenarioAsyncChannel ios )
     {
@@ -29,12 +29,18 @@ IOtaskAsyncChannelWrite( IOscenarioAsyncChannel ios )
     }
 
 /*
+Fields used by completer class
+*/
+IOscenarioAsyncChannel iosac;
+CountDownLatch latch;
+
+/*
 Run IO task
 */
 @Override public void run()
     {
-    IOscenarioAsyncChannel iosac = (IOscenarioAsyncChannel)ios;
-    CountDownLatch latch = new CountDownLatch( iosac.fileCount );
+    iosac = (IOscenarioAsyncChannel)ios;
+    latch = new CountDownLatch( iosac.fileCount );
     Object attachment = null;
     try
         {
@@ -46,43 +52,62 @@ Run IO task
                 ( iosac.pathsSrc[i], CREATE , WRITE );
             duplicates[i] = iosac.totalBuffer.duplicate();
             }
-            iosac.statistics.startInterval
-                ( TOTAL_WRITE_ID, System.nanoTime() );
-            for( int i=0; i<iosac.fileCount; i++ )
-                {
-                iosac.channelsSrc[i].write( duplicates[i], 0, attachment,
-                                      new CompletionHandler<Integer,Object>()
-                    {
-                    @Override
-                    public void completed( Integer result, Object attachment )
-                        {
-                        latch.countDown();
-                        }
-                    @Override
-                    public void failed( Throwable e, Object attachment )
-                        {
-                        iosac.lastError = new StatusEntry( false, 
-                                "Failed write completion" + e.getMessage() );
-                        }
-                    });
-                }
-            try
-                {
-                latch.await();
-                }
-            catch ( InterruptedException e )
-                {
-                iosac.lastError = new StatusEntry( false, 
-                        "countdown write wait interrupted" + e.getMessage() );
-                }
-            iosac.statistics.sendMBPS
-                ( TOTAL_WRITE_ID, iosac.totalSize, System.nanoTime() );
+        iosac.statistics.startInterval( TOTAL_WRITE_ID, System.nanoTime() );
+        for( int i=0; i<iosac.fileCount; i++ )
+            {
+            iosac.channelsSrc[i].write
+                ( duplicates[i], 0, attachment, new AsyncCompleter( i ) );
+            }
+        try
+            {
+            latch.await();
+            }
+        catch ( InterruptedException e )
+            {
+            iosac.lastError = new StatusEntry( false, 
+                "countdown write wait interrupted" + e.getMessage() );
+            }
+        for( int i=0; i<iosac.fileCount; i++ )
+            {
+            iosac.channelsSrc[i].close();
+            }
+        iosac.statistics.sendMBPS
+            ( TOTAL_WRITE_ID, iosac.totalSize, System.nanoTime() );
         }
     catch( IOException e )
         {
         iosac.delete( iosac.pathsSrc, iosac.channelsSrc );
         iosac.lastError = 
             new StatusEntry( false, "Write error: " + e.getMessage() );
+        }
+    }
+
+/*
+Async completer for callback
+*/
+private class AsyncCompleter implements CompletionHandler< Integer, Object >
+    {
+    private final int id;
+    AsyncCompleter( int i )
+        {
+        id = i;
+        // Single file measured write start at completer class constructor
+        iosac.statistics.startInterval
+            ( id, WRITE_ID, System.nanoTime() );
+        }
+    @Override public void completed( Integer result, Object attachment )
+        {
+        iosac.statistics.sendMBPS
+            ( id, WRITE_ID, iosac.fileSize, System.nanoTime() );
+        // Single file measured write end when complete signaled
+        iosac.setSync( iosac.lastError, WRITE_ID, IOTASK_NAME );
+        // signal operation termination from this thread
+        latch.countDown();
+        }
+    @Override public void failed( Throwable e, Object attachment )
+        {
+        iosac.lastError = new StatusEntry
+            ( false, "Failed write completion" + e.getMessage() );
         }
     }
 }

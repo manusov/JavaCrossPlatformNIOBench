@@ -35,14 +35,14 @@ import java.nio.file.Path;
 public class IOscenarioAsyncChannel extends IOscenario
 {
 final AsynchronousFileChannel[] channelsSrc;
-final AsynchronousFileChannel[] channelsDst;
+// final AsynchronousFileChannel[] channelsDst;
 final ByteBuffer totalBuffer;
 
 public IOscenarioAsyncChannel()
     {
     super();
     channelsSrc = new AsynchronousFileChannel[fileCount];
-    channelsDst = new AsynchronousFileChannel[fileCount];
+    // channelsDst = new AsynchronousFileChannel[fileCount];
     totalBuffer = ByteBuffer.allocateDirect( fileSize );
     for( int i=0; i<bufferCount; i++ )
         totalBuffer.put( dataBlock );
@@ -61,12 +61,14 @@ public IOscenarioAsyncChannel
       byte[] dataBlock )
     {
     super( pathSrc, prefixSrc, postfixSrc, pathDst, prefixDst, postfixDst,
-           fileCount, fileSize, blockSize, threadCount,
+           fileCount, fileSize, blockSize,
+           // this constant (2) to force MT scenario because async always MT
+           2, // threadCount,
            readSync, writeSync, copySync, dataSparse, fastCopy,
            readWriteMode, addressMode, dataMode,
            readDelay, writeDelay, copyDelay, dataBlock );
     channelsSrc = new AsynchronousFileChannel[fileCount];
-    channelsDst = new AsynchronousFileChannel[fileCount];
+    // channelsDst = new AsynchronousFileChannel[fileCount];
     totalBuffer = ByteBuffer.allocateDirect( fileSize );
     for( int i=0; i<bufferCount; i++ )
         totalBuffer.put( dataBlock );
@@ -100,7 +102,7 @@ public IOscenarioAsyncChannel
         Note delete operation cycles for all files is not interruptable.
         */
         delete( pathsSrc, channelsSrc );
-        delete( pathsDst, channelsDst );
+        // delete( pathsDst, channelsDst );
         }
     }
 
@@ -134,8 +136,8 @@ void delete( Path[] path, AsynchronousFileChannel[] channel )
         for( int i=0; i<path.length; i++ )
         try
             {
-            if ( path[i]    != null )  Files.delete( path[i] );
-            if ( channel[i] != null )  channel[i].close();
+            if ( path[i]    != null ) Files.delete( path[i] );
+            if ( channel[i] != null ) channel[i].close();
             }
         catch ( IOException e )
             {

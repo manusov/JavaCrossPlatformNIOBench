@@ -207,6 +207,7 @@ public IOscenario()
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
     
+    // note async channel is multi-thread (per files) even if thread count = 1
     if ( threadCount < 2 )
         {
         statistics = new StatisticsModel( ID_COUNT );
@@ -381,7 +382,7 @@ void setSync( int count, StatusEntry se, int id, String name  )
         StateSync sc;
         if ( id < ID_COUNT )
             {
-            StateAsync a = statistics.receive( id );
+            StateAsync a = statistics.receive( id, count );  // TABLE BUG FIX
             if ( a != null )
                 {
                 sc = new StateSync( count, se, id, name,

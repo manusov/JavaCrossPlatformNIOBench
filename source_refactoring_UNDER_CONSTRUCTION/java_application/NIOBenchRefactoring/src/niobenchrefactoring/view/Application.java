@@ -152,6 +152,15 @@ private final static int DEFAULT_ID = 3;     // first run-deactivated
 private final static int CANCEL_ID  = 10;    // not deactivated when run
 private final static int RUN_ID     = 11;
 
+public static enum APPLICATION_PANELS 
+    { CHANNEL, 
+      ASYNC_CHANNEL, 
+      SCATTER_GATHER, 
+      MEMORY_MAPPED, 
+      ARCHIVE, 
+      NATIVE, 
+      SSD }
+
 /*
 GUI window constructor
 */
@@ -167,7 +176,7 @@ public Application( PAL pal, int palWidth )
           new PanelScatterGather ( this ) ,
           new PanelMemoryMapped  ( this ) ,
           new PanelArchives      ( this ) ,
-          new PanelNative        ( this ) ,  // index=5, is f(hardware)
+          new PanelNative        ( this ) ,  // this available = f(hardware)
           new PanelSSD           ( this ) };
     selectedPanel = panels[0];
     // tabbed panels and common (used for all panels) buttons
@@ -184,18 +193,14 @@ public Application( PAL pal, int palWidth )
     // Lock "Native OS API" tab if native library not loaded
     if ( palWidth < 0 )
         {
-        tabs.setEnabledAt( 5, false );
+        tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
         }
-
-    // ========== DEBUG LOCKS ==========
-    tabs.setEnabledAt( 1, false );
-    tabs.setEnabledAt( 2, false );
-    tabs.setEnabledAt( 3, false );
-    tabs.setEnabledAt( 4, false );
-    tabs.setEnabledAt( 5, false );
-    tabs.setEnabledAt( 6, false );
-    // ========== END OF DEBUG LOCKS ==========
-    
+    // locks for yet not supported panels
+    tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
+    tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
+    tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
+    tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
+    tabs.setEnabledAt( APPLICATION_PANELS.SSD .ordinal(), false );
     }
 
 /*

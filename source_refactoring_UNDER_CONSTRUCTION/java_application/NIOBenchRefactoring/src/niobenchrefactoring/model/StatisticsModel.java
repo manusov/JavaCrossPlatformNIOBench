@@ -149,14 +149,20 @@ private class ValueIndexed implements Comparable<ValueIndexed>
 /*
 Receive array and median results with indexes.
 */
+
 public StateAsync receive( int selector )
+    {
+    return receive( selector, -1 );
+    }
+
+public StateAsync receive( int selector, int sizeOverride )
     {
     double[] valuesOriginal = null;
     ValueIndexed[] valuesSorted = null;
     
     synchronized( arrays )
         {
-        if ( ( arrays != null )&&( selector < arrays.length )&&
+        if ( ( arrays != null ) && ( selector < arrays.length ) &&
              ( arrays[selector] != null ) )
             {
             ArrayList<Double> a = arrays[selector];
@@ -175,6 +181,11 @@ public StateAsync receive( int selector )
     int n;
     if ( ( valuesSorted != null )&&( ( n = valuesSorted.length ) > 0 ) )
         {
+        if ( ( sizeOverride > 0 )&&( sizeOverride < n ) )
+            {
+            n = sizeOverride;
+            }
+            
         Arrays.sort( valuesSorted );
         int indexMin = -1;
         int indexCenter = -1;

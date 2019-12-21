@@ -33,6 +33,7 @@ import niobenchrefactoring.model.StatusEntry;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.view.Application;
 import niobenchrefactoring.view.ApplicationPanel;
+import niobenchrefactoring.view.PanelAsyncChannel;
 import opendraw.FunctionController;
 import opendraw.FunctionModelInterface;
 import opendraw.OpenDraw;
@@ -154,7 +155,12 @@ private class ThreadRun extends Thread
         currentPercentage = 0.0;
         int rwMode = panel.optionRwMode();
         int deleteAddend = 1;
+        
         int phaseCount = 3;             // write + copy + read = 3 phases
+        if ( panel instanceof PanelAsyncChannel )
+            {
+            phaseCount = 2;             // without copy for Async. Channel
+            }
         if ( rwMode == READ_ONLY )
             {
             phaseCount = 1;             // read only = 1 phase
@@ -165,6 +171,7 @@ private class ThreadRun extends Thread
             phaseCount = 2;             // write + copy = 2 phases
             deleteAddend = 0;
             }
+        
         addendPercentage = 
             ACTIVE_PERCENTAGE / ( fileCount * phaseCount + deleteAddend );
         interrupt = false;

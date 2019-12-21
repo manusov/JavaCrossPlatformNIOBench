@@ -17,8 +17,16 @@ import niobenchrefactoring.model.TableScatterGather;
 class PanelScatterGather extends ApplicationPanel 
 {
 private final TableChannel tableModel = new TableScatterGather();
-@Override String getTabName() { return "NIO scatter-gather"; }
-@Override public TableChannel getTableModel() { return tableModel; }
+
+@Override String getTabName() 
+    {
+    return "NIO scatter-gather"; 
+    }
+
+@Override public TableChannel getTableModel() 
+    {
+    return tableModel; 
+    }
 
 public PanelScatterGather( Application application )
     {
@@ -35,11 +43,8 @@ not make this operations in constructor because overridable warnings.
     }
 
 /*
-Customize panel with combo boxes, by restrictions for options settings,
-static restrictions: disable some options,
-dynamic restrictions: automatically update option X after modify option Y,
-for example, automatically update destination path after modify source path,
-set block size not above file size.
+Customize panel with combo boxes, by restrictions for options settings.
+Differrent panels has different options restrictions.
 */
 @Override void buildRestrictions()
     {

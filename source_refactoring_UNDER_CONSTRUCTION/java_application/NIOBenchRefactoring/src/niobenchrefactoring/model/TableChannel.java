@@ -136,10 +136,10 @@ public void measurementNotify( StateAsync[] async )
     }
 
 /*
-This methods not private, can be used by child classes
+Some of this methods not private, can be used by child classes
 */
 
-void cellsHelper( StateAsync entry, int row )
+private void cellsHelper( StateAsync entry, int row )
     {
     valueHelper( entry.median,  row,   1 );
     double[] minmax = medianHelper( entry );
