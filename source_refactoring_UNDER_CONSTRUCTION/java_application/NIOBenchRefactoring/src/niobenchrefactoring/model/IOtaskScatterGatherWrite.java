@@ -21,8 +21,7 @@ import static java.nio.file.StandardOpenOption.SPARSE;
 
 public class IOtaskScatterGatherWrite extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO scatter-gather MBPS, Write";
+private final static String IOTASK_NAME = "Write/ST/NIO scatter-gather";
 
 /*
 Constructor stores IO scenario object
@@ -56,13 +55,33 @@ Run IO task
             else
                 iosg.gatherWriters[i] = FileChannel.open
                     ( iosg.pathsSrc[i], APPEND );
-            // rewind all buffers of multi-buffer
-            for ( ByteBuffer b : iosg.multiBuffer ) 
-                b.rewind();
+            int j = iosg.fileSize;
             // Single file measured write start
             iosg.statistics.startInterval( WRITE_ID, System.nanoTime() );
-            //
-            iosg.gatherWriters[i].write( iosg.multiBuffer );
+            // write sequence of blocks
+            while ( j >= iosg.blockSize )
+                {
+                // rewind all buffers of multi-buffer
+                for ( ByteBuffer b : iosg.multiBuffer )
+                    b.rewind();
+                int k = 0;
+                while( k < iosg.blockSize )
+                    {
+                    k += iosg.gatherWriters[i].write( iosg.multiBuffer );
+                    }
+                j -= iosg.blockSize;
+                }
+            // write tail
+            if ( ( j > 0 )&&( iosg.multiBufferTail != null ) )
+                {
+                for ( ByteBuffer b : iosg.multiBufferTail )
+                    b.rewind();
+                int k = 0;
+                while ( k < j )
+                    {
+                    k += iosg.gatherWriters[i].write( iosg.multiBufferTail );
+                    }
+                }
             //
             iosg.statistics.sendMBPS
                 ( WRITE_ID, iosg.fileSize, System.nanoTime() );

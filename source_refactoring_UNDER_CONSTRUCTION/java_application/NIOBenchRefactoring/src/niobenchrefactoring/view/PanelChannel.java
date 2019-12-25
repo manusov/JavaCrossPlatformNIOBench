@@ -202,6 +202,8 @@ private final static int DEFAULT_READ_WRITE = 0;
 private final static String SET_READ_WRITE[] =
     { "Read/Write no mix", 
       "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
+      "SSD training (1)", "SSD training (2)", "SSD training (3)", 
+      "SSD training (10)", "SSD training (15)", "SSD training (25)", 
       "Read only", "Write only" };
 // fast copy option
 final static int ID_FAST_COPY = 7;

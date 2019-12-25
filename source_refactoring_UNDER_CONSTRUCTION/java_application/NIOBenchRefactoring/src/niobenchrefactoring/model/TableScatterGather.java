@@ -11,17 +11,5 @@ package niobenchrefactoring.model;
 
 public class TableScatterGather extends TableChannel
 {
-
-
-/*
-Update table for each measured value from Report Monitor.
-*/
-@Override public void measurementNotify( StateAsync[] async )
-    {
-    
-    
-    // notify changes
-    fireTableDataChanged();
-    }
-    
+// now repeats functionality of parent class, customization feature reserved
 }

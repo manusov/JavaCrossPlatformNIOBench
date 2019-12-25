@@ -197,7 +197,7 @@ Can call this method with buffer = null for delete file without unmap buffer.
 */
 StatusEntry unmapAndDelete( String name, MappedByteBuffer buffer )
     {
-    StatusEntry entry = null;
+    StatusEntry entry = new StatusEntry( true, "N/A" );
     /*
     Unmap buffer, if not null, exit with status details if error
     */

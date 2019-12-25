@@ -168,7 +168,7 @@ boolean errorCheck()
 /*
 Helper for run thread and wait it termination
 */
-private void threadHelper( Thread t )
+void threadHelper( Thread t )
     {
     t.start();
     int postCount = 3;
@@ -231,4 +231,5 @@ void delete( Path[] path, FileChannel[] channel )
             }
         }
     }
+
 }

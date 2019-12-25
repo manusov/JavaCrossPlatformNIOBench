@@ -17,8 +17,7 @@ import java.nio.channels.FileChannel;
 
 public class IOtaskMappedRead extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO memory-mapped file single thread MBPS, Read";
+private final static String IOTASK_NAME = "Read/NIO memory mapped";
 
 /*
 Constructor stores IO scenario object
@@ -66,8 +65,7 @@ Run IO task
             {   // note unmap required before delay
             iosm.unmapAndDelete( null, bufferSrc );
             iosm.delete( iosm.namesSrc );
-            iosm.lastError = new StatusEntry
-                ( false, "Mapped read error: " + e.getMessage() );
+            iosm.lastError = new StatusEntry( false, e.getMessage() );
             }
         finally
             {  // this call without delete, path string = null

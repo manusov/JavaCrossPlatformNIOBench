@@ -11,10 +11,11 @@ with tabbed sub-panels.
 package niobenchrefactoring.view;
 
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.IOscenarioScatterGather;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableScatterGather;
 
-class PanelScatterGather extends ApplicationPanel 
+class PanelScatterGather extends PanelChannel  // ApplicationPanel
 {
 private final TableChannel tableModel = new TableScatterGather();
 
@@ -37,10 +38,12 @@ public PanelScatterGather( Application application )
 Additional build method, 
 not make this operations in constructor because overridable warnings.
 */
+/*
 @Override void build()
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java
     }
+*/
 
 /*
 Customize panel with combo boxes, by restrictions for options settings.
@@ -48,7 +51,14 @@ Differrent panels has different options restrictions.
 */
 @Override void buildRestrictions()
     {
-    
+    // set parent class restrictions, PanelChannel.java
+    super.buildRestrictions();
+    // add restrictions for this panel, text labels for combo boxes
+    labels[TEXT_COUNT + ID_THREAD_COUNT].setEnabled( false );
+    labels[TEXT_COUNT + ID_FAST_COPY].setEnabled( false );
+    // combo boxes
+    boxes[ID_THREAD_COUNT].setEnabled( false );
+    boxes[ID_FAST_COPY].setEnabled( false );
     }
 
 /*
@@ -56,24 +66,31 @@ Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from button handler.
 */
+/*
 @Override public void setDefaults( SCENARIO scenario )
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java
     }
+*/
 
 /*
 Public method for clear benchmarks results by button: "Clear".
 This method can be called from button handler.
 */
+/*
 @Override public void clearResults()
     {
-    // Reserved for panel-specific clear, additional to HandlerClear action.
+    // reserved, because same as parent panel - PanelChannel.java
+    // reserved for panel-specific clear, additional to HandlerClear action.
     }
+*/
 
 /*
 Support "Run" button
 */
-
+/*
+// reserved, because same as parent panel - PanelChannel.java
+//
 @Override public void disableGuiBeforeRun()     {              }
 @Override public void enableGuiAfterRun()       {              }
 @Override public String optionSourcePath()      { return null; }
@@ -92,23 +109,43 @@ Support "Run" button
 @Override public int optionReadDelay()          { return 0;    }
 @Override public int optionWriteDelay()         { return 0;    }
 @Override public int optionCopyDelay()          { return 0;    }
+*/
 
 /*
 Build IO scenario with options settings, defined in this panel
 */
 @Override public IOscenario buildIOscenario()
     {
-    
-    return null;
+    IOscenario ios = new IOscenarioScatterGather
+        ( // String pathSrc, String prefixSrc, String postfixSrc,
+          optionSourcePath(),      null, null,
+          // String pathDst, String prefixDst, String postfixDst,
+          optionDestinationPath(), null, null,
+          // int fileCount, int fileSize, int blockSize,
+          optionFileCount(), optionFileSize(), optionBlockSize(),
+          // int threadCount,
+          optionThreadCount(),
+          // boolean readSync, boolean writeSync, boolean copySync,
+          optionReadSync() > 0, optionWriteSync() > 0, optionCopySync() > 0,
+          // boolean dataSparse, boolean fastCopy, 
+          optionWriteSync() > 0, optionFastCopy() > 0,
+          // int readWriteMode, int addressMode, int dataMode,
+          optionRwMode(), optionAddressMode(), optionDataMode(),
+          // int readDelay, int writeDelay, int copyDelay,
+          optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
+          // byte[] dataBlock
+          dataBlock );
+    return ios;
     }
 
 /*
 Return text information about options settings at start IO scenario
 */
+/*
 @Override public String reportIOscenario()
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java
     return "";
     }
-
+*/
 }

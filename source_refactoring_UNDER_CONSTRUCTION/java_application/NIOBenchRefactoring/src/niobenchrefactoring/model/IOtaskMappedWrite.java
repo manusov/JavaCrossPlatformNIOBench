@@ -17,8 +17,7 @@ import java.nio.channels.FileChannel;
 
 public class IOtaskMappedWrite extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO memory-mapped file single thread MBPS, Write";
+private final static String IOTASK_NAME = "Write/NIO memory mapped";
 
 /*
 Constructor stores IO scenario object
@@ -71,8 +70,7 @@ Run IO task
             {   // note unmap required before delay
             iosm.unmapAndDelete( null, buffer );
             iosm.delete( iosm.namesSrc );
-            iosm.lastError = new StatusEntry
-                ( false, "Mapped write error: " + e.getMessage() );
+            iosm.lastError = new StatusEntry( false, e.getMessage() );
             }
         finally
             {  // this call without delete, path string = null

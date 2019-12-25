@@ -37,9 +37,12 @@ import java.nio.file.Path;
 
 public class IOscenarioScatterGather extends IOscenario
 {
+private final static int SUB_BUFFER_SIZE = 4096;    
+
 final GatheringByteChannel[] gatherWriters;
 final ScatteringByteChannel[] scatterReaders;
 final ByteBuffer[] multiBuffer;
+final ByteBuffer[] multiBufferTail;
 
 /*
 Default constructor
@@ -49,7 +52,8 @@ public IOscenarioScatterGather()
     super();
     gatherWriters = new GatheringByteChannel[fileCount];
     scatterReaders = new ScatteringByteChannel[fileCount];
-    multiBuffer = multiBufferInitHelper();
+    multiBuffer = multiBufferInitHelper( blockSize );
+    multiBufferTail = multiBufferInitHelper( tailSize );
     }
 
 /*
@@ -72,12 +76,44 @@ public IOscenarioScatterGather
            readDelay, writeDelay, copyDelay, dataBlock );
     gatherWriters = new GatheringByteChannel[fileCount];
     scatterReaders = new ScatteringByteChannel[fileCount];
-    multiBuffer = multiBufferInitHelper();
+    multiBuffer = multiBufferInitHelper( blockSize );
+    multiBufferTail = multiBufferInitHelper( tailSize );
     }
 
 /*
 Helper for class constructor    
-*/    
+*/
+private ByteBuffer[] multiBufferInitHelper( int bufferSize )
+    {
+    if ( bufferSize != 0 )
+        {
+        int subCount = bufferSize / SUB_BUFFER_SIZE;
+        int subTail  = bufferSize % SUB_BUFFER_SIZE;
+        int n = ( subTail == 0 ) ? subCount : subCount + 1;
+        ByteBuffer[] buffers = new ByteBuffer[n];
+        int i;
+        int offset = 0;
+        for( i=0; i<subCount; i++ )
+            {
+            buffers[i] = ByteBuffer.allocateDirect( SUB_BUFFER_SIZE );
+            buffers[i].put( dataBlock, offset, SUB_BUFFER_SIZE );
+            offset += SUB_BUFFER_SIZE;
+            }
+        if ( subTail != 0 )
+            {
+            buffers[i] = ByteBuffer.allocateDirect( subTail );
+            buffers[i].put( dataBlock, offset, subTail );
+            }
+        return buffers;
+        }
+    else
+        {
+        return null;
+        }
+    }
+    
+    
+/*
 private ByteBuffer[] multiBufferInitHelper()
     {
     int n = bufferCount;
@@ -96,7 +132,7 @@ private ByteBuffer[] multiBufferInitHelper()
         }
     return buffer;
     }
-
+*/
 
 /*
 Run performance scenario    
@@ -128,8 +164,8 @@ Run performance scenario
         Phase = Delete, note about files not deleted in WRITE_ONLY mode.
         Note delete operation cycles for all files is not interruptable.
         */
-        delete( pathsSrc, gatherWriters );
-        delete( pathsDst, scatterReaders );
+        delete( pathsSrc, scatterReaders );
+        delete( pathsDst, gatherWriters );
         }
     }
 

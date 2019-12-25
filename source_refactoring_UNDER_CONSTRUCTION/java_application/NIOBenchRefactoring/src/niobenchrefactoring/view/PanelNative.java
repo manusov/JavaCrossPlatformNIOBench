@@ -14,7 +14,7 @@ import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableNative;
 
-class PanelNative extends ApplicationPanel 
+class PanelNative extends PanelChannel  // ApplicationPanel
 {
 private final TableChannel tableModel = new TableNative();
 
@@ -37,10 +37,12 @@ public PanelNative( Application application )
 Additional build method, 
 not make this operations in constructor because overridable warnings.
 */
+/*
 @Override void build()
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java
     }
+*/
 
 /*
 Customize panel with combo boxes, by restrictions for options settings.
@@ -48,7 +50,7 @@ Differrent panels has different options restrictions.
 */
 @Override void buildRestrictions()
     {
-    
+    // no restrictions for this panel, all combo boxes active
     }
 
 /*
@@ -56,10 +58,12 @@ Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from button handler.
 */
+/*
 @Override public void setDefaults( SCENARIO scenario )
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java    
     }
+*/
 
 /*
 Public method for clear benchmarks results by button: "Clear".
@@ -67,13 +71,16 @@ This method can be called from button handler.
 */
 @Override public void clearResults()
     {
-    // Reserved for panel-specific clear, additional to HandlerClear action.
+    // reserved, because same as parent panel - PanelChannel.java
+    // reserved for panel-specific clear, additional to HandlerClear action.
     }
 
 /*
 Support "Run" button
 */
-
+/*
+// reserved, because same as parent panel - PanelChannel.java
+//
 @Override public void disableGuiBeforeRun()     {              }
 @Override public void enableGuiAfterRun()       {              }
 @Override public String optionSourcePath()      { return null; }
@@ -92,6 +99,7 @@ Support "Run" button
 @Override public int optionReadDelay()          { return 0;    }
 @Override public int optionWriteDelay()         { return 0;    }
 @Override public int optionCopyDelay()          { return 0;    }
+*/
 
 /*
 Build IO scenario with options settings, defined in this panel
@@ -107,7 +115,7 @@ Return text information about options settings at start IO scenario
 */
 @Override public String reportIOscenario()
     {
-        
+    // reserved, because same as parent panel - PanelChannel.java    
     return "";
     }
 

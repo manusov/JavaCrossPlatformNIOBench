@@ -48,6 +48,12 @@ public final static int DELETE_ID  = 8;
 public final static int COMPLETE_ID  = 9;
 public final static int ERROR_ID  = 10;
 public final static int HALTED_ID  = -1;
+// duplicates ID
+public final static int PACK_ID = READ_ID;
+public final static int UNPACK_ID = COPY_ID;
+public final static int TOTAL_PACK_ID = TOTAL_READ_ID;
+public final static int TOTAL_UNPACK_ID = TOTAL_COPY_ID;
+
 /*
 Names for phases progress visualization
 */
@@ -297,7 +303,7 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
     }
 
 /*
-Helper for class constructor    
+Helper for class constructor
 */    
 private void namesAndPathsInitHelper()
     {

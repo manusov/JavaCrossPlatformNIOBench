@@ -15,7 +15,7 @@ import niobenchrefactoring.model.IOscenarioAsyncChannel;
 import niobenchrefactoring.model.TableAsyncChannel;
 import niobenchrefactoring.model.TableChannel;
 
-public class PanelAsyncChannel extends PanelChannel  // ApplicationPanel 
+public class PanelAsyncChannel extends PanelChannel  // ApplicationPanel
 {
 private final TableChannel tableModel = new TableAsyncChannel();
 
@@ -152,7 +152,7 @@ Return text information about options settings at start IO scenario
 /*
 @Override public String reportIOscenario()
     {
-    // reserved, because same as parent panel - PanelChannel.java    
+    // reserved, because same as parent panel - PanelChannel.java
     // return "";
     }
 */

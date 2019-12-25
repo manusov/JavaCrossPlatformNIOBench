@@ -9,6 +9,9 @@ Dual purpose: table model used for build GUI and save text report.
 
 package niobenchrefactoring.model;
 
+import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+
 public class TableArchives extends TableChannel
 {
 @Override public String[][] getRowsValues()
@@ -25,12 +28,17 @@ public class TableArchives extends TableChannel
 /*
 Update table for each measured value from Report Monitor.
 */
+
 @Override public void measurementNotify( StateAsync[] async )
     {
-    
-    
-    // notify changes
-    fireTableDataChanged();
+    if ( ( async.length >= WRITE_ID )&&( async.length >= READ_ID ) )
+        {
+        StateAsync temp = async[WRITE_ID];
+        async[WRITE_ID] = async[READ_ID];
+        async[READ_ID] = temp;
+        }
+    super.measurementNotify( async );
     }
+
 
 }

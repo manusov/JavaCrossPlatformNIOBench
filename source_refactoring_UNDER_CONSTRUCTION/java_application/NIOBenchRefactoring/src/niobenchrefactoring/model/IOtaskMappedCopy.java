@@ -17,8 +17,7 @@ import java.nio.channels.FileChannel;
 
 public class IOtaskMappedCopy extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO memory-mapped file single thread MBPS, Copy";
+private final static String IOTASK_NAME = "Copy/NIO memory mapped";
 
 /*
 Constructor stores IO scenario object
@@ -87,8 +86,7 @@ Run IO task
             iosm.unmapAndDelete( null, bufferSrc );
             iosm.unmapAndDelete( null, bufferDst );
             iosm.delete( iosm.namesSrc );
-            iosm.lastError = new StatusEntry
-                ( false, "Mapped copy error: " + e.getMessage() );
+            iosm.lastError = new StatusEntry( false, e.getMessage() );
             }
         finally
             {  // this call without delete, path string = null

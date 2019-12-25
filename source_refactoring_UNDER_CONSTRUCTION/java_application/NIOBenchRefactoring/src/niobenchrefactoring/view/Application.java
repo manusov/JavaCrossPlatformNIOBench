@@ -195,12 +195,16 @@ public Application( PAL pal, int palWidth )
         {
         tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
         }
-    // locks for yet not supported panels
+    // locks for yet not supported or yet buggy panels
+    //
+    tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
+    tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SSD .ordinal(), false );
+    //
     }
 
 /*

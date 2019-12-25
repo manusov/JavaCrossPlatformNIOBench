@@ -21,8 +21,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 public class IOtaskScatterGatherCopy extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO scatter-gather MBPS, Copy";
+private final static String IOTASK_NAME = "Copy/ST/NIO scatter-gather";
 
 /*
 Constructor stores IO scenario object
@@ -56,22 +55,63 @@ Run IO task
             else
                 iosg.gatherWriters[i] = FileChannel.open
                     ( iosg.pathsDst[i], CREATE, WRITE );
+            int j = iosg.fileSize;
             // Single file measured copy start
             iosg.statistics.startInterval( COPY_ID, System.nanoTime() );
-            //
-            // rewind all buffers of multi-buffer and read to multi-buffer
-            for ( ByteBuffer b : iosg.multiBuffer ) 
-                b.rewind();
-            iosg.scatterReaders[i].read( iosg.multiBuffer );
-            // rewind all buffers of multi-buffer and write from multi-buf.
-            for ( ByteBuffer b : iosg.multiBuffer ) 
-                b.rewind();
-            iosg.gatherWriters[i].write( iosg.multiBuffer );
-            //
+
+            // copy sequence of blocks
+            while ( j >= iosg.blockSize )
+                {
+                // rewind all buffers of multi-buffer
+                for ( ByteBuffer b : iosg.multiBuffer )
+                    b.rewind();
+                // read block
+                int k = 0;
+                while( k < iosg.blockSize )
+                    {
+                    k += iosg.scatterReaders[i].read( iosg.multiBuffer );
+                    }
+                // rewind all buffers of multi-buffer
+                for ( ByteBuffer b : iosg.multiBuffer )
+                    b.rewind();
+                // write block
+                k = 0;
+                while( k < iosg.blockSize )
+                    {
+                    k += iosg.gatherWriters[i].write( iosg.multiBuffer );
+                    }
+                j -= iosg.blockSize;
+                }
+            // copy write tail
+            if ( ( j > 0 )&&( iosg.multiBufferTail != null ) )
+                {
+                // rewind all buffers of multi-buffer tail    
+                for ( ByteBuffer b : iosg.multiBufferTail )
+                    b.rewind();
+                // read block tail
+                int k = 0;
+                while ( k < j )
+                    {
+                    k += iosg.scatterReaders[i].read( iosg.multiBufferTail );
+                    }
+                // rewind all buffers of multi-buffer tail    
+                for ( ByteBuffer b : iosg.multiBufferTail )
+                    b.rewind();
+                // write block tail
+                k = 0;
+                while ( k < j )
+                    {
+                    k += iosg.gatherWriters[i].write( iosg.multiBufferTail );
+                    }
+                }
+            
             iosg.statistics.sendMBPS
                 ( COPY_ID, iosg.fileSize, System.nanoTime() );
             // Single file measured copy end
             iosg.setSync( i+1, iosg.lastError, COPY_ID, IOTASK_NAME );
+            
+            iosg.scatterReaders[i].close();
+            iosg.gatherWriters[i].close();
             }
         //
         iosg.statistics.sendMBPS

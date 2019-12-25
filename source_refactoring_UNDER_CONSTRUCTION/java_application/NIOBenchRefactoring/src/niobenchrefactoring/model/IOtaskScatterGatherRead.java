@@ -17,8 +17,7 @@ import java.nio.channels.FileChannel;
 
 public class IOtaskScatterGatherRead extends IOtask
 {
-private final static String IOTASK_NAME = 
-    "NIO scatter-gather MBPS, Read";
+private final static String IOTASK_NAME = "Read/ST/NIO scatter-gather";
 
 /*
 Constructor stores IO scenario object
@@ -43,13 +42,33 @@ Run IO task
             {
             if ( isInterrupted() ) break;
             iosg.scatterReaders[i] = FileChannel.open( iosg.pathsSrc[i] );
+            int j = iosg.fileSize;
             // Single file measured read start
             iosg.statistics.startInterval( READ_ID, System.nanoTime() );
-            //
-            // rewind all buffers of multi-buffer and read to multi-buffer
-            for ( ByteBuffer b : iosg.multiBuffer ) 
-                b.rewind();
-            iosg.scatterReaders[i].read( iosg.multiBuffer );
+            // read sequence of blocks
+            while ( j >= iosg.blockSize )
+                {
+                // rewind all buffers of multi-buffer
+                for ( ByteBuffer b : iosg.multiBuffer )
+                    b.rewind();
+                int k = 0;
+                while( k < iosg.blockSize )
+                    {
+                    k += iosg.scatterReaders[i].read( iosg.multiBuffer );
+                    }
+                j -= iosg.blockSize;
+                }
+            // read tail
+            if ( ( j > 0 )&&( iosg.multiBufferTail != null ) )
+                {
+                for ( ByteBuffer b : iosg.multiBufferTail )
+                    b.rewind();
+                int k = 0;
+                while ( k < j )
+                    {
+                    k += iosg.scatterReaders[i].read( iosg.multiBufferTail );
+                    }
+                }
             //
             iosg.statistics.sendMBPS
                 ( READ_ID, iosg.fileSize, System.nanoTime() );
