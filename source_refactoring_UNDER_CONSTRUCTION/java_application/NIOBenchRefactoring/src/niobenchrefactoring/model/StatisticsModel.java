@@ -15,7 +15,8 @@ import java.util.Arrays;
 public class StatisticsModel 
 {
 private final ArrayList<Double>[] arrays;
-    
+
+/*
 StatisticsModel( int arraysCount )
     {
     arrays = new ArrayList[arraysCount];
@@ -25,6 +26,7 @@ StatisticsModel( int arraysCount )
         }
     nanoseconds = new long[1][arraysCount];
     }
+*/
 
 StatisticsModel( int fileThreadsCount, int arraysCount )
     {

@@ -4,20 +4,15 @@
 ;                                                                              ;
 ;                  Updated at NIOBench v0.01.00 refactoring.                   ; 
 ;------------------------------------------------------------------------------;
-
 include 'win32a.inc'
 format PE GUI 4.0 DLL
 entry DllMain
-
 ;---------- Code section -------------------------------------------------------
 section '.text' code readable executable
-
 DllMain:        ; This called by Operating System when load/unload DLL
 mov eax,1       ; Return status to OS caller (actual when load)
 ret
-
 ;--- This simple entry point for debug native call mechanism ---
-
 checkBinary:              ; also differentiate between Win32 and Win32/WOW64
 ;--- Detect WOW64 ---
 push ebx
@@ -45,7 +40,6 @@ jz @f
 inc eax
 @@:
 ret
-
 ;--- Entry point for binary services, Java Native Interface (JNI) ---
 ; Parm#1 = [ESP+04] = JNI Environment  
 ; Parm#2 = [ESP+08] = JNI This Object reference (not used by this routine)
@@ -56,7 +50,7 @@ ret
 ; Return = EAX = JNI Status, 0=Error, 1=IA32 OK, 2=x64 OK
 ; Remember about 6*4=24 bytes must be removed from stack when return (RET 24),
 ; because required by IA32 calling convention.
-
+;---
 entryBinary:
 push ebx esi edi ebp                   ; Save non-volatile registers
 xor eax,eax
@@ -137,7 +131,6 @@ jae @f
 call dword [FunctionSelector+ecx*4]
 @@:
 jmp ReleaseRet
-
 ;---------- Get native library name -------------------------------------------;
 ; Parm#1 = EDI = Pointer to buffer for return data                             ;
 ; Output = EAX = Status: 0=Error, Non-Zero=OK, set external. at transit caller ;
@@ -156,7 +149,6 @@ jmp @b
 @@:
 pop edi esi
 ret
-
 ;---------- Get native library information ------------------------------------;
 ; Note. Get name and Get info is separate procedures for easy debug reasons.   ;
 ; Parm#1 = EDI = Pointer to buffer for return data                             ;
@@ -201,69 +193,45 @@ inc dword [edi]
 .Done:                   ; This point for errors handling
 pop ebx
 ret
-
-;---------- Get Random Numbers array ------------------------------------------;
-; Input:   ESI = Pointer to IPB (Input Parameters Block)                       ;
-;                DWORD [ESI+00] = Function code, decoded externally            ;
-;                DWORD [ESI+04] = Reserved                                     ;
-;                DWORD [ESI+08] = Block length, qwords                         ;
-;                DWORD [ESI+12] = Reserved                                     ;
-;          EDI = Pointer to OPB (Output Parameters Block)                      ;
-; Output:  EAX = JNI Status: 0=Error, 1=Win32 JNI OK                           ;
-;                set externally from this subroutine                           ;
-;          OPB[] = Output buffer                                               ;
-;------------------------------------------------------------------------------; 
-GetRandomData:
-mov edx,edi
-mov ecx,[esi+08]
-jecxz .Done 
-;--- Low dword ---
-.WaitQword1:
-rdrand eax
-jnc .WaitQword1
-mov [edx],eax
-;--- High dword ---
-.WaitQword2:
-rdrand eax
-jnc .WaitQword2
-mov [edx+4],eax
-;--- Cycle ---
-add edx,8
-dec ecx
-jnz .WaitQword1
-.Done:
-ret
-
+;---------- Library main functionality ----------------------------------------;
+include 'include\Equations.inc'
+include 'include\GetRandomData.inc'
+include 'include\MeasureReadFile.inc'
+include 'include\MeasureWriteFile.inc'
+include 'include\MeasureCopyFile.inc'
+include 'include\MeasureMixedIO.inc'
+include 'include\MeasureDeleteFile.inc'
 ;---------- Data section -------------------------------------------------------
 section '.data' data readable writeable
 ;--- Functions pointers, for IPB absent ---
 FunctionCount      =   3
-FunctionSelector   DD  GetLibraryName    ; 0 = Get native library ASCII name
-                   DD  GetLibraryInfo    ; 1 = Get native library information  
+FunctionSelector   DD  GetLibraryName     ; 0 = Get native library ASCII name
+                   DD  GetLibraryInfo     ; 1 = Get native library information  
                    DD  0  
-
 ;--- Functions pointers, for IPB present ---
-iFunctionCount     =   2
-iFunctionSelector  DD  GetRandomData     ; 0 = Get array of random data
-                   DD  0
+iFunctionCount     =   7
+iFunctionSelector  DD  GetRandomData      ; 0 = Get array of random data
+                   DD  MeasureReadFile    ; 1 = Read file
+                   DD  MeasureWriteFile   ; 2 = Write file
+                   DD  MeasureCopyFile    ; 3 = Copy file
+                   DD  MeasureMixedIO     ; 4 = Mixed read/write
+                   DD  MeasureDeleteFile  ; 5 = Delete file                   
+                   DD  0                  ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.01.00 for Windows ia32.',0  
+LibraryName        DB  'NIOBench native library v0.02.00 for Windows ia32.',0  
 ;--- Data for detect WOW64 ---
 LibName  DB  'KERNEL32',0
 FncName  DB  'IsWow64Process',0
-
 ;---------- Export section -----------------------------------------------------
 section '.edata' export data readable
 export 'WIN32JNI.dll' ,\
 checkBinary  , 'Java_niobenchrefactoring_resources_PAL_checkBinary', \
 entryBinary  , 'Java_niobenchrefactoring_resources_PAL_entryBinary'
-
 ;---------- Import section ----------------------------------------------------;
 section '.idata' import data readable writeable
 library kernel32 , 'KERNEL32.DLL' , advapi32 , 'ADVAPI32.DLL'
 include 'api\kernel32.inc'
 include 'api\advapi32.inc'
-
 ;---------- Relocations section ------------------------------------------------ 
 data fixups
 end data

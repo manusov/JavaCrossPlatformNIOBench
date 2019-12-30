@@ -13,7 +13,7 @@ package niobenchrefactoring.resources;
 public class IOPB 
 {
 
-public static String extractStringFromOPB( long[] data )
+public static String receiveStringFromOPB( long[] data )
     {
     StringBuilder sb = new StringBuilder( "" );
     for( int i=0; i<data.length; i++ )
@@ -31,7 +31,7 @@ public static String extractStringFromOPB( long[] data )
     return sb.toString();
     }
 
-public static void extractBytesFromOPB( long[] qwords, byte[] bytes )
+public static void receiveBytesFromOPB( long[] qwords, byte[] bytes )
     {
     int k=0;
     for ( int i=0; i<qwords.length; i++ )
@@ -42,6 +42,41 @@ public static void extractBytesFromOPB( long[] qwords, byte[] bytes )
             bytes[k] = (byte)( q & 0xFF );
             k++;
             q >>>= 8;
+            }
+        }
+    }
+
+public static void transmitStringToIPB( String s, long[] ipb, int base )
+    {
+    int i = base;
+    int j = 0;
+    byte b = 0;
+    while ( i < ipb.length )
+        {
+        long data = 0;
+        for( int k=0; k<8; k++ )
+            {
+            if ( j < s.length() )
+                {
+                b = (byte) s.charAt(j);
+                }
+            else if ( j == s.length() )
+                {
+                b = 0;
+                }
+            else
+                {
+                break;
+                }
+            j++;
+            long a = b & 0xFFL;
+            data |= a << ( k*8 );
+            }
+        ipb[i] = data;
+        i++;
+        if ( b == 0 )
+            {
+            break;
             }
         }
     }

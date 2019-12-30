@@ -213,15 +213,15 @@ public IOscenario()
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
     
-    // note async channel is multi-thread (per files) even if thread count = 1
-    if ( threadCount < 2 )
-        {
-        statistics = new StatisticsModel( ID_COUNT );
-        }
-    else
-        {
-        statistics = new StatisticsModel( fileCount, ID_COUNT );
-        }
+// note async channel is multi-thread (per files) even if thread count = 1
+//    if ( threadCount < 2 )
+//        {
+//        statistics = new StatisticsModel( ID_COUNT );
+//        }
+//    else
+//        {
+    statistics = new StatisticsModel( fileCount, ID_COUNT );
+//        }
     
     syncQueue = new LinkedList();
     lastError = new StatusEntry( true, "OK" );
@@ -289,14 +289,14 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
     
-    if ( threadCount < 2 )
-        {
-        statistics = new StatisticsModel( ID_COUNT );
-        }
-    else
-        {
-        statistics = new StatisticsModel( fileCount, ID_COUNT );
-        }
+//    if ( threadCount < 2 )
+//        {
+//        statistics = new StatisticsModel( ID_COUNT );
+//        }
+//    else
+//        {
+    statistics = new StatisticsModel( fileCount, ID_COUNT );
+//        }
 
     syncQueue = new LinkedList();
     lastError = new StatusEntry( true, "OK" );

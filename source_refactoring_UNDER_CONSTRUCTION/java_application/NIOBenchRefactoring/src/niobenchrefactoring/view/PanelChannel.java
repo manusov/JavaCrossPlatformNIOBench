@@ -28,8 +28,8 @@ import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.IOscenarioChannel;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.resources.About;
-import niobenchrefactoring.resources.IOPB;
-import static niobenchrefactoring.resources.IOPB.extractStringFromOPB;
+import static niobenchrefactoring.resources.IOPB.receiveBytesFromOPB;
+import static niobenchrefactoring.resources.IOPB.receiveStringFromOPB;
 import niobenchrefactoring.resources.PAL;
 import static niobenchrefactoring.resources.PAL.GET_LIBRARY_INFO;
 import static niobenchrefactoring.resources.PAL.GET_LIBRARY_NAME;
@@ -75,7 +75,7 @@ GUI window geometry constants
 private final static Dimension SIZE_BIG_LABEL   = new Dimension ( 101, 21 );
 private final static Dimension SIZE_SMALL_LABEL = new Dimension (  70, 21 );
 private final static Dimension SIZE_TEXT_PATH   = new Dimension ( 260, 23 );
-private final static Dimension SIZE_COMBO       = new Dimension ( 150, 21 );
+private final static Dimension SIZE_COMBO       = new Dimension ( 160, 21 );
 private final static Dimension SIZE_BUTTON      = new Dimension (  89, 24 );
 /*
 Text labels for combo boxes
@@ -100,145 +100,148 @@ final JLabel[] labels =
 /*
 Text Fields, Buttons and Combo Boxes
 */
-private final JTextField[] texts =
-    { new JTextField() ,
-      new JTextField() };
-private final JButton[] buttons  = new JButton[TEXT_COUNT];
+final JTextField[] texts = { new JTextField() , new JTextField() };
+final JButton[] buttons  = new JButton[TEXT_COUNT];
 final JComboBox[] boxes = new JComboBox[COMBO_COUNT];
 /*
 Handlers for buttons functions and names for dialogue boxes
 */
-private final static String NAME_SRC = 
+final static String NAME_SRC = 
     "SOURCE drive and directory for benchmarks";
-private final static String NAME_DST = 
+final static String NAME_DST = 
     "DESTINATION drive and directory for benchmarks";
-private final HandlerSourcePath[] panelButtonsHandlers;
+final HandlerSourcePath[] panelButtonsHandlers;
 /*
 Constants for labels, text fields and combo boxes
 addressing and allocation by Spring Layout
 */
-private final static int UP_FIRST = 0;
-private final static int UP_LAST = 1;
-private final static int LEFT_UP = 2;
-private final static int LEFT_DOWN = 8;
-private final static int RIGHT_UP = 9;
-private final static int RIGHT_DOWN = 15;
+final static int UP_FIRST = 0;
+final static int UP_LAST = 1;
+final static int LEFT_UP = 2;
+final static int LEFT_DOWN = 8;
+final static int RIGHT_UP = 9;
+final static int RIGHT_DOWN = 15;
 /*
 Text fields and combos arrays addressing
 */
 final static int TEXT_COUNT = 2;
-private final static int COMBO_COUNT = 14;
-private final static int TEXT_FIRST = 0;
-private final static int COMBO_FIRST = 0;
-private final static int COMBO_MIDDLE = 7;
+final static int COMBO_COUNT = 14;
+final static int TEXT_FIRST = 0;
+final static int COMBO_FIRST = 0;
+final static int COMBO_MIDDLE = 7;
 /*
 Support combo boxes set of available values
 */
 // select performance scenario
 // support sizes for files and blocks
-private final static int K = 1024;
-private final static int M = 1024*1024;
-private final static String UNITS_B = " bytes";
-private final static String UNITS_K = " KB";
-private final static String UNITS_M = " MB";
+final static int K = 1024;
+final static int M = 1024*1024;
+final static String UNITS_B = " bytes";
+final static String UNITS_K = " KB";
+final static String UNITS_M = " MB";
 // support time units, milliseconds-based
-private final static int SECOND = 1000;
-private final static int MINUTE = 1000*60;
-private final static String UNITS_MS = " ms";
-private final static String UNITS_SECOND  = " second";
-private final static String UNITS_SECONDS = " seconds";
-private final static String UNITS_MINUTE  = " minute";
-private final static String UNITS_MINUTES = " minutes";
+final static int SECOND = 1000;
+final static int MINUTE = 1000*60;
+final static String UNITS_MS = " ms";
+final static String UNITS_SECOND  = " second";
+final static String UNITS_SECONDS = " seconds";
+final static String UNITS_MINUTE  = " minute";
+final static String UNITS_MINUTES = " minutes";
 // file size option
 final static int ID_FILE_SIZE = 0;
-private final static int DEFAULT_FILE_SIZE_MBPS = 13;  // means index of default
-private final static int DEFAULT_FILE_SIZE_IOPS = 3;
-private final static int SET_FILE_SIZE_BYTES[] =
+final static int DEFAULT_FILE_SIZE_MBPS = 13;  // means index of default
+final static int DEFAULT_FILE_SIZE_IOPS = 3;
+final static int SET_FILE_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
       16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 
       512*1024, 1024*1024, 10*1024*1024, 100*1024*1024, 200*1024*1024,
       400*1024*1024, 1024*1024*1024, 1536*1024*1024 };
 // block size option
 final static int ID_BLOCK_SIZE = 1;
-private final static int DEFAULT_BLOCK_SIZE_MBPS = 12;
-private final static int DEFAULT_BLOCK_SIZE_IOPS = 3;
-private final static int SET_BLOCK_SIZE_BYTES[] =
+final static int DEFAULT_BLOCK_SIZE_MBPS = 12;
+final static int DEFAULT_BLOCK_SIZE_IOPS = 3;
+final static int SET_BLOCK_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
       16*1024, 32*1024, 64*1024, 128*1024, 256*1024, 512*1024, 1024*1024,
       10*1024*1024, 16*1024*1024, 128*1024*1024, 256*1024*1024 };
 // file count option
 final static int ID_FILE_COUNT = 2;
-private final static int DEFAULT_FILE_COUNT_MBPS = 9;
-private final static int DEFAULT_FILE_COUNT_IOPS = 16;
-private final static int SET_FILE_COUNT[] = 
+final static int DEFAULT_FILE_COUNT_MBPS = 9;
+final static int DEFAULT_FILE_COUNT_IOPS = 16;
+final static int SET_FILE_COUNT[] = 
     { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
       20, 40, 50, 100, 500, 1000, 2000, 5000, 
       10000, 50000, 100000, 200000, 500000, 1000000, 2500000, 5000000  };
 // thread count option
 final static int ID_THREAD_COUNT = 3;
-private final static int DEFAULT_THREAD_COUNT = 0;
-private final static int SET_THREAD_COUNT[] =
+final static int DEFAULT_THREAD_COUNT = 0;
+final static int SET_THREAD_COUNT[] =
     { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
       16, 24, 32, 48, 64, 128, 256 };
 // data randomization option
 final static int ID_DATA_PATTERN = 4;
-private final static int DEFAULT_DATA_PATTERN = 0;
-private final static int ZERO_DATA_PATTERN      = 0;
-private final static int ONE_DATA_PATTERN       = 1;
-private final static int SEQUENTAL_DATA_PATTERN = 2;
-private final static int SOFTWARE_DATA_PATTERN  = 3;
-private final static int HARDWARE_DATA_PATTERN  = 4;
-private final static String SET_DATA_PATTERN[] =
+final static int DEFAULT_DATA_PATTERN = 0;
+final static int ZERO_DATA_PATTERN      = 0;
+final static int ONE_DATA_PATTERN       = 1;
+final static int SEQUENTAL_DATA_PATTERN = 2;
+final static int SOFTWARE_DATA_PATTERN  = 3;
+final static int HARDWARE_DATA_PATTERN  = 4;
+final static String SET_DATA_PATTERN[] =
     { "Zeroes", "Ones", "Sequental", "Software RNG", "Hardware RNG" };
 // address randomization option
 final static int ID_ADDRESS_PATTERN = 5;
-private final static int DEFAULT_ADDRESS_MBPS = 0;
-private final static int DEFAULT_ADDRESS_IOPS = 0; // 2;  // DEBUG LOCK
-private final static String SET_ADDRESS_PATTERN[] =
+final static int DEFAULT_ADDRESS_MBPS = 0;
+final static int DEFAULT_ADDRESS_IOPS = 0; // 2;  // DEBUG LOCK
+final static String SET_ADDRESS_PATTERN[] =
     { "Sequental", "Batterfly", "Software RNG", "Hardware RNG" };
 // read-write mode option
 final static int ID_READ_WRITE = 6;
-private final static int DEFAULT_READ_WRITE = 0;
-private final static String SET_READ_WRITE[] =
+final static int DEFAULT_READ_WRITE = 0;
+final static int DEFAULT_READ_WRITE_SSD = 4;
+final static String SET_READ_WRITE[] =
     { "Read/Write no mix", 
       "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
-      "SSD training (1)", "SSD training (2)", "SSD training (3)", 
-      "SSD training (10)", "SSD training (15)", "SSD training (25)", 
+      "SSD training 1 cycle", 
+      "SSD training 2 cycles", 
+      "SSD training 3 cycles", 
+      "SSD training 10 cycles", 
+      "SSD training 15 cycles", 
+      "SSD training 25 cycles", 
       "Read only", "Write only" };
 // fast copy option
 final static int ID_FAST_COPY = 7;
-private final static int DEFAULT_FAST_COPY = 1;
-private final static String SET_FAST_COPY[] =
+final static int DEFAULT_FAST_COPY = 1;
+final static String SET_FAST_COPY[] =
     { "Disabled", "Enabled" };
 // read synchronization option
 final static int ID_READ_SYNC = 8;
-private final static int DEFAULT_READ_SYNC = 0;
-private final static String SET_READ_SYNC[] =
+final static int DEFAULT_READ_SYNC = 0;
+final static String SET_READ_SYNC[] =
     { "Buffered", "Unbuffered" };
 // write synchronization option
 final static int ID_WRITE_SYNC = 9;
-private final static int DEFAULT_WRITE_SYNC = 0;
-private final static String SET_WRITE_SYNC[] =
+final static int DEFAULT_WRITE_SYNC = 0;
+final static String SET_WRITE_SYNC[] =
     { "Write back", "Write through", "WT + Sparse"  };
 // copy synchronization option
 final static int ID_COPY_SYNC = 10;
-private final static int DEFAULT_COPY_SYNC = 0;
-private final static String SET_COPY_SYNC[] =
+final static int DEFAULT_COPY_SYNC = 0;
+final static String SET_COPY_SYNC[] =
     { "Write back", "Write through", "WT + Sparse"  };
 // read delay option
 final static int ID_READ_DELAY = 11;
-private final static int DEFAULT_READ_DELAY = 0;
-private final static int SET_READ_DELAY[] =
+final static int DEFAULT_READ_DELAY = 0;
+final static int SET_READ_DELAY[] =
     { 0, 1, 5, 10, 100, 500, 1000, 10000, 20000, 30000, 
       60000, 120000, 180000, 240000, 300000 };
 // write delay option
 final static int ID_WRITE_DELAY = 12;
-private final static int DEFAULT_WRITE_DELAY = DEFAULT_READ_DELAY;
-private final static int SET_WRITE_DELAY[] = SET_READ_DELAY;
+final static int DEFAULT_WRITE_DELAY = DEFAULT_READ_DELAY;
+final static int SET_WRITE_DELAY[] = SET_READ_DELAY;
 // copy delay option
 final static int ID_COPY_DELAY = 13;
-private final static int DEFAULT_COPY_DELAY = DEFAULT_READ_DELAY;
-private final static int SET_COPY_DELAY[] = SET_READ_DELAY;
+final static int DEFAULT_COPY_DELAY = DEFAULT_READ_DELAY;
+final static int SET_COPY_DELAY[] = SET_READ_DELAY;
 
 /*
 Text strings and variables required for support
@@ -296,7 +299,7 @@ not make this operations in constructor because overridable warnings.
         int status = pal.entryBinary( null, data, GET_LIBRARY_NAME, size );
         if ( status != 0 )
             {
-            libraryName = extractStringFromOPB( data );
+            libraryName = receiveStringFromOPB( data );
             }
         status = pal.entryBinary( null, data, GET_LIBRARY_INFO, size );
         if ( status != 0 )
@@ -409,7 +412,7 @@ not make this operations in constructor because overridable warnings.
             sl.putConstraint( SpringLayout.NORTH, labels[i], 6, 
                               SpringLayout.SOUTH, labels[i-1] );
             }
-        sl.putConstraint( SpringLayout.WEST, labels[i], 270, 
+        sl.putConstraint( SpringLayout.WEST, labels[i], 262, 
                           SpringLayout.WEST, c );
         labels[i].setPreferredSize( SIZE_SMALL_LABEL );
         add( labels[i] );
@@ -600,7 +603,7 @@ private class DataBlockBuilderListener implements ActionListener
             int status = pal.entryBinary( ipb, opb, ipbSize, opbSize );
             if ( status > 0 )
                 {
-                IOPB.extractBytesFromOPB( opb, data );
+                receiveBytesFromOPB( opb, data );
                 }
             else
                 {
@@ -726,7 +729,7 @@ private void helperComboCount( int id, int[] valuesArray, int selection )
     boxes[id].setSelectedIndex( selection );    
     }
 
-private void helperComboString( int id, String[] namesArray, int selection )
+void helperComboString( int id, String[] namesArray, int selection )
     {
     for ( String name : namesArray ) 
         {

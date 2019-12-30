@@ -14,7 +14,7 @@ import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableSSD;
 
-class PanelSSD extends ApplicationPanel 
+class PanelSSD extends PanelNative // ApplicationPanel 
 {
 private final TableChannel tableModel = new TableSSD();
 
@@ -34,81 +34,15 @@ public PanelSSD( Application application )
     }
 
 /*
-Additional build method, 
-not make this operations in constructor because overridable warnings.
-*/
-@Override void build()
-    {
-        
-    }
-
-/*
-Customize panel with combo boxes, by restrictions for options settings.
-Differrent panels has different options restrictions.
-*/
-@Override void buildRestrictions()
-    {
-    
-    }
-
-/*
 Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from button handler.
 */
 @Override public void setDefaults( SCENARIO scenario )
     {
-        
+    super.setDefaults( scenario );
+    boxes[ID_READ_WRITE].removeAllItems();
+    helperComboString( ID_READ_WRITE,
+                       SET_READ_WRITE, DEFAULT_READ_WRITE_SSD );
     }
-
-/*
-Public method for clear benchmarks results by button: "Clear".
-This method can be called from button handler.
-*/
-@Override public void clearResults()
-    {
-    // Reserved for panel-specific clear, additional to HandlerClear action.
-    }
-
-/*
-Support "Run" button
-*/
-
-@Override public void disableGuiBeforeRun()     {              }
-@Override public void enableGuiAfterRun()       {              }
-@Override public String optionSourcePath()      { return null; }
-@Override public String optionDestinationPath() { return null; }
-@Override public int optionFileSize()           { return 0;    }
-@Override public int optionBlockSize()          { return 0;    }
-@Override public int optionFileCount()          { return 0;    }
-@Override public int optionThreadCount()        { return 0;    }
-@Override public int optionDataMode()           { return 0;    }
-@Override public int optionAddressMode()        { return 0;    }
-@Override public int optionRwMode()             { return 0;    }
-@Override public int optionFastCopy()           { return 0;    }
-@Override public int optionReadSync()           { return 0;    }
-@Override public int optionWriteSync()          { return 0;    }
-@Override public int optionCopySync()           { return 0;    }
-@Override public int optionReadDelay()          { return 0;    }
-@Override public int optionWriteDelay()         { return 0;    }
-@Override public int optionCopyDelay()          { return 0;    }
-
-/*
-Build IO scenario with options settings, defined in this panel
-*/
-@Override public IOscenario buildIOscenario()
-    {
-    
-    return null;
-    }
-
-/*
-Return text information about options settings at start IO scenario
-*/
-@Override public String reportIOscenario()
-    {
-        
-    return "";
-    }
-
 }

@@ -1,0 +1,3 @@
+
+MeasureDeleteFile:
+ret

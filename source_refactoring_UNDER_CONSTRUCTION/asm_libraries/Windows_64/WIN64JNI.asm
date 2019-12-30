@@ -4,24 +4,18 @@
 ;                                                                              ;
 ;                  Updated at NIOBench v0.01.00 refactoring.                   ;
 ;------------------------------------------------------------------------------;
-
 include 'win64a.inc'
 format PE64 GUI 4.0 DLL
 entry DllMain
-
 ;---------- Code section ------------------------------------------------------;
 section '.text' code readable executable
-
 DllMain:        ; This called by Operating System when load/unload DLL
 mov eax,1       ; Return status to OS caller (actual when load)
 ret
-
 ;--- This simple entry point for debug native call mechanism ---
-
 checkBinary:    
 mov eax,64
 ret
-
 ;--- Entry point for binary services, Java Native Interface (JNI) ---
 ; Parm#1 = RCX = JNI Environment  
 ; Parm#2 = RDX = JNI This Object reference (not used by this routine)
@@ -31,7 +25,6 @@ ret
 ; Parm#6 = [RSP+48] = OPB size, qwords, or reserved if OPB=NULL
 ; Return = RAX = JNI Status: 0=Error, 1=IA32 OK, 2=x64 OK
 ;---
-
 entryBinary:
 push rbx rsi rdi rbp r12 r13 r14 r15   ; Save non-volatile registers
 mov rbp,rsp                            ; Save RSP because stack alignment
@@ -123,7 +116,6 @@ jae @f
 call qword [FunctionSelector+r14*8]
 @@:
 jmp ReleaseRet
-
 ;---------- Get native library name -------------------------------------------;
 ; Parm#1 = RDI = Pointer to buffer for return data                             ;
 ; Output = RAX = Status: 0=Error, Non-Zero=OK, set external. at transit caller ;
@@ -142,7 +134,6 @@ jmp @b
 @@:
 pop rdi rsi
 ret
-
 ;---------- Get native library information ------------------------------------;
 ; Note. Get name and Get info is separate procedures for easy debug reasons.   ;
 ; Parm#1 = RDI = Pointer to buffer for return data                             ;
@@ -187,59 +178,42 @@ inc dword [rdi]
 .Done:                   ; This point for errors handling
 pop rbx
 ret
-
-;---------- Get Random Numbers array ------------------------------------------;
-; Input:   RSI = Pointer to IPB (Input Parameters Block)                       ;
-;                DWORD [RSI+00] = Function code, decoded externally            ;
-;                DWORD [RSI+04] = Reserved                                     ;
-;                DWORD [RSI+08] = Block length, qwords                         ;
-;                DWORD [RSI+12] = Reserved                                     ;
-;          RDI = Pointer to OPB (Output Parameters Block)                      ;
-; Output:  RAX = JNI Status: 0=Error, 2=Win64 JNI OK                           ;
-;                set externally from this subroutine                           ;
-;          OPB[] = Output buffer                                               ;
-;------------------------------------------------------------------------------; 
-GetRandomData:
-mov rdx,rdi         ; RDX = Base address of destination array
-mov ecx,[rsi+08]    ; RCX = Length of destination array, units = QWORDS
-jrcxz .Done         ; Skip if length = 0 
-.WaitQword:
-rdrand rax          ; RAX = Random number
-jnc .WaitQword      ; Wait for RNG ready
-mov [rdx],rax       ; Store random number to array
-add rdx,8
-dec ecx
-jnz .WaitQword      ; Cycle for required length
-.Done:
-ret
-
+;---------- Library main functionality ----------------------------------------;
+include 'include\Equations.inc'
+include 'include\GetRandomData.inc'
+include 'include\MeasureReadFile.inc'
+include 'include\MeasureWriteFile.inc'
+include 'include\MeasureCopyFile.inc'
+include 'include\MeasureMixedIO.inc'
+include 'include\MeasureDeleteFile.inc'
 ;---------- Data section ------------------------------------------------------;
 section '.data' data readable writeable
 ;--- Functions pointers, for IPB absent ---
 FunctionCount      =   3
 FunctionSelector   DQ  GetLibraryName    ; 0 = Get native library ASCII name
                    DQ  GetLibraryInfo    ; 1 = Get native library information   
-                   DQ  0  
-
+                   DQ  0                 ; Reserved unused  
 ;--- Functions pointers, for IPB present ---
-iFunctionCount     =   2
-iFunctionSelector  DQ  GetRandomData    ; 0 = Get array of random data
-                   DQ  0
+iFunctionCount     =   7
+iFunctionSelector  DQ  GetRandomData      ; 0 = Get array of random data
+                   DQ  MeasureReadFile    ; 1 = Read file
+                   DQ  MeasureWriteFile   ; 2 = Write file
+                   DQ  MeasureCopyFile    ; 3 = Copy file
+                   DQ  MeasureMixedIO     ; 4 = Mixed read/write
+                   DQ  MeasureDeleteFile  ; 5 = Delete file                   
+                   DQ  0                  ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.01.00 for Windows x64.',0  
-
+LibraryName        DB  'NIOBench native library v0.02.00 for Windows x64.',0  
 ;---------- Export section ----------------------------------------------------;
 section '.edata' export data readable
 export 'WIN64JNI.dll' ,\
 checkBinary  , 'Java_niobenchrefactoring_resources_PAL_checkBinary', \
 entryBinary  , 'Java_niobenchrefactoring_resources_PAL_entryBinary'
-
 ;---------- Import section ----------------------------------------------------;
 section '.idata' import data readable writeable
 library kernel32 , 'KERNEL32.DLL' , advapi32 , 'ADVAPI32.DLL'
 include 'api\kernel32.inc'
 include 'api\advapi32.inc'
-
 ;---------- Relocations section -----------------------------------------------; 
 data fixups
 end data

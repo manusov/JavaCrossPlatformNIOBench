@@ -18,7 +18,17 @@ public class NIOBenchRefactoring
 {
 public static void main(String[] args) 
     {
+/*    
+    DebugNativeIO d = new DebugNativeIO();
+    d.testWrite();
+    d.testCopy();
+    d.testRead();
+    d.testDelete();
+*/
+
+//        
     RunApplication ra = new RunApplication();
     ra.run();
+//        
     }
 }

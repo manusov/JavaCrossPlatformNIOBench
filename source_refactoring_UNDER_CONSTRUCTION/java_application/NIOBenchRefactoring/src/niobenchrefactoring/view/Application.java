@@ -194,6 +194,7 @@ public Application( PAL pal, int palWidth )
     if ( palWidth < 0 )
         {
         tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
+        tabs.setEnabledAt( APPLICATION_PANELS.SSD.ordinal(), false );
         }
     // locks for yet not supported or yet buggy panels
     //
