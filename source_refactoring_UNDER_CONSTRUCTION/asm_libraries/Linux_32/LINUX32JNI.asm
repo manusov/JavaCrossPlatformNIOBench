@@ -200,47 +200,30 @@ inc dword [edi]
 .Done:                   ; This point for errors handling
 pop ebx
 ret
-
-;---------- Get Random Numbers array ------------------------------------------;
-; Input:   ESI = Pointer to IPB (Input Parameters Block)                       ;
-;                DWORD [ESI+00] = Function code, decoded externally            ;
-;                DWORD [ESI+04] = Reserved                                     ;
-;                DWORD [ESI+08] = Block length, qwords                         ;
-;                DWORD [ESI+12] = Reserved                                     ;
-;          EDI = Pointer to OPB (Output Parameters Block)                      ;
-; Output:  EAX = JNI Status: 0=Error, 1=Win32 JNI OK                           ;
-;                set externally from this subroutine                           ;
-;          OPB[] = Output buffer                                               ;
-;------------------------------------------------------------------------------; 
-GetRandomData:
-mov edx,edi
-mov ecx,[esi+08]
-jecxz .Done 
-;--- Low dword ---
-.WaitQword1:
-rdrand eax
-jnc .WaitQword1
-mov [edx],eax
-;--- High dword ---
-.WaitQword2:
-rdrand eax
-jnc .WaitQword2
-mov [edx+4],eax
-;--- Cycle ---
-add edx,8
-dec ecx
-jnz .WaitQword1
-.Done:
-ret
-
+;---------- Library main functionality ----------------------------------------;
+include 'include\Equations.inc'
+include 'include\GetRandomData.inc'
+include 'include\MeasureReadFile.inc'
+include 'include\MeasureWriteFile.inc'
+include 'include\MeasureCopyFile.inc'
+include 'include\MeasureMixedIO.inc'
+include 'include\MeasureDeleteFile.inc'
 ;--- Functions pointers, for IPB absent ---
 FunctionCount      =   3
-FunctionSelector   DD  GetLibraryName    ; 0 = Get native library ASCII name
-                   DD  GetLibraryInfo    ; 1 = Get native library information  
+FunctionSelector   DD  GetLibraryName     ; 0 = Get native library ASCII name
+                   DD  GetLibraryInfo     ; 1 = Get native library information  
                    DD  0  
 ;--- Functions pointers, for IPB present ---
-iFunctionCount     =   2
-iFunctionSelector  DD  GetRandomData     ; 0 = Get array of random data
-                   DD  0
+iFunctionCount     =   7
+iFunctionSelector  DD  GetRandomData      ; 0 = Get array of random data
+                   DD  MeasureReadFile    ; 1 = Read file
+                   DD  MeasureWriteFile   ; 2 = Write file
+                   DD  MeasureCopyFile    ; 3 = Copy file
+                   DD  MeasureMixedIO     ; 4 = Mixed read/write
+                   DD  MeasureDeleteFile  ; 5 = Delete file                   
+                   DD  0                  ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.01.00 for Linux ia32.',0  
+LibraryName        DB  'NIOBench native library v0.01.00 for Linux ia32.',0
+
+
+  

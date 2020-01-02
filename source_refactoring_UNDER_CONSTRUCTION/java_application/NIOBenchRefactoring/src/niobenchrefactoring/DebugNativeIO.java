@@ -159,9 +159,11 @@ void testCopy()
         ipb[IPB_REQUEST_ID]     = MEASURE_COPY_FILE;
         ipb[IPB_REQUEST_SIZE]   = fileSize;
         ipb[IPB_BLOCK_SIZE]     = blockSize;
-        ipb[IPB_SRC_ATTRIBUTES] = WINDOWS_FILE_ATTRIBUTE_NORMAL +
-                                  WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
-                                  WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+        long attributes = WINDOWS_FILE_ATTRIBUTE_NORMAL +
+                          WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
+                          WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+        ipb[IPB_SRC_ATTRIBUTES] = attributes;
+        ipb[IPB_DST_ATTRIBUTES] = attributes;
         ipb[IPB_ITERATIONS] = 5;
         transmitStringToIPB( srcFileName, ipb, IPB_SRC_PATH );
         transmitStringToIPB( dstFileName, ipb, IPB_DST_PATH );
