@@ -13,6 +13,7 @@ package niobenchrefactoring.model;
 import static niobenchrefactoring.model.IOscenario.READ_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -100,6 +101,18 @@ private class ReadTask implements Callable<StatusEntry>
                 // ( threadIndex, READ_ID, iosc.fileSize, System.nanoTime() );
                    ( fileIndex, READ_ID, iosc.fileSize, System.nanoTime() );
             }
+        catch( ClosedByInterruptException e1 )
+            {
+            try
+                {
+                if ( iosc.channelsSrc[fileIndex] != null )
+                    iosc.channelsSrc[fileIndex].close();
+                }
+            catch ( IOException e2 )
+                {
+                }
+            }
+
         catch( IOException e )
             {
             iosc.delete( iosc.pathsSrc, iosc.channelsSrc );

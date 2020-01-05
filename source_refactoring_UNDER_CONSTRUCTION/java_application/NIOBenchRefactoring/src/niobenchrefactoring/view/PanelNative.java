@@ -11,6 +11,7 @@ with tabbed sub-panels.
 package niobenchrefactoring.view;
 
 import niobenchrefactoring.model.IOscenario;
+import niobenchrefactoring.model.IOscenarioNative;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableNative;
 
@@ -69,11 +70,13 @@ This method can be called from button handler.
 Public method for clear benchmarks results by button: "Clear".
 This method can be called from button handler.
 */
+/*
 @Override public void clearResults()
     {
     // reserved, because same as parent panel - PanelChannel.java
     // reserved for panel-specific clear, additional to HandlerClear action.
     }
+*/
 
 /*
 Support "Run" button
@@ -106,17 +109,37 @@ Build IO scenario with options settings, defined in this panel
 */
 @Override public IOscenario buildIOscenario()
     {
-    
-    return null;
+    IOscenario ios = new IOscenarioNative
+        ( // String pathSrc, String prefixSrc, String postfixSrc,
+          optionSourcePath(),      null, null,
+          // String pathDst, String prefixDst, String postfixDst,
+          optionDestinationPath(), null, null,
+          // int fileCount, int fileSize, int blockSize,
+          optionFileCount(), optionFileSize(), optionBlockSize(),
+          // int threadCount,
+          optionThreadCount(),
+          // boolean readSync, boolean writeSync, boolean copySync,
+          optionReadSync() > 0, optionWriteSync() > 0, optionCopySync() > 0,
+          // boolean dataSparse, boolean fastCopy, 
+          optionWriteSync() > 0, optionFastCopy() > 0,
+          // int readWriteMode, int addressMode, int dataMode,
+          optionRwMode(), optionAddressMode(), optionDataMode(),
+          // int readDelay, int writeDelay, int copyDelay,
+          optionReadDelay(), optionWriteDelay(), optionCopyDelay(),
+          // byte[] dataBlock
+          dataBlock,
+          application.getPAL() );
+    return ios;
     }
 
 /*
 Return text information about options settings at start IO scenario
 */
+/*
 @Override public String reportIOscenario()
     {
     // reserved, because same as parent panel - PanelChannel.java    
     return "";
     }
-
+*/
 }

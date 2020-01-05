@@ -21,10 +21,8 @@ TODO. SHOW PHASE AND INTERVAL NAMES FOR DELAY INTERVALS
 
 */
 
-
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.HelperDelay.delay;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -99,15 +97,16 @@ private void buffersInitHelper()
         }
     }
     
+private IOtask iotWrite;    
+private IOtask iotCopy;
+private IOtask iotRead;
+private boolean interrupt = false;
+
 /*
 Run performance scenario    
 */
 @Override public void run()
     {
-    IOtask iotWrite;    
-    IOtask iotCopy;
-    IOtask iotRead;
-    
     if ( threadCount > 1 )
         {  // initialize tasks for multi-thread branch
         iotWrite = new IOtaskChannelWriteMT( this );
@@ -121,19 +120,22 @@ Run performance scenario
         iotRead  = new IOtaskChannelRead( this );
         }
     
-    if ( ( readWriteMode != READ_ONLY ) && errorCheck() )
+    if ( ( readWriteMode != READ_ONLY ) &&
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
         preDelay( writeDelay, WRITE_DELAY_NAME );
         threadHelper( iotWrite );
         }
     
-    if ( ( readWriteMode != READ_ONLY ) && errorCheck() )
+    if ( ( readWriteMode != READ_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
         preDelay( copyDelay, COPY_DELAY_NAME );
         threadHelper( iotCopy );
         }
     
-    if ( ( readWriteMode != WRITE_ONLY ) && errorCheck() )
+    if ( ( readWriteMode != WRITE_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
         preDelay( readDelay, READ_DELAY_NAME );
         threadHelper( iotRead );
@@ -152,58 +154,15 @@ Run performance scenario
     }
 
 /*
-Helper for interrupt when error
+Interrupt performance scenario    
 */
-boolean errorCheck()
+@Override public void interrupt()
     {
-    if ( lastError == null )
-        return true;
-    else
-        {
-        return lastError.flag;
-        }
-    }
-
-
-/*
-Helper for run thread and wait it termination
-*/
-void threadHelper( Thread t )
-    {
-    t.start();
-    int postCount = 3;
-    while( postCount > 0 )
-        {
-        HelperDelay.delay( 150 );
-        if ( ! t.isAlive() )
-            postCount--;
-        }
-    }
-
-/*
-Helper for time delay with seconds visualization
-*/
-void preDelay( int milliseconds, String name )
-    {
-    if ( milliseconds > 0 )
-        {
-        int seconds = milliseconds / 1000;
-        milliseconds = milliseconds % 1000;
-        int i = 0;
-        if ( seconds > 0 )
-            {  // delay integer count of seconds
-            for( i=0; i<seconds; i++ )
-                {
-                setSync( i, lastError, DELAY_ID, name );
-                delay( 1000 );
-                }
-            }
-        if ( milliseconds > 0 )
-            {  // delay tail
-            setSync( i, lastError, DELAY_ID, name );
-            delay( milliseconds );
-            }
-        }
+    if ( iotWrite != null ) iotWrite.interrupt();
+    if ( iotCopy  != null ) iotCopy.interrupt();
+    if ( iotRead  != null ) iotRead.interrupt();
+    super.interrupt();
+    interrupt = true;
     }
 
 /*

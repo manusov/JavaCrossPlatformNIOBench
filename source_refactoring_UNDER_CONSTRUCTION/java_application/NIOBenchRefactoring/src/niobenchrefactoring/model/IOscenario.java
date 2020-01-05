@@ -28,6 +28,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.LinkedList;
+import static niobenchrefactoring.model.HelperDelay.delay;
 
 public class IOscenario extends Thread
 {
@@ -436,4 +437,61 @@ void clearSync()
         }
     }
 */
+
+/*
+Helper for interrupt when error
+*/
+boolean errorCheck()
+    {
+    if ( lastError == null )
+        return true;
+    else
+        {
+        return lastError.flag;
+        }
+    }
+
+
+/*
+Helper for run thread and wait it termination
+*/
+void threadHelper( Thread t )
+    {
+    t.start();
+    int postCount = 3;
+    while( postCount > 0 )
+        {
+        HelperDelay.delay( 150 );
+        if ( ! t.isAlive() )
+            postCount--;
+        }
+    }
+
+/*
+Helper for time delay with seconds visualization
+*/
+void preDelay( int milliseconds, String name )
+    {
+    if ( milliseconds > 0 )
+        {
+        int seconds = milliseconds / 1000;
+        milliseconds = milliseconds % 1000;
+        int i = 0;
+        if ( seconds > 0 )
+            {  // delay integer count of seconds
+            for( i=0; i<seconds; i++ )
+                {
+                setSync( i, lastError, DELAY_ID, name );
+                delay( 1000 );
+                }
+            }
+        if ( milliseconds > 0 )
+            {  // delay tail
+            setSync( i, lastError, DELAY_ID, name );
+            delay( milliseconds );
+            }
+        }
+    }
+
+
 }

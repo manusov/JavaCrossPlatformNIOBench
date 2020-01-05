@@ -25,12 +25,15 @@ public ApplicationPanel( Application application )
     }
 
 abstract String getTabName();
+
+abstract public String getLibraryName();
+abstract public TableChannel getTableModel();
+
 abstract void build();
 abstract void buildRestrictions();
 
 abstract public void setDefaults( SCENARIO scenario );
 abstract public void clearResults();
-abstract public TableChannel getTableModel();
 
 // support "Run" button
 abstract public void disableGuiBeforeRun();

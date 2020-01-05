@@ -50,7 +50,7 @@ private boolean error = false;
 private Thread threadRun;
 private final static String MESSAGE_INTERRUPTED = "Test interrupted";
 private String unitsString;
-private final static int ASYNC_PAUSE = 10;
+private final static int ASYNC_PAUSE = 10;  // milliseconds
 
 private final double ACTIVE_PERCENTAGE = 99.0;
 private double currentPercentage;
@@ -76,13 +76,15 @@ public HandlerRun( Application application )
         if ( panel != null )
             {
             if ( ! runStop )
-                {  // test RUNNING by this button press
+                {  // test RUNNING by this button press when test no running
+                interrupt = false;
                 runStop = true;
                 threadRun = new ThreadRun( panel );
                 threadRun.start();
                 }
             else
-                {  // test STOPPED by this button press
+                {  // test STOPPED by this button press when test running
+                interrupt = true;
                 threadRun.interrupt();
                 }
             }
@@ -174,7 +176,6 @@ private class ThreadRun extends Thread
         
         addendPercentage = 
             ACTIVE_PERCENTAGE / ( fileCount * phaseCount + deleteAddend );
-        interrupt = false;
         error = false;
         previousID = -1;
         
@@ -267,18 +268,36 @@ private class ThreadRun extends Thread
                         }
                     }
                 }
+            // check termination, normal and interrupted
             if ( ! ios.isAlive() )
                 postCount--;
-            delay( ASYNC_PAUSE );
+            // time pause for prevent over-utilization system at wait cycle
+            StatusEntry delayStatus = delay( ASYNC_PAUSE );
+            // check interrupted by user,
+            // note delay routine can "eat" interrupt status, 
+            // required check status flag
+            if ( isInterrupted() || ( ! delayStatus.flag ) )
+                {
+                ios.interrupt();
+                }
             }
+        
         /*
-        Test main cycle end,
+        Test main cycle end, check errors and interrupt conditions,
+        no visual messages if error, current error message used
         */
         application.updateProgress( 100 );
-        if ( ! error )
-            {
-            application.updateOperationString( "Test complete.", COMPLETE_ID );
+        if ( ( ! error ) && ( ! interrupt ) )
+            {  // if no errors and not interrupted
+            application.updateOperationString
+                ( "Test complete.", COMPLETE_ID );
             }
+        else if ( ! error )
+            {  // if no errors and interrupted
+            application.updateOperationString
+                ( "Test interrupted.", COMPLETE_ID );
+            }
+        
         /*
         Send benchmark done message with time to text log, get milliseconds
         */

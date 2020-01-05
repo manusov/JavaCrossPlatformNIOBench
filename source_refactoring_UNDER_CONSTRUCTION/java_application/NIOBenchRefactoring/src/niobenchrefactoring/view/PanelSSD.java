@@ -10,7 +10,6 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableSSD;
 

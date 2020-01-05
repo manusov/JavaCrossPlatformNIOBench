@@ -13,6 +13,7 @@ package niobenchrefactoring.model;
 import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -160,6 +161,17 @@ private class WriteTask implements Callable<StatusEntry>
                    ( fileIndex, WRITE_ID, iosc.fileSize, System.nanoTime() );
             iosc.channelsSrc[fileIndex].close();
             }
+        catch( ClosedByInterruptException e1 )
+            {
+            try
+                {
+                if ( iosc.channelsSrc[fileIndex] != null )
+                    iosc.channelsSrc[fileIndex].close();
+                }
+            catch ( IOException e2 )
+                {
+                }
+            }
         catch( IOException e )
             {
             iosc.delete( iosc.pathsSrc, iosc.channelsSrc );
@@ -193,8 +205,8 @@ StatusEntry executorShutdownAndWait( ExecutorService executor )
         }
     catch ( InterruptedException e )
         {
-        statusFlag = false;
-        statusString = "Executor wait: " + e.getMessage();
+        // statusFlag = false;
+        // statusString = "Executor wait: " + e.getMessage();
         }
     return new StatusEntry( statusFlag, statusString );
     }
@@ -211,7 +223,9 @@ StatusEntry executorShutdown( ExecutorService executor )
         try
             {
             executor.shutdown();
-            executor.awaitTermination( 5, TimeUnit.SECONDS );
+            // executor.awaitTermination( 5, TimeUnit.SECONDS );
+            executor.awaitTermination( 10, TimeUnit.MINUTES );
+            //
             }
         catch (InterruptedException e )
             {

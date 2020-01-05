@@ -198,7 +198,7 @@ public Application( PAL pal, int palWidth )
         }
     // locks for yet not supported or yet buggy panels
     //
-    tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
+    // tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );

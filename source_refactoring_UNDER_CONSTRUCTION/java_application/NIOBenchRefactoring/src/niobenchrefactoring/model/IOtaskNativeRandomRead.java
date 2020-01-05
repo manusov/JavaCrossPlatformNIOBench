@@ -12,13 +12,12 @@ package niobenchrefactoring.model;
 
 public class IOtaskNativeRandomRead extends IOtask
 {
-private final static String IOTASK_NAME =
-    "Native OS API disk random read, IOPS";
+private final static String IOTASK_NAME = "Read/Random/Native";
 
 /*
 Constructor stores IO scenario object
 */
-IOtaskNativeRandomRead( IOscenarioChannel ios )
+IOtaskNativeRandomRead( IOscenarioNative ios )
     {
     super( ios );
     }

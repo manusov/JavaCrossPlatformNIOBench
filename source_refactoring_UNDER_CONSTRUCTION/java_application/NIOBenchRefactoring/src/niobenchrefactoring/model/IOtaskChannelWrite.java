@@ -13,6 +13,7 @@ package niobenchrefactoring.model;
 import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import static java.nio.file.StandardOpenOption.APPEND;
@@ -34,6 +35,10 @@ IOtaskChannelWrite( IOscenarioChannel ios )
 /*
 Run IO task
 */
+
+private int i = 0;
+private boolean interrupt = false;
+
 @Override public void run()
     {
     IOscenarioChannel iosc = (IOscenarioChannel)ios;
@@ -42,9 +47,9 @@ Run IO task
         // All files total measured write cycle start
         iosc.statistics.startInterval( TOTAL_WRITE_ID, System.nanoTime() );
         //
-        for( int i=0; i<iosc.fileCount; i++ )
+        for( i=0; i<iosc.fileCount; i++ )
             {
-            if ( isInterrupted() ) break;
+            if ( isInterrupted() || interrupt ) break;
             Files.createFile( iosc.pathsSrc[i] );
             if ( iosc.dataSparse )
                 iosc.channelsSrc[i] = FileChannel.open
@@ -92,6 +97,19 @@ Run IO task
             sendMBPS( TOTAL_WRITE_ID, iosc.totalSize, System.nanoTime() );
         // All files total measured write cycle end
         }
+    
+    catch( ClosedByInterruptException e1 )
+        {
+        try
+            {
+            if ( iosc.channelsSrc[i] != null ) iosc.channelsSrc[i].close();
+            interrupt = true;
+            }
+        catch ( IOException e2 )
+            {
+            }
+        }
+
     catch( IOException e )
         {
         iosc.delete( iosc.pathsSrc, iosc.channelsSrc );

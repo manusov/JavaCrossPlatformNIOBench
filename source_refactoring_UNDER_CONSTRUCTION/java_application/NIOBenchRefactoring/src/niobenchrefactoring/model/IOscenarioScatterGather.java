@@ -172,6 +172,7 @@ Run performance scenario
 /*
 Helper for run thread and wait it termination
 */
+/*
 private void threadHelper( Thread t )
     {
     t.start();
@@ -183,6 +184,7 @@ private void threadHelper( Thread t )
             postCount--;
         }
     }
+*/
 
 /*
 Helper for delete files

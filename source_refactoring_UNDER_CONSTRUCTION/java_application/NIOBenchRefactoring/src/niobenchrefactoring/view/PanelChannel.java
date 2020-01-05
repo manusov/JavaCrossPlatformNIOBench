@@ -64,6 +64,11 @@ private final TableChannel tableModel = new TableChannel();
     return "NIO channels"; 
     }
 
+@Override public String getLibraryName()
+    {
+    return libraryName;
+    }
+
 @Override public TableChannel getTableModel()
     {
     return tableModel; 
@@ -72,10 +77,12 @@ private final TableChannel tableModel = new TableChannel();
 /*
 GUI window geometry constants    
 */
-private final static Dimension SIZE_BIG_LABEL   = new Dimension ( 101, 21 );
-private final static Dimension SIZE_SMALL_LABEL = new Dimension (  70, 21 );
+private final static Dimension SIZE_UP_LABEL    = new Dimension ( 125, 21 );
+private final static Dimension SIZE_LEFT_LABEL  = new Dimension (  64, 21 );
+private final static Dimension SIZE_RIGHT_LABEL = new Dimension (  88, 21 );
 private final static Dimension SIZE_TEXT_PATH   = new Dimension ( 260, 23 );
-private final static Dimension SIZE_COMBO       = new Dimension ( 160, 21 );
+private final static Dimension SIZE_LEFT_COMBO  = new Dimension ( 160, 21 );
+private final static Dimension SIZE_RIGHT_COMBO = new Dimension ( 145, 21 );
 private final static Dimension SIZE_BUTTON      = new Dimension (  89, 24 );
 /*
 Text labels for combo boxes
@@ -345,7 +352,7 @@ not make this operations in constructor because overridable warnings.
             }
         sl.putConstraint( SpringLayout.WEST, labels[i], 11, 
                           SpringLayout.WEST, c );
-        labels[i].setPreferredSize( SIZE_BIG_LABEL );
+        labels[i].setPreferredSize( SIZE_UP_LABEL );
         add( labels[i] );
         // text input field, located middle
         texts[j].setPreferredSize( SIZE_TEXT_PATH );
@@ -384,11 +391,11 @@ not make this operations in constructor because overridable warnings.
             }
         sl.putConstraint( SpringLayout.WEST, labels[i], 11, 
                           SpringLayout.WEST, c );
-        labels[i].setPreferredSize( SIZE_SMALL_LABEL );
+        labels[i].setPreferredSize( SIZE_LEFT_LABEL );
         add( labels[i] );
         // combo box, located right
         boxes[j] = new JComboBox();
-        boxes[j].setPreferredSize( SIZE_COMBO );
+        boxes[j].setPreferredSize( SIZE_LEFT_COMBO );
         sl.putConstraint( SpringLayout.NORTH, boxes[j], 0, 
                           SpringLayout.NORTH, labels[i] );
         sl.putConstraint( SpringLayout.WEST, boxes[j], 0, 
@@ -412,13 +419,13 @@ not make this operations in constructor because overridable warnings.
             sl.putConstraint( SpringLayout.NORTH, labels[i], 6, 
                               SpringLayout.SOUTH, labels[i-1] );
             }
-        sl.putConstraint( SpringLayout.WEST, labels[i], 262, 
+        sl.putConstraint( SpringLayout.WEST, labels[i], 260, 
                           SpringLayout.WEST, c );
-        labels[i].setPreferredSize( SIZE_SMALL_LABEL );
+        labels[i].setPreferredSize( SIZE_RIGHT_LABEL );
         add( labels[i] );
         // combo box, located right
         boxes[j] = new JComboBox();
-        boxes[j].setPreferredSize( SIZE_COMBO );
+        boxes[j].setPreferredSize( SIZE_RIGHT_COMBO );
         sl.putConstraint( SpringLayout.NORTH, boxes[j], 0, 
                           SpringLayout.NORTH, labels[i] );
         sl.putConstraint( SpringLayout.WEST, boxes[j], 0, 

@@ -13,6 +13,7 @@ package niobenchrefactoring.model;
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.DSYNC;
@@ -34,6 +35,10 @@ IOtaskChannelCopy( IOscenarioChannel ios )
 /*
 Run IO task
 */
+
+private int i = 0;
+private boolean interrupt = false;
+
 @Override public void run()
     {
     IOscenarioChannel iosc = (IOscenarioChannel)ios;
@@ -42,9 +47,9 @@ Run IO task
         // All files total measured copy cycle start
         iosc.statistics.startInterval( TOTAL_COPY_ID, System.nanoTime() );
         //
-        for( int i=0; i<iosc.fileCount; i++ )
+        for( i=0; i<iosc.fileCount; i++ )
             {
-            if ( isInterrupted() ) break;
+            if ( isInterrupted() || interrupt ) break;
             if ( iosc.fastCopy )
                 {
                 iosc.channelsSrc[i] = FileChannel.open( iosc.pathsSrc[i] );
@@ -112,6 +117,19 @@ Run IO task
             ( TOTAL_COPY_ID, iosc.totalSize, System.nanoTime() );
         // All files total measured copy cycle end
         }
+    
+    catch( ClosedByInterruptException e1 )
+        {
+        try
+            {
+            if ( iosc.channelsSrc[i] != null ) iosc.channelsSrc[i].close();
+            interrupt = true;
+            }
+        catch ( IOException e2 )
+            {
+            }
+        }
+    
     catch( IOException e )
         {
         iosc.delete( iosc.pathsSrc, iosc.channelsSrc );

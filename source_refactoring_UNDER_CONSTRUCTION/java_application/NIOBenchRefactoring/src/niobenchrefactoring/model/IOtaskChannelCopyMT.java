@@ -13,6 +13,7 @@ package niobenchrefactoring.model;
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
 import java.io.IOException;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.DSYNC;
@@ -156,6 +157,17 @@ private class CopyTask implements Callable<StatusEntry>
                 iosc.statistics.sendMBPS
                     // ( threadIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
                        ( fileIndex, COPY_ID, iosc.fileSize, System.nanoTime() );
+                }
+            }
+        catch( ClosedByInterruptException e1 )
+            {
+            try
+                {
+                if ( iosc.channelsSrc[fileIndex] != null )
+                    iosc.channelsSrc[fileIndex].close();
+                }
+            catch ( IOException e2 )
+                {
                 }
             }
         catch( IOException e )
