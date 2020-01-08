@@ -44,14 +44,13 @@
 ; DWORD [OPB+32] = Executed read/write/copy operation size,                    ; 
 ;                  available after operation execute                           ;
 ;                  This is QWORD even for 32-bit version                       ;
-; QWORD [OPB+40] = Timer at start of measurement repeats, units = 100 ns       ;
-; QWORD [OPB+48] = Timer at end of measurement repeats, units = 100 ns         ;
-; DWORD [OPB+56] = Last called OS API status, see Linux Sys Call Reference     ;
-; DWORD [OPB+60] = Reserved for x64 layout compatibility                       ;
-; QWORD [OPB+64] = Last called OS API type:                                    ;
+; QWORD [OPB+40] = Timer delta for measurement repeats, units = 1 ns           ;
+; DWORD [OPB+48] = Last called OS API status, see Linux Sys Call Reference     ;
+; DWORD [OPB+52] = Reserved for x64 layout compatibility                       ;
+; QWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
-; DWORD [OPB+68] = Reserved for x64 layout compatibility                       ;
+; DWORD [OPB+60] = Reserved for x64 layout compatibility                       ;
 ; 4024 BYTES [OPB+72] = Reserved                                               ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
@@ -80,8 +79,12 @@ mov OPB_BUFFER_SIZE,eax     ; Setup Work buffer size
 ;--- Create source file ---
 push esi edi
 lea ebx,IPB_SRC_PATH          ; EBX = Parm#1 = Pointer to source file path
-mov ecx,IPB_SRC_ATTRIBUTES    ; ECX = Parm#2 = File operation mode flags
-mov edx,00000C00h             ; EDX = Parm#3 = File access read-write mode flags
+mov ecx,FILE_FLAGS_BLANK      ; ECX = Parm#2 = File operation mode flags
+test IPB_SRC_ATTRIBUTES,00000011b
+jz @f
+or ecx,FILE_FLAG_O_DIRECT
+@@:
+mov edx,FILE_SHARE_MODE       ; EDX = Parm#3 = File access read-write mode flags
 mov eax,5                     ; EAX = Function code = SYS_OPEN
 int 80h
 pop edi esi
@@ -166,6 +169,21 @@ int 80h
 pop edi esi
 test eax,eax
 jnz ErrorWrite
+
+;--- Calculate delta-time in nanoseconds ---
+mov eax,OPB_TRANSIT_T2_S
+sub eax,OPB_TRANSIT_T1_S       ; EAX = Delta seconds
+mov ebx,1000000000             ; EBX = Nanoseconds per second
+mul ebx                        ; EDX:EAX = Delta nanoseconds, addend #1 by seconds
+xchg ebx,eax
+mov ecx,edx                    ; ECX:EBX = Delta nanoseconds, addend #1 by seconds
+mov eax,OPB_TRANSIT_T2_NS
+sub eax,OPB_TRANSIT_T1_NS      ; EDX:EAX = Delta nanoseconds, addend #2 by nanoseconds
+cdq
+add eax,ebx
+adc edx,ecx                   ; EDX:EAX = sum of addends #1, #2, total delta in nanoseconds 
+mov OPB_TIMER_DELTA_L,eax
+mov OPB_TIMER_DELTA_H,edx
 
 ;--- Close file ---
 mov ebx,OPB_SRC_HANDLE      ; EBX = Parm#1 = Source file descriptor, handle

@@ -212,5 +212,5 @@ iFunctionSelector  DQ  GetRandomData      ; 0 = Get array of random data
                    DQ  MeasureDeleteFile  ; 5 = Delete file                   
                    DQ  0                  ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.01.00 for Linux x64.',0  
+LibraryName        DB  'NIOBench native library v0.03.00 for Linux x64.',0  
 

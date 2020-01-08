@@ -1,3 +1,6 @@
+;------------------------------------------------------------------------------;
+;                Equations for native file I/O library.                        ;
+;------------------------------------------------------------------------------;
 ; Get information from:
 ; Ray Seyfarth PDF is main valid book
 ; http://man7.org/linux/man-pages/dir_section_2.html
@@ -49,8 +52,7 @@
 ; 5) Note 32-bit operations (example: MOV EDX,3) also clear bits D[63-32] of
 ; target registers and can be used instead 64-operations (example: MOV RDX,3)
 ; for save space. This note actual not for Linux only, for x64 total.
-
-; equations for Linux API functions
+;---------- Equations for Linux API functions ---------------------------------;
 SYS_READ         = 0      ; Linux API functions (syscall numbers)
 SYS_WRITE        = 1
 SYS_OPEN         = 2
@@ -67,7 +69,10 @@ SYS_SETAFFINITY  = 203
 SYS_GETAFFINITY  = 204
 SYS_SETMEMPOLICY = 238    ; Note alternative codes
 SYS_GETMEMPOLICY = 239    ; Note alternative codes
-
+;--- Constants equations ------------------------------------------------------; 
+FILE_FLAGS_BLANK    EQU  00000042h
+FILE_FLAG_O_DIRECT  EQU  00004000h
+FILE_SHARE_MODE     EQU  -1         ; note old value is 00000C00h required sudo
 ;---------- File I/O benchmarking support functions, equations ----------------;
 ; IPB (Input Parameters Block) layout declaration
 IPB_REQUEST_ID      EQU  qword [r14 + 00] 
@@ -84,10 +89,9 @@ OPB_BUFFER_SIZE     EQU  qword [r15 + 08]
 OPB_SRC_HANDLE      EQU  qword [r15 + 16]
 OPB_DST_HANDLE      EQU  qword [r15 + 24]
 OPB_OPERATION_SIZE  EQU  qword [r15 + 32]
-OPB_TIMER_START     EQU  qword [r15 + 40]
-OPB_TIMER_STOP      EQU  qword [r15 + 48]
-OPB_LAST_OPERATION  EQU  qword [r15 + 56]
-OPB_LAST_ERROR      EQU  qword [r15 + 64]
+OPB_TIMER_DELTA     EQU  qword [r15 + 40]
+OPB_LAST_OPERATION  EQU  qword [r15 + 48]
+OPB_LAST_ERROR      EQU  qword [r15 + 56]
 OPB_DATA_ARRAY      EQU  [r15 + 4096]
 OPB_CLEAR_QWORDS    EQU  9  
 ; Step identification constants
@@ -100,8 +104,10 @@ STEP_CLOSE          EQU  5
 STEP_DELETE         EQU  6
 ; transit fields
 OPB_TRANSIT_T1      EQU  [r15 + 80]
+OPB_TRANSIT_T1_S    EQU  qword [r15 + 80]
+OPB_TRANSIT_T1_NS   EQU  qword [r15 + 88]
 OPB_TRANSIT_T2      EQU  [r15 + 96]
+OPB_TRANSIT_T2_S    EQU  qword [r15 + 96]
+OPB_TRANSIT_T2_NS   EQU  qword [r15 + 104]
 OPB_TRANSIT_SEEK    EQU  [r15 + 112]  ; usage removed
-
-
 

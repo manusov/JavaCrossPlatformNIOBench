@@ -17,6 +17,10 @@
 ; Input parameters = EBX, ECX, EDX, ESI, EDI, EBP
 ; Output parameter = EAX
 
+;--- Constants equations ------------------------------------------------------; 
+FILE_FLAGS_BLANK    EQU  00000042h
+FILE_FLAG_O_DIRECT  EQU  00004000h
+FILE_SHARE_MODE     EQU  -1         ; note old value is 00000C00h required sudo
 ;---------- File I/O benchmarking support functions, equations ----------------;
 ; IPB (Input Parameters Block) layout declaration, all high dwords reserved
 IPB_REQUEST_ID        EQU  dword [esi + 00] 
@@ -34,10 +38,10 @@ OPB_SRC_HANDLE        EQU  dword [edi + 16]
 OPB_DST_HANDLE        EQU  dword [edi + 24]
 OPB_OPERATION_SIZE_L  EQU  dword [edi + 32]
 OPB_OPERATION_SIZE_H  EQU  dword [edi + 36]
-OPB_TIMER_START       EQU  dword [edi + 40]
-OPB_TIMER_STOP        EQU  dword [edi + 48]
-OPB_LAST_OPERATION    EQU  dword [edi + 56]
-OPB_LAST_ERROR        EQU  dword [edi + 64]
+OPB_TIMER_DELTA_L     EQU  dword [edi + 40]
+OPB_TIMER_DELTA_H     EQU  dword [edi + 44]
+OPB_LAST_OPERATION    EQU  dword [edi + 48]
+OPB_LAST_ERROR        EQU  dword [edi + 56]
 OPB_DATA_ARRAY        EQU  [edi + 4096]
 OPB_CLEAR_DWORDS      EQU  9*2  
 ; Step identification constants
@@ -48,21 +52,19 @@ STEP_OPEN_WRITE       EQU  3
 STEP_WRITE            EQU  4
 STEP_CLOSE            EQU  5
 STEP_DELETE           EQU  6
-
 ; additional support for 32-bit version, because small number of registers
 OPB_TRANSIT_SIZE_L    EQU  dword [edi + 72]
 OPB_TRANSIT_SIZE_H    EQU  dword [edi + 76]  
 OPB_TRANSIT_REPEATS   EQU  dword [edi + 80]
-
 ; transit fields
 OPB_TRANSIT_T1        EQU  [edi + 88]
+OPB_TRANSIT_T1_S      EQU  dword [edi + 88]
+OPB_TRANSIT_T1_NS     EQU  dword [edi + 92]
 OPB_TRANSIT_T2        EQU  [edi + 104]
+OPB_TRANSIT_T2_S      EQU  dword [edi + 104]
+OPB_TRANSIT_T2_NS     EQU  dword [edi + 108]
 OPB_TRANSIT_SEEK      EQU  [edi + 120]  ; usage removed
-
 ; this required for restore ESI, EDI, 
 ; because temporary used by Linux 32 calling convention
 BACKUP_ESI            EQU  dword [esp + 08]
 BACKUP_EDI            EQU  dword [esp + 04]
-
-
-

@@ -16,9 +16,11 @@
 ; QWORD [IPB+00] = Required function ID                                        ;
 ; QWORD [IPB+08] = Required read/write/copy operation size, bytes              ;
 ; QWORD [IPB+16] = I/O block size, per OS API function call, bytes             ;
-; QWORD [IPB+24] = Source file performance attributes,                         ; 
+; QWORD [IPB+24] = Source file performance attributes,                         ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ;  
 ;                  see Linux Sys Call Reference, OPEN function, parm#2         ;
-; QWORD [IPB+32] = Destination file performance attributes,                    ; 
+; QWORD [IPB+32] = Destination file performance attributes,                    ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ;  
 ;                  see Linux Sys Call Reference, OPEN function, parm#2         ;
 ; QWORD [IPB+40] = Number of measurement repeats iterations                    ;
 ; Max. 976 BYTES [IPB+48] = Reserved                                           ; 
@@ -33,10 +35,9 @@
 ; QWORD [OPB+24] = Destination file handle, available after open file          ;
 ; QWORD [OPB+32] = Executed read/write/copy operation size,                    ; 
 ;                  available after operation execute                           ;
-; QWORD [OPB+40] = Timer at start of measurement repeats, units = 100 ns       ;
-; QWORD [OPB+48] = Timer at end of measurement repeats, units = 100 ns         ;
-; QWORD [OPB+56] = Last called OS API status, see Linux Sys Call Reference     ;
-; QWORD [OPB+64] = Last called OS API type:                                    ;
+; QWORD [OPB+40] = Timer delta for measurement repeats, units = 1 ns           ;
+; QWORD [OPB+48] = Last called OS API status, see Linux Sys Call Reference     ;
+; QWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
 ; 4024 BYTES [IPB+72] = Reserved                                               ;
