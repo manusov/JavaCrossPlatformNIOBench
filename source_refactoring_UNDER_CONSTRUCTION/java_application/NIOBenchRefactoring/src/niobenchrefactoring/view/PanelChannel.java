@@ -111,7 +111,7 @@ final JTextField[] texts = { new JTextField() , new JTextField() };
 final JButton[] buttons  = new JButton[TEXT_COUNT];
 final JComboBox[] boxes = new JComboBox[COMBO_COUNT];
 /*
-Handlers for buttons functions and names for dialogue boxes
+Names for dialogue boxes and handlers for buttons functions
 */
 final static String NAME_SRC = 
     "SOURCE drive and directory for benchmarks";
@@ -249,6 +249,11 @@ final static int SET_WRITE_DELAY[] = SET_READ_DELAY;
 final static int ID_COPY_DELAY = 13;
 final static int DEFAULT_COPY_DELAY = DEFAULT_READ_DELAY;
 final static int SET_COPY_DELAY[] = SET_READ_DELAY;
+
+/*
+Special values used globally
+*/
+final static String ITEMS_NOT_AVAILABLE = "N/A";
 
 /*
 Text strings and variables required for support

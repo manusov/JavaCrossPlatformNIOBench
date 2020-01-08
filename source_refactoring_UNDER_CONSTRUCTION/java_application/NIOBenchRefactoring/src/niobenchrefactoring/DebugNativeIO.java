@@ -60,9 +60,9 @@ void testRead()
         ipb[IPB_REQUEST_ID]     = MEASURE_READ_FILE;
         ipb[IPB_REQUEST_SIZE]   = fileSize;
         ipb[IPB_BLOCK_SIZE]     = blockSize;
-        ipb[IPB_SRC_ATTRIBUTES] = WINDOWS_FILE_ATTRIBUTE_NORMAL +
-                                  WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
-                                  WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+        ipb[IPB_SRC_ATTRIBUTES] = FILE_ATTRIBUTE_BLANK +
+                                  FILE_ATTRIBUTE_READ_SYNC +
+                                  FILE_ATTRIBUTE_WRITE_SYNC;
         ipb[IPB_ITERATIONS] = 5;
         transmitStringToIPB( fileName, ipb, IPB_SRC_PATH );
         // call Read File function
@@ -74,8 +74,8 @@ void testRead()
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
             megabytes /= ( 1024*1024 );
-            double seconds = opb[OPB_TIMER_STOP] - opb[OPB_TIMER_START];
-            seconds /= 1E7;
+            double seconds = opb[OPB_TIMER_DELTA];
+            seconds /= 1E9;
             double mbps = megabytes / seconds;
             s = String.format
                 ( "READ:  megabytes = %.1f, seconds = %.1f, mbps = %.1f ", 
@@ -109,9 +109,9 @@ void testWrite()
         ipb[IPB_REQUEST_ID]     = MEASURE_WRITE_FILE;
         ipb[IPB_REQUEST_SIZE]   = fileSize;
         ipb[IPB_BLOCK_SIZE]     = blockSize;
-        ipb[IPB_SRC_ATTRIBUTES] = WINDOWS_FILE_ATTRIBUTE_NORMAL +
-                                  WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
-                                  WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+        ipb[IPB_SRC_ATTRIBUTES] = FILE_ATTRIBUTE_BLANK +
+                                  FILE_ATTRIBUTE_READ_SYNC +
+                                  FILE_ATTRIBUTE_WRITE_SYNC;
         ipb[IPB_ITERATIONS] = 5;
         transmitStringToIPB( fileName, ipb, IPB_SRC_PATH );
         // call Write File function
@@ -123,8 +123,8 @@ void testWrite()
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
             megabytes /= ( 1024*1024 );
-            double seconds = opb[OPB_TIMER_STOP] - opb[OPB_TIMER_START];
-            seconds /= 1E7;
+            double seconds = opb[OPB_TIMER_DELTA];
+            seconds /= 1E9;
             double mbps = megabytes / seconds;
             s = String.format
                 ( "WRITE: megabytes = %.1f, seconds = %.1f, mbps = %.1f ", 
@@ -159,9 +159,9 @@ void testCopy()
         ipb[IPB_REQUEST_ID]     = MEASURE_COPY_FILE;
         ipb[IPB_REQUEST_SIZE]   = fileSize;
         ipb[IPB_BLOCK_SIZE]     = blockSize;
-        long attributes = WINDOWS_FILE_ATTRIBUTE_NORMAL +
-                          WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
-                          WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+        long attributes = FILE_ATTRIBUTE_BLANK +
+                          FILE_ATTRIBUTE_READ_SYNC +
+                          FILE_ATTRIBUTE_WRITE_SYNC;
         ipb[IPB_SRC_ATTRIBUTES] = attributes;
         ipb[IPB_DST_ATTRIBUTES] = attributes;
         ipb[IPB_ITERATIONS] = 5;
@@ -176,8 +176,8 @@ void testCopy()
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
             megabytes /= ( 1024*1024 );
-            double seconds = opb[OPB_TIMER_STOP] - opb[OPB_TIMER_START];
-            seconds /= 1E7;
+            double seconds = opb[OPB_TIMER_DELTA];
+            seconds /= 1E9;
             double mbps = megabytes / seconds;
             s = String.format
                 ( "COPY: megabytes = %.1f, seconds = %.1f, mbps = %.1f ", 

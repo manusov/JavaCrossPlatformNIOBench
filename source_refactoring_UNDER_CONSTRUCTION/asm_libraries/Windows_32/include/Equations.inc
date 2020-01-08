@@ -15,10 +15,10 @@ OPB_SRC_HANDLE        EQU  dword [edi + 16]
 OPB_DST_HANDLE        EQU  dword [edi + 24]
 OPB_OPERATION_SIZE_L  EQU  dword [edi + 32]
 OPB_OPERATION_SIZE_H  EQU  dword [edi + 36]
-OPB_TIMER_START       EQU  dword [edi + 40]
-OPB_TIMER_STOP        EQU  dword [edi + 48]
-OPB_LAST_OPERATION    EQU  dword [edi + 56]
-OPB_LAST_ERROR        EQU  dword [edi + 64]
+OPB_TIMER_DELTA_L     EQU  dword [edi + 40]
+OPB_TIMER_DELTA_H     EQU  dword [edi + 44]
+OPB_LAST_OPERATION    EQU  dword [edi + 48]
+OPB_LAST_ERROR        EQU  dword [edi + 56]
 OPB_DATA_ARRAY        EQU  [edi + 4096]
 OPB_CLEAR_DWORDS      EQU  9*2  
 ; Step identification constants
@@ -31,9 +31,15 @@ STEP_CLOSE            EQU  5
 STEP_DELETE           EQU  6
 ; additional definitions by MSDN
 INVALID_SET_FILE_POINTER  EQU  -1
-
+; Scratch pad, OS-specific usage
+OPB_TRANSIT_T1        EQU  qword [edi + 80]
+OPB_TRANSIT_T1_L      EQU  dword [edi + 80]
+OPB_TRANSIT_T1_H      EQU  dword [edi + 84]
+OPB_TRANSIT_T2        EQU  qword [edi + 88]
+OPB_TRANSIT_T2_L      EQU  dword [edi + 88]
+OPB_TRANSIT_T2_H      EQU  dword [edi + 92]
 ; additional support for 32-bit version, because small number of registers
-OPB_TRANSIT_SIZE_L    EQU  dword [edi + 72]
-OPB_TRANSIT_SIZE_H    EQU  dword [edi + 80]  
-OPB_TRANSIT_REPEATS   EQU  dword [edi + 88]
+OPB_TRANSIT_SIZE_L    EQU  dword [edi + 96]
+OPB_TRANSIT_SIZE_H    EQU  dword [edi + 100]  
+OPB_TRANSIT_REPEATS   EQU  dword [edi + 104]
  

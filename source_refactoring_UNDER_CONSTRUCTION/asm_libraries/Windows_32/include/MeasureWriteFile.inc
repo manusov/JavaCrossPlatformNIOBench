@@ -19,10 +19,12 @@
 ; DWORD [IPB+12] = Reserved for x64 layout compatibility                       ;
 ; DWORD [IPB+16] = I/O block size, per OS API function call, bytes             ;
 ; DWORD [IPB+20] = Reserved for x64 layout compatibility                       ;
-; DWORD [IPB+24] = Source file performance attributes,                         ; 
+; DWORD [IPB+24] = Source file performance attributes,                         ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ;
 ;                  see MSDN, CreateFileA API parm#6                            ;
 ; DWORD [IPB+28] = Reserved for x64 layout compatibility                       ;
-; QWORD [IPB+32] = Destination file performance attributes,                    ; 
+; QWORD [IPB+32] = Destination file performance attributes,                    ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ; 
 ;                  see MSDN, CreateFileA API parm#6                            ;
 ; DWORD [IPB+36] = Reserved for x64 layout compatibility                       ;
 ; DWORD [IPB+40] = Number of measurement repeats iterations                    ;
@@ -44,14 +46,13 @@
 ; QWORD [OPB+32] = Executed read/write/copy operation size,                    ; 
 ;                  available after operation execute                           ;
 ;                  This is QWORD even for 32-bit version                       ;
-; QWORD [OPB+40] = Timer at start of measurement repeats, units = 100 ns       ;
-; QWORD [OPB+48] = Timer at end of measurement repeats, units = 100 ns         ;
-; DWORD [OPB+56] = Last called OS API status, see MSDN                         ;
-; DWORD [OPB+60] = Reserved for x64 layout compatibility                       ;
-; DWORD [OPB+64] = Last called OS API type:                                    ;
+; QWORD [OPB+40] = Timer delta for measurement repeats, units = 1 ns           ;
+; DWORD [OPB+48] = Last called OS API status, see MSDN                         ;
+; DWORD [OPB+52] = Reserved for x64 layout compatibility                       ;
+; DWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
-; DWORD [OPB+68] = Reserved for x64 layout compatibility                       ;
+; DWORD [OPB+60] = Reserved for x64 layout compatibility                       ;
 ; 4024 BYTES [IPB+72] = Reserved                                               ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
@@ -77,7 +78,16 @@ mov OPB_BUFFER_SIZE,ebp        ; EBP = Work buffer size
 ;--- Open/Create file for Write ---
 xor eax,eax                    ; This for compact push zeroes
 push eax                       ; Parm#7 = 0 = Template file handle, not used
-push IPB_SRC_ATTRIBUTES        ; Parm#6 = File attribute and flags
+mov ecx,FILE_ATTRIBUTE_NORMAL
+test IPB_SRC_ATTRIBUTES,00000001b
+jz @f
+or ecx,FILE_FLAG_NO_BUFFERING
+@@:
+test IPB_SRC_ATTRIBUTES,00000010b
+jz @f
+or ecx,FILE_FLAG_WRITE_THROUGH
+@@:
+push ecx                       ; Parm#6 = File attribute and flags
 push CREATE_ALWAYS             ; Parm#5 = Creation disposition
 push eax                       ; Parm#4 = Security attributes = 0
 push eax                       ; Parm#3 = Share mode = 0  
@@ -92,7 +102,7 @@ jz ErrorFileContext
 ;--- Start measurement cycle, get and store start timer value ---
 mov eax,IPB_ITERATIONS
 mov OPB_TRANSIT_REPEATS,eax
-lea eax,OPB_TIMER_START
+lea eax,OPB_TRANSIT_T1
 push eax
 call [GetSystemTimeAsFileTime]
 ;--- Measurement iteration ---
@@ -144,9 +154,20 @@ je ErrorFileContext
 ;--- Count measurement iterations, set total read size include meas. cycle ---
 dec OPB_TRANSIT_REPEATS
 jnz .WriteMeasurement
-lea eax,OPB_TIMER_STOP
+lea eax,OPB_TRANSIT_T2
 push eax
 call [GetSystemTimeAsFileTime]
+mov eax,OPB_TRANSIT_T2_L
+mov ecx,OPB_TRANSIT_T2_H
+sub eax,OPB_TRANSIT_T1_L
+sbb ecx,OPB_TRANSIT_T1_H
+mov ebx,100
+mul ebx
+mov OPB_TIMER_DELTA_L,eax
+mov OPB_TIMER_DELTA_H,edx
+mov eax,ecx
+mul ebx
+add OPB_TIMER_DELTA_H,eax
 ;--- Close file after Read ---
 push OPB_SRC_HANDLE            ; Parm#1 = Pointer to file path
 call [CloseHandle]

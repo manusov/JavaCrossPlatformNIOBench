@@ -17,9 +17,13 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
+import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
+import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
+import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
+import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_WRITE_SYNC;
 import static niobenchrefactoring.resources.PAL.IPB_BLOCK_SIZE;
 import static niobenchrefactoring.resources.PAL.IPB_ITERATIONS;
 import static niobenchrefactoring.resources.PAL.IPB_REQUEST_ID;
@@ -29,11 +33,7 @@ import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH;
 import static niobenchrefactoring.resources.PAL.MEASURE_WRITE_FILE;
 import static niobenchrefactoring.resources.PAL.OPB_LAST_ERROR;
 import static niobenchrefactoring.resources.PAL.OPB_LAST_OPERATION;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_START;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_STOP;
-import static niobenchrefactoring.resources.PAL.WINDOWS_FILE_ATTRIBUTE_NORMAL;
-import static niobenchrefactoring.resources.PAL.WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING;
-import static niobenchrefactoring.resources.PAL.WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 
 public class IOtaskNativeLinearWrite extends IOtask
 {
@@ -61,23 +61,25 @@ Run IO task
         iosn.ipb[IPB_REQUEST_ID]   = MEASURE_WRITE_FILE;
         iosn.ipb[IPB_REQUEST_SIZE] = iosn.fileSize;
         iosn.ipb[IPB_BLOCK_SIZE]   = iosn.blockSize;
-        long attributes = WINDOWS_FILE_ATTRIBUTE_NORMAL;
+        long attributes = FILE_ATTRIBUTE_BLANK;
         if ( iosn.writeSync )
             {
-            attributes += WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING +
-                          WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH;
+            attributes += FILE_ATTRIBUTE_READ_SYNC +
+                          FILE_ATTRIBUTE_WRITE_SYNC;
             }
         iosn.ipb[IPB_SRC_ATTRIBUTES] = attributes;
         iosn.ipb[IPB_ITERATIONS] = 5;                                           // !
         transmitStringToIPB( iosn.namesSrc[i], iosn.ipb, IPB_SRC_PATH );
+        // start measurement time
+        iosn.statistics.startInterval( WRITE_ID, 0 );
         // call Read File function
         int status = iosn.pal.entryBinary
             ( iosn.ipb, iosn.opb, iosn.ipb.length, iosn.opb.length );
-        // Single file measured write report about start and stop
-        iosn.statistics.startInterval
-            ( WRITE_ID, iosn.opb[OPB_TIMER_START] * (100/5) );                  // !
-        iosn.statistics.sendMBPS
-            ( WRITE_ID, iosn.fileSize, iosn.opb[OPB_TIMER_STOP] * (100/5) );    // !
+        // Single file measured copy report about start and stop
+        // TODO. USE opb[OPB_OPERATION_SIZE]
+        double nanoseconds = iosn.opb[OPB_TIMER_DELTA];
+        long delta = (long)( nanoseconds / 5.0 );                              // !
+        iosn.statistics.sendMBPS( WRITE_ID, iosn.fileSize, delta );
         // Single file measured write end
         iosn.setSync( i+1, iosn.lastError, WRITE_ID, IOTASK_NAME );
         // check errors

@@ -57,4 +57,5 @@ abstract public int optionCopyDelay();
 
 abstract public IOscenario buildIOscenario();
 abstract public String reportIOscenario();
+
 }

@@ -49,6 +49,8 @@ import static niobenchrefactoring.model.IOscenario.STARTING_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import niobenchrefactoring.resources.About;
 import niobenchrefactoring.resources.PAL;
+import static niobenchrefactoring.view.PanelChannel.UP_FIRST;
+import static niobenchrefactoring.view.PanelChannel.UP_LAST;
 import opendraw.OpenDraw;
 import openlog.OpenLog;
 import opentable.OpenTable;
@@ -197,15 +199,15 @@ public Application( PAL pal, int palWidth )
         tabs.setEnabledAt( APPLICATION_PANELS.SSD.ordinal(), false );
         }
     // locks for yet not supported or yet buggy panels
-    //
-    // tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
+    /*
+    tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
-    tabs.setEnabledAt( APPLICATION_PANELS.SSD .ordinal(), false );
-    //
+    tabs.setEnabledAt( APPLICATION_PANELS.SSD.ordinal(), false );
+    */
     }
 
 /*
@@ -491,5 +493,35 @@ public void updateOperationString( String message, int phase )
         }
     updateOperationString( message, enable, color );
     }
+
+/*
+Support callbacks from HandlerSourcePath, HandlerDestinationPath for
+globally change paths strings after change at one screen
+*/
+
+public void updateAllSrcPaths( String s )
+    {
+    for ( ApplicationPanel panel : panels ) 
+        {
+        if ( panel instanceof PanelChannel )
+            {
+            ( (PanelChannel) panel ).texts[UP_FIRST].setText( s );
+            ( (PanelChannel) panel ).texts[UP_FIRST].repaint();
+            }
+        }
+    }
+
+public void updateAllDstPaths( String s )
+    {
+    for ( ApplicationPanel panel : panels ) 
+        {
+        if ( panel instanceof PanelChannel )
+            {
+            ( (PanelChannel) panel ).texts[UP_LAST].setText( s );
+            ( (PanelChannel) panel ).texts[UP_LAST].repaint();
+            }
+        }
+    }
+
 
 }

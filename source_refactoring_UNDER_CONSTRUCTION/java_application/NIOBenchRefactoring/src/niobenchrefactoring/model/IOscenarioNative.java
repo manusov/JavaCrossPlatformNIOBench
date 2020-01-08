@@ -66,10 +66,6 @@ Run performance scenario
 */
 @Override public void run()
     {
-    IOtask iotWrite;    
-    IOtask iotCopy;
-    IOtask iotRead;
-    
     if ( addressMode == ADDRESS_SEQUENTAL )
         {  // initialize tasks for sequental address branch
         iotWrite = new IOtaskNativeLinearWrite( this );
@@ -82,7 +78,8 @@ Run performance scenario
         iotCopy  = new IOtaskNativeRandomCopy( this );
         iotRead  = new IOtaskNativeRandomRead( this );
         }
-    
+
+/*    
     if ( ( readWriteMode != READ_ONLY ) && errorCheck() )
         {
         preDelay( writeDelay, WRITE_DELAY_NAME );
@@ -100,7 +97,29 @@ Run performance scenario
         preDelay( readDelay, READ_DELAY_NAME );
         threadHelper( iotRead );
         }
+*/
+
+    if ( ( readWriteMode != READ_ONLY ) &&
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( writeDelay, WRITE_DELAY_NAME );
+        threadHelper( iotWrite );
+        }
     
+    if ( ( readWriteMode != READ_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( copyDelay, COPY_DELAY_NAME );
+        threadHelper( iotCopy );
+        }
+    
+    if ( ( readWriteMode != WRITE_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( readDelay, READ_DELAY_NAME );
+        threadHelper( iotRead );
+        }
+
     if ( readWriteMode == READ_WRITE )
         {
         setSync( 0, lastError, DELETE_ID, DELETE_NAME );

@@ -104,10 +104,10 @@ Run performance scenario
 */
 @Override public void run()
     {
-    IOtask iotWrite  = new IOtaskChannelWriteMT( this );    
-    IOtask iotPack   = new IOtaskArchivePack( this );
-    IOtask iotUnpack = new IOtaskArchiveUnpack( this );
-    
+    iotWrite = new IOtaskChannelWriteMT( this );    
+    iotCopy  = new IOtaskArchivePack( this );
+    iotRead  = new IOtaskArchiveUnpack( this );
+/*    
     if ( errorCheck() )
         {
         threadHelper( iotWrite );
@@ -115,14 +115,33 @@ Run performance scenario
     
     if ( errorCheck() )
         {
-        threadHelper( iotPack );
+        threadHelper( iotCopy );
         }
     
     if ( errorCheck() )
         {
-        threadHelper( iotUnpack );
+        threadHelper( iotRead );
+        }
+*/
+
+    if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        // preDelay( writeDelay, WRITE_DELAY_NAME );
+        threadHelper( iotWrite );
         }
     
+    if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        // preDelay( copyDelay, COPY_DELAY_NAME );
+        threadHelper( iotCopy );
+        }
+    
+    if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        // preDelay( readDelay, READ_DELAY_NAME );
+        threadHelper( iotRead );
+        }
+
     setSync( 0, lastError, DELETE_ID, DELETE_NAME );
     delete( pathsSrc, channelsSrc );
     delete( pathsDst, channelsDst );

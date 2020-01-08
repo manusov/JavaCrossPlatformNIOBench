@@ -1,4 +1,6 @@
-;---------- Template for debug ------------------------------------------------;
+;------------------------------------------------------------------------------;
+;     Module for debug, this fragment used for run under debugger (FDBG).      ;    
+;------------------------------------------------------------------------------;
 include 'win64a.inc'
 include 'include\Equations.inc'
 format PE64 GUI
@@ -11,8 +13,9 @@ lea rdi,[OPB]
 ;---
 ;mov IPB_REQUEST_SIZE, 16384
 ;mov IPB_BLOCK_SIZE,   4096
-;mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-;mov IPB_SRC_ATTRIBUTES,rax
+;;- mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;;- mov IPB_SRC_ATTRIBUTES,rax
+;mov IPB_SRC_ATTRIBUTES,00000011b
 ;mov IPB_ITERATIONS,5
 ;lea rcx,[ReadFileName]
 ;lea rdx,IPB_SRC_PATH
@@ -27,8 +30,9 @@ lea rdi,[OPB]
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-mov IPB_SRC_ATTRIBUTES,rax
+;- mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;- mov IPB_SRC_ATTRIBUTES,rax
+mov IPB_SRC_ATTRIBUTES,00000011b
 mov IPB_ITERATIONS,1            ; 5
 ; lea rcx,[WriteFileName]
   lea rcx,[ReadFileName]
@@ -44,9 +48,10 @@ call MeasureWriteFile
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-mov IPB_SRC_ATTRIBUTES,rax
-mov IPB_DST_ATTRIBUTES,rax
+;- mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;- mov IPB_SRC_ATTRIBUTES,rax
+mov IPB_SRC_ATTRIBUTES,00000011b
+mov IPB_DST_ATTRIBUTES,00000011b
 mov IPB_ITERATIONS,5
 lea rcx,[ReadFileName]
 lea rdx,IPB_SRC_PATH

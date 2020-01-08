@@ -59,12 +59,20 @@ public HandlerSourcePath( Application application, String name,
                 }
             }
         }
+    
     field1.setText( s1 );
     field1.repaint();
+    
     if ( field2 != null )
-        {
+        {  // this click as source path, modify both src. and dst. paths
         field2.setText( s1 );
         field2.repaint();
+        application.updateAllSrcPaths( s1 );
+        application.updateAllDstPaths( s1 );
+        }
+    else
+        {  // this click as destination path, modify only destination path
+        application.updateAllDstPaths( s1 );
         }
     }
 }

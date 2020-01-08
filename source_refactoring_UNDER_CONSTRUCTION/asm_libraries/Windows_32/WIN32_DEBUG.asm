@@ -1,4 +1,6 @@
-;---------- Template for debug ------------------------------------------------;
+;------------------------------------------------------------------------------;
+;     Module for debug, this fragment used for run under debugger (OllyDbg).   ;    
+;------------------------------------------------------------------------------;
 include 'win32a.inc'
 include 'include\Equations.inc'
 format PE GUI
@@ -10,8 +12,9 @@ lea edi,[OPB]
 ;---
 ;mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 ;mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-;mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-;mov IPB_SRC_ATTRIBUTES,eax
+;;-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;;-mov IPB_SRC_ATTRIBUTES,eax
+;mov IPB_SRC_ATTRIBUTES,00000011b
 ;mov IPB_ITERATIONS,5
 ;lea ecx,[ReadFileName]
 ;lea edx,IPB_SRC_PATH
@@ -29,33 +32,36 @@ lea edi,[OPB]
 ;mov ecx,OPB_OPERATION_SIZE_L
 ;mov edx,OPB_OPERATION_SIZE_H
 ;---
-;mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
-;mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-;mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-;mov IPB_SRC_ATTRIBUTES,eax
-;mov IPB_ITERATIONS,5                 ; 5 ; 1
-;; lea ecx,[WriteFileName]
-;  lea ecx,[ReadFileName]
-;lea edx,IPB_SRC_PATH
-;@@:
-;mov al,[ecx]
-;mov [edx],al
-;inc ecx
-;inc edx
-;cmp al,0
-;jne @b
-;call MeasureWriteFile
-;; debug point
-;INT3
-;mov eax,OPB_LAST_ERROR
-;mov ecx,OPB_OPERATION_SIZE_L
-;mov edx,OPB_OPERATION_SIZE_H
+mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
+mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
+;- mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;- mov IPB_SRC_ATTRIBUTES,eax
+mov IPB_SRC_ATTRIBUTES,00000011b
+mov IPB_ITERATIONS,5                 ; 5 ; 1
+; lea ecx,[WriteFileName]
+  lea ecx,[ReadFileName]
+lea edx,IPB_SRC_PATH
+@@:
+mov al,[ecx]
+mov [edx],al
+inc ecx
+inc edx
+cmp al,0
+jne @b
+call MeasureWriteFile
+; debug point
+; INT3
+mov eax,OPB_LAST_ERROR
+mov ecx,OPB_OPERATION_SIZE_L
+mov edx,OPB_OPERATION_SIZE_H
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-mov IPB_SRC_ATTRIBUTES,eax
-mov IPB_DST_ATTRIBUTES,eax
+;-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;-mov IPB_SRC_ATTRIBUTES,eax
+;-mov IPB_DST_ATTRIBUTES,eax
+mov IPB_SRC_ATTRIBUTES,00000011b
+mov IPB_DST_ATTRIBUTES,00000011b
 mov IPB_ITERATIONS,5
 lea ecx,[ReadFileName]
 lea edx,IPB_SRC_PATH
@@ -77,7 +83,6 @@ cmp al,0
 jne @b
 call MeasureCopyFile
 ; debug point
-INT3
 mov eax,OPB_LAST_ERROR
 mov ecx,OPB_OPERATION_SIZE_L
 mov edx,OPB_OPERATION_SIZE_H

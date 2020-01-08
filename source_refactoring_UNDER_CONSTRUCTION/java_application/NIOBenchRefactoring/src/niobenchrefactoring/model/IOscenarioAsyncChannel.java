@@ -79,10 +79,10 @@ public IOscenarioAsyncChannel
     
 @Override public void run()
     {
-   
-    IOtask iotWrite = new IOtaskAsyncChannelWrite( this );
-    IOtask iotRead  = new IOtaskAsyncChannelRead( this );
-    
+    iotWrite = new IOtaskAsyncChannelWrite( this );
+    iotRead  = new IOtaskAsyncChannelRead( this );
+ 
+/*    
     if ( readWriteMode != READ_ONLY )
         {
         delay( writeDelay );
@@ -94,9 +94,24 @@ public IOscenarioAsyncChannel
         delay( readDelay );
         threadHelper( iotRead );
         }
-    
+*/
+    if ( ( readWriteMode != READ_ONLY ) &&
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( writeDelay, WRITE_DELAY_NAME );
+        threadHelper( iotWrite );
+        }
+
+    if ( ( readWriteMode != WRITE_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( readDelay, READ_DELAY_NAME );
+        threadHelper( iotRead );
+        }
+
     if ( readWriteMode == READ_WRITE )
         {
+        setSync( 0, lastError, DELETE_ID, DELETE_NAME );
         /*
         Phase = Delete, note about files not deleted in WRITE_ONLY mode.
         Note delete operation cycles for all files is not interruptable.

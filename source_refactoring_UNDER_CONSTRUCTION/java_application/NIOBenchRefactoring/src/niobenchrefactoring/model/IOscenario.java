@@ -174,6 +174,14 @@ String phaseName = "";
 StatusEntry lastError;
 
 /*
+Common functionality support group for all child classes
+*/
+IOtask iotWrite;    
+IOtask iotCopy;
+IOtask iotRead;
+boolean interrupt = false;
+
+/*
 Constructor for options settings by internal defaults
 */    
 public IOscenario()
@@ -493,5 +501,16 @@ void preDelay( int milliseconds, String name )
         }
     }
 
+/*
+Interrupt performance scenario    
+*/
+@Override public void interrupt()
+    {
+    if ( iotWrite != null ) iotWrite.interrupt();
+    if ( iotCopy  != null ) iotCopy.interrupt();
+    if ( iotRead  != null ) iotRead.interrupt();
+    super.interrupt();
+    interrupt = true;
+    }
 
 }

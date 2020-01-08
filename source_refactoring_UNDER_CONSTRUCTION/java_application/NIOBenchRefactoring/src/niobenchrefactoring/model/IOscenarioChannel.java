@@ -96,11 +96,6 @@ private void buffersInitHelper()
             }
         }
     }
-    
-private IOtask iotWrite;    
-private IOtask iotCopy;
-private IOtask iotRead;
-private boolean interrupt = false;
 
 /*
 Run performance scenario    
@@ -151,18 +146,6 @@ Run performance scenario
         delete( pathsSrc, channelsSrc );
         delete( pathsDst, channelsDst );
         }
-    }
-
-/*
-Interrupt performance scenario    
-*/
-@Override public void interrupt()
-    {
-    if ( iotWrite != null ) iotWrite.interrupt();
-    if ( iotCopy  != null ) iotCopy.interrupt();
-    if ( iotRead  != null ) iotRead.interrupt();
-    super.interrupt();
-    interrupt = true;
     }
 
 /*

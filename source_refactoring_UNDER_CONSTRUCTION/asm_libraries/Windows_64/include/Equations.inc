@@ -14,10 +14,9 @@ OPB_BUFFER_SIZE     EQU  qword [rdi + 08]
 OPB_SRC_HANDLE      EQU  qword [rdi + 16]
 OPB_DST_HANDLE      EQU  qword [rdi + 24]
 OPB_OPERATION_SIZE  EQU  qword [rdi + 32]
-OPB_TIMER_START     EQU  qword [rdi + 40]
-OPB_TIMER_STOP      EQU  qword [rdi + 48]
-OPB_LAST_OPERATION  EQU  qword [rdi + 56]
-OPB_LAST_ERROR      EQU  qword [rdi + 64]
+OPB_TIMER_DELTA     EQU  qword [rdi + 40]
+OPB_LAST_OPERATION  EQU  qword [rdi + 48]
+OPB_LAST_ERROR      EQU  qword [rdi + 56]
 OPB_DATA_ARRAY      EQU  [rdi + 4096]
 OPB_CLEAR_QWORDS    EQU  9  
 ; Step identification constants
@@ -36,5 +35,12 @@ PARM_SHADOW_4       EQU  qword [rsp + 24]
 PARM_5              EQU  qword [rsp + 32]
 PARM_6              EQU  qword [rsp + 40]
 PARM_7              EQU  qword [rsp + 48]
-; additional definitions by MSDN
+; Additional definitions by MSDN
 INVALID_SET_FILE_POINTER  EQU  -1
+; Scratch pad, OS-specific usage
+OPB_TRANSIT_T1      EQU  qword [rdi + 80]
+OPB_TRANSIT_T2      EQU  qword [rdi + 88]
+
+
+
+

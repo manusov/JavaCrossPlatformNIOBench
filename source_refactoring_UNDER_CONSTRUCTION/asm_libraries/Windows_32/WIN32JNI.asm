@@ -218,7 +218,7 @@ iFunctionSelector  DD  GetRandomData      ; 0 = Get array of random data
                    DD  MeasureDeleteFile  ; 5 = Delete file                   
                    DD  0                  ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.02.00 for Windows ia32.',0  
+LibraryName        DB  'NIOBench native library v0.03.00 for Windows ia32.',0  
 ;--- Data for detect WOW64 ---
 LibName  DB  'KERNEL32',0
 FncName  DB  'IsWow64Process',0

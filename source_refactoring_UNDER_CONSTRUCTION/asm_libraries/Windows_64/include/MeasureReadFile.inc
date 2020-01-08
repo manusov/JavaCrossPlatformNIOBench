@@ -16,9 +16,11 @@
 ; QWORD [IPB+00] = Required function ID                                        ;
 ; QWORD [IPB+08] = Required read/write/copy operation size, bytes              ;
 ; QWORD [IPB+16] = I/O block size, per OS API function call, bytes             ;
-; QWORD [IPB+24] = Source file performance attributes,                         ; 
+; QWORD [IPB+24] = Source file performance attributes,                         ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ; 
 ;                  see MSDN, CreateFileA API parm#6                            ;
-; QWORD [IPB+32] = Destination file performance attributes,                    ; 
+; QWORD [IPB+32] = Destination file performance attributes,                    ;
+;                  D0 = Read sync, D1 = Write Sync, other reserved             ; 
 ;                  see MSDN, CreateFileA API parm#6                            ;
 ; QWORD [IPB+40] = Number of measurement repeats iterations                    ;
 ; Max. 976 BYTES [IPB+48] = Reserved                                           ; 
@@ -33,12 +35,12 @@
 ; QWORD [OPB+24] = Destination file handle, available after open file          ;
 ; QWORD [OPB+32] = Executed read/write/copy operation size,                    ; 
 ;                  available after operation execute                           ;
-; QWORD [OPB+40] = Timer at start of measurement repeats, units = 100 ns       ;
-; QWORD [OPB+48] = Timer at end of measurement repeats, units = 100 ns         ;
-; QWORD [OPB+56] = Last called OS API status, see MSDN                         ;
-; QWORD [OPB+64] = Last called OS API type:                                    ;
+; QWORD [OPB+40] = Timer delta for measurement repeats, units = 1 ns           ;
+; QWORD [OPB+48] = Last called OS API status, see MSDN                         ;
+; QWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
+; Use OS-specific scratch pad at OPB;[80-95], 16 bytes (for timer API)         ;
 ; 4024 BYTES [IPB+72] = Reserved                                               ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
@@ -72,7 +74,15 @@ mov edx,GENERIC_READ           ; RDX    = Parm#2 = Desired access
 xor r8d,r8d                    ; R8     = Parm#3 = Share mode = 0
 xor r9d,r9d                    ; R9     = Parm#4 = Security attributes = 0
 mov PARM_5,OPEN_EXISTING       ; Parm#5 = Creation disposition
-mov rax,IPB_SRC_ATTRIBUTES
+mov eax,FILE_ATTRIBUTE_NORMAL
+test IPB_SRC_ATTRIBUTES,00000001b
+jz @f
+or eax,FILE_FLAG_NO_BUFFERING
+@@:
+test IPB_SRC_ATTRIBUTES,00000010b
+jz @f
+or eax,FILE_FLAG_WRITE_THROUGH
+@@:
 mov PARM_6,rax                 ; Parm#6 = File attribute and flags 
 mov PARM_7,r8                  ; Parm#7 = 0 = Template file handle, not used
 call [CreateFileA]
@@ -87,7 +97,7 @@ jz ErrorFileContext            ; Here ZF=1(Z) if any error condition detected
 ;--- Start measurement cycle, get and store start timer value ---
 mov r13,IPB_ITERATIONS
 xor r14,r14                    ; R14 = Accumulate size, include meas. cycle
-lea rcx,OPB_TIMER_START
+lea rcx,OPB_TRANSIT_T1
 call [GetSystemTimeAsFileTime]
 ;--- Measurement iteration ---
 .ReadMeasurement:
@@ -128,8 +138,12 @@ je ErrorFileContext
 dec r13
 jnz .ReadMeasurement
 mov OPB_OPERATION_SIZE,r14
-lea rcx,OPB_TIMER_STOP
+lea rcx,OPB_TRANSIT_T2
 call [GetSystemTimeAsFileTime]
+mov rax,OPB_TRANSIT_T2
+sub rax,OPB_TRANSIT_T1
+imul rax,rax,100
+mov OPB_TIMER_DELTA,rax
 ;--- Close file after Read ---
 mov rcx,r12                    ; RCX = Parm#1 = Pointer to file path
 call [CloseHandle]

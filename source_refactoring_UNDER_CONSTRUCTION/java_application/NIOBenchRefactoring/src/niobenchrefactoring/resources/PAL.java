@@ -56,10 +56,9 @@ public final static int OPB_BUFFER_SIZE    = 1;
 public final static int OPB_SRC_HANDLE     = 2;
 public final static int OPB_DST_HANDLE     = 3;
 public final static int OPB_OPERATION_SIZE = 4;
-public final static int OPB_TIMER_START    = 5;
-public final static int OPB_TIMER_STOP     = 6;
-public final static int OPB_LAST_OPERATION = 7;
-public final static int OPB_LAST_ERROR     = 8;
+public final static int OPB_TIMER_DELTA    = 5;
+public final static int OPB_LAST_OPERATION = 6;
+public final static int OPB_LAST_ERROR     = 7;
 public final static int OPB_DATA_ARRAY     = 4096/8;
 // constant for size and alignment reservations at IPB and OPB + data buffer
 public final static int FILE_API_IPB_SIZE    = 4096/8;
@@ -74,9 +73,9 @@ public final static int STEP_WRITE      = 4;
 public final static int STEP_CLOSE      = 5;
 public final static int STEP_DELETE     = 6;
 // Microsoft Windows file attributes
-public final static long WINDOWS_FILE_ATTRIBUTE_NORMAL        = 0x80L;
-public final static long WINDOWS_FILE_ATTRIBUTE_NO_BUFFERING  = 0x20000000L;
-public final static long WINDOWS_FILE_ATTRIBUTE_WRITE_THROUGH = 0x80000000L;
+public final static long FILE_ATTRIBUTE_BLANK      = 0;
+public final static long FILE_ATTRIBUTE_READ_SYNC  = 1;
+public final static long FILE_ATTRIBUTE_WRITE_SYNC = 2;
 // special status constant for native width
 public final static int JRE32_UNDER_OS64 = 33;
 

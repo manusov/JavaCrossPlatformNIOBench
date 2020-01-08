@@ -51,7 +51,16 @@ Differrent panels has different options restrictions.
 */
 @Override void buildRestrictions()
     {
-    // no restrictions for this panel, all combo boxes active
+    // labels with combo names, located left
+    labels[TEXT_COUNT + ID_ADDRESS_PATTERN].setEnabled( false );
+    labels[TEXT_COUNT + ID_READ_WRITE].setEnabled( false );
+    labels[TEXT_COUNT + ID_THREAD_COUNT].setEnabled( false );
+    labels[TEXT_COUNT + ID_FAST_COPY].setEnabled( false );
+    // combo boxes
+    boxes[ID_ADDRESS_PATTERN].setEnabled( false );
+    boxes[ID_READ_WRITE].setEnabled( false );
+    boxes[ID_THREAD_COUNT].setEnabled( false );
+    boxes[ID_FAST_COPY].setEnabled( false );
     }
 
 /*

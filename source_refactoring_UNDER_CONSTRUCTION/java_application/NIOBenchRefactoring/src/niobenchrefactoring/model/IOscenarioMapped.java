@@ -116,11 +116,10 @@ Run performance scenario
 */
 @Override public void run()
     {
-    
-    IOtask iotWrite = new IOtaskMappedWrite( this );
-    IOtask iotCopy  = new IOtaskMappedCopy( this );
-    IOtask iotRead  = new IOtaskMappedRead( this );
-
+    iotWrite = new IOtaskMappedWrite( this );
+    iotCopy  = new IOtaskMappedCopy( this );
+    iotRead  = new IOtaskMappedRead( this );
+/*
     if ( readWriteMode != READ_ONLY )
         {
         delay( writeDelay );
@@ -134,9 +133,32 @@ Run performance scenario
         delay( readDelay );
         threadHelper( iotRead );
         }
+*/
+
+    if ( ( readWriteMode != READ_ONLY ) &&
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( writeDelay, WRITE_DELAY_NAME );
+        threadHelper( iotWrite );
+        }
     
+    if ( ( readWriteMode != READ_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( copyDelay, COPY_DELAY_NAME );
+        threadHelper( iotCopy );
+        }
+    
+    if ( ( readWriteMode != WRITE_ONLY ) && 
+         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+        {
+        preDelay( readDelay, READ_DELAY_NAME );
+        threadHelper( iotRead );
+        }
+
     if ( readWriteMode == READ_WRITE )
         {
+        setSync( 0, lastError, DELETE_ID, DELETE_NAME );
         /*
         Phase = Delete, note about files not deleted in WRITE_ONLY mode.
         Note delete operation cycles for all files is not interruptable.
