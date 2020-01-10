@@ -268,6 +268,7 @@ public HandlerLoad( Application application )
 Helpers
 */
 
+// pattern for detect summary table strings
 private final static Pattern SUMMARY_PATTERN = 
         Pattern.compile( "\\W*\\d+(,|\\.)*\\d+\\W*" );
 
@@ -310,14 +311,18 @@ private class Measure
         }
     }
 
+// pattern for split string to substrings by spaces
 private final static String SPLIT_PATTERN = "\\s+";
 
+// pattern for detect string number, integer value
 private final static Pattern INDEX_PATTERN = 
         Pattern.compile( "\\W*\\d+\\W*" );
 
+// pattern for detect measurement results, floating point value
 private final static Pattern VALUE_PATTERN = 
         Pattern.compile( "\\W*\\d+(,|\\.)*\\d+\\W*" );
 
+// pattern for detect median marks at measurement results
 private final static Pattern MEDIAN_PATTERN = 
         Pattern.compile( "\\W*M\\W*" );
 
@@ -341,7 +346,9 @@ private Measure measureHelper( String s )
                     {
                     countNumbers++;
                     result.texts[countNumbers] = subs[i];
-                    result.numbers[countNumbers] = new BigDecimal( subs[i] );
+                    // result.numbers[countNumbers] = new BigDecimal( subs[i] );
+                    String s1 = subs[i].replace( ',', '.' );
+                    result.numbers[countNumbers] = new BigDecimal( s1 );
                     }
                 else
                     {
