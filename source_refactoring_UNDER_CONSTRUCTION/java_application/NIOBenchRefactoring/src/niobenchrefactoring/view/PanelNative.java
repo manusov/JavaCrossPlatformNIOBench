@@ -68,12 +68,25 @@ Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from button handler.
 */
-/*
+final static int DEFAULT_FILE_SIZE_MBPS_NATIVE  = 13;
+final static int DEFAULT_BLOCK_SIZE_MBPS_NATIVE = 12;
+final static int DEFAULT_READ_SYNC_NATIVE       = 1;
+final static int DEFAULT_WRITE_SYNC_NATIVE      = 1;
+final static int DEFAULT_COPY_SYNC_NATIVE       = 1;
+
 @Override public void setDefaults( SCENARIO scenario )
     {
-    // reserved, because same as parent panel - PanelChannel.java    
+    super.setDefaults( scenario );
+    if ( scenario == SCENARIO.MBPS )
+        {  // this settings for MBPS scenario, not for IOPS scenario
+        boxes[ID_FILE_SIZE].setSelectedIndex( DEFAULT_FILE_SIZE_MBPS_NATIVE );
+        boxes[ID_BLOCK_SIZE].setSelectedIndex( DEFAULT_BLOCK_SIZE_MBPS_NATIVE );
+        }
+        // this settings for both MBPS and IOPS scenarios
+        boxes[ID_READ_SYNC].setSelectedIndex( DEFAULT_READ_SYNC_NATIVE );
+        boxes[ID_WRITE_SYNC].setSelectedIndex( DEFAULT_WRITE_SYNC_NATIVE );
+        boxes[ID_COPY_SYNC].setSelectedIndex( DEFAULT_COPY_SYNC_NATIVE );
     }
-*/
 
 /*
 Public method for clear benchmarks results by button: "Clear".

@@ -156,7 +156,7 @@ final static String UNITS_MINUTE  = " minute";
 final static String UNITS_MINUTES = " minutes";
 // file size option
 final static int ID_FILE_SIZE = 0;
-final static int DEFAULT_FILE_SIZE_MBPS = 13;  // means index of default
+final static int DEFAULT_FILE_SIZE_MBPS = 16;  // 13 // means index of default
 final static int DEFAULT_FILE_SIZE_IOPS = 3;
 final static int SET_FILE_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
@@ -165,7 +165,7 @@ final static int SET_FILE_SIZE_BYTES[] =
       400*1024*1024, 1024*1024*1024, 1536*1024*1024 };
 // block size option
 final static int ID_BLOCK_SIZE = 1;
-final static int DEFAULT_BLOCK_SIZE_MBPS = 12;
+final static int DEFAULT_BLOCK_SIZE_MBPS = 13;  // 12;
 final static int DEFAULT_BLOCK_SIZE_IOPS = 3;
 final static int SET_BLOCK_SIZE_BYTES[] =
     { 512, 1024, 2*1024, 4*1024, 8*1024, 
@@ -708,7 +708,7 @@ This method can be called from button handler.
 Helpers for build combo boxes content,
 */
 
-private void helperComboSize( int id, int[] valuesArray, int selection )
+void helperComboSize( int id, int[] valuesArray, int selection )
     {
     for( int value : valuesArray )
         {
@@ -732,7 +732,7 @@ private void helperComboSize( int id, int[] valuesArray, int selection )
     boxes[id].setSelectedIndex( selection );
     }
 
-private void helperComboCount( int id, int[] valuesArray, int selection )
+void helperComboCount( int id, int[] valuesArray, int selection )
     {
     for( int value : valuesArray )
         {
@@ -758,7 +758,7 @@ void helperComboString( int id, String[] namesArray, int selection )
     boxes[id].setSelectedIndex( selection );
     }
 
-private void helperComboTime( int id, int[] valuesArray, int selection )
+void helperComboTime( int id, int[] valuesArray, int selection )
     {
     for( int value : valuesArray )
         {
