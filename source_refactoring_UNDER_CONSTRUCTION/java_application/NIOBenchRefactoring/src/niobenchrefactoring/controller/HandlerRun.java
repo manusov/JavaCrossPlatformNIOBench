@@ -148,7 +148,7 @@ private class ThreadRun extends Thread
             childDrawModel.rescaleXmax( fileCount );
             }
         logHelper( null );
-        tableHelper( null );
+        tableHelper( (StateSync) null );
         drawHelper( null );
         
         /*
@@ -316,6 +316,9 @@ private class ThreadRun extends Thread
         StateAsync[] async = ios.getAsync();
         if ( async != null )
             {
+            // update table
+            tableHelper( async );
+            // initializing parameters for log
             double totalRead = Double.NaN;
             double totalWrite = Double.NaN;
             double totalCopy = Double.NaN;
@@ -481,6 +484,19 @@ private void tableHelper( StateSync sync )
         }
     }
 
+private void tableHelper( StateAsync[] async )
+    {
+    if ( ( childTable != null )&&( childTableModel != null ) )
+        {
+        if ( async != null )
+            {
+            childTableModel.notifyAsync( async );
+            }
+        childTable.repaint();
+        childTable.revalidate();
+        }
+    }
+
 private void tableMedianHelper( StateAsync[] async )
     {
     if ( ( childTable != null )&&( childTableModel != null ) )
@@ -490,7 +506,7 @@ private void tableMedianHelper( StateAsync[] async )
             childTableModel.notifyMedians( async );
             }
         }
-    tableHelper( null );
+    tableHelper( (StateSync) null );
     }
 
 private void drawHelper( BigDecimal[] bd )

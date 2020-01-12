@@ -20,7 +20,7 @@ public static void main(String[] args)
     {
 /*
     // TODO. Use total size calculation:
-       TotalSize =  fileSize * fileCount * measurementResults
+    // TotalSize =  fileSize * fileCount * measurementResults
     // for all native scenarios, implement for windows and linux.
     // Linux native libraries yet not calculate TotalSize.
     DebugNativeIO d = new DebugNativeIO();

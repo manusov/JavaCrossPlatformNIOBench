@@ -6,8 +6,13 @@ import static niobenchrefactoring.resources.PAL.*;
 
 public class DebugNativeIO
 {
-private final String SRC_FILE_NAME = "C:\\TEMP\\a1.bin";
-private final String DST_FILE_NAME = "C:\\TEMP\\a2.bin";
+// private final String SRC_FILE_NAME = "C:\\TEMP\\a1.bin";
+// private final String DST_FILE_NAME = "C:\\TEMP\\a2.bin";
+    
+private final String SRC_FILE_NAME = "/home/manusov/PROJECTS/NB/a1.bin";
+private final String DST_FILE_NAME = "/home/manusov/PROJECTS/NB/a2.bin";
+
+    
 private final PAL pal;
 private boolean binaryValid = false;
 

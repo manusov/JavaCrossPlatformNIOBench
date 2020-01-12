@@ -12,6 +12,9 @@ import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import niobenchrefactoring.model.StateAsync;
 import niobenchrefactoring.model.StateSync;
@@ -19,6 +22,7 @@ import niobenchrefactoring.model.StateSync;
 public class StatisticsTableModel extends AbstractTableModel 
 {
 final static String MARK_STRING = "<html><b><font color=blue>";
+final static int EXTRA_LINES = 1 + 5;
     
 public StatisticsTableModel()
     {
@@ -29,7 +33,7 @@ public StatisticsTableModel()
 final void blank( int n ) 
     {
     maxIndex = n;
-    rowsValues = new String[ n + 5 ][ getColumnCount() ];
+    rowsValues = new String[ n + EXTRA_LINES ][ getColumnCount() ];
     int i;
     for( i=0; i<n; i++ )
         {
@@ -47,7 +51,7 @@ final void blank( int n )
         }
     i++;  // skip 1 string
     
-    for( int j=1; j<5; j++ )
+    for( int j=1; j<EXTRA_LINES; j++ )
         {
         rowsValues[i] = Arrays.copyOf ( initValues[j], initValues[j].length );
         i++;
@@ -63,7 +67,8 @@ private final String[][] initValues =
       { "Median"   , "-" , "-" , "-" } ,
       { "Average"  , "-" , "-" , "-" } ,
       { "Minimum"  , "-" , "-" , "-" } ,
-      { "Maximum"  , "-" , "-" , "-" } , };
+      { "Maximum"  , "-" , "-" , "-" } ,
+      { "Integral" , "-" , "-" , "-" } , };
 
 // table model this application-specific public methods
 final String[] getColumnsNames()          { return COLUMNS_NAMES; }
@@ -126,14 +131,44 @@ public void notifySync( StateSync sync )
     fireTableDataChanged();
     }
 
-private void valueHelper( StateSync sync , int row, int column )
+private void valueHelper( StateSync sync, int row, int column )
     {
     int n = rowsValues.length;
     rowsValues[row][column] = String.format( "%.2f", sync.current );
-    rowsValues[n-4][column] = String.format( "%.2f", sync.median );
-    rowsValues[n-3][column] = String.format( "%.2f", sync.average );
-    rowsValues[n-2][column] = String.format( "%.2f", sync.min );
-    rowsValues[n-1][column] = String.format( "%.2f", sync.max );
+    rowsValues[n-5][column] = String.format( "%.2f", sync.median );
+    rowsValues[n-4][column] = String.format( "%.2f", sync.average );
+    rowsValues[n-3][column] = String.format( "%.2f", sync.min );
+    rowsValues[n-2][column] = String.format( "%.2f", sync.max );
+    }
+
+/*
+Update table for integral values
+*/
+public void notifyAsync( StateAsync[] async )
+    {
+    if ( async != null )
+        {
+        int n = rowsValues.length;
+        for ( int i=0; i<async.length; i++ )
+        if ( async[i] != null )
+            {
+            switch ( i )
+                {
+                case TOTAL_READ_ID:
+                    rowsValues[n-1][1] = 
+                            String.format( "%.2f", async[i].current );
+                    break;
+                case TOTAL_WRITE_ID:
+                    rowsValues[n-1][2] = 
+                            String.format( "%.2f", async[i].current );
+                    break;
+                case TOTAL_COPY_ID:
+                    rowsValues[n-1][3] = 
+                            String.format( "%.2f", async[i].current );
+                    break;
+                }
+            }
+        }
     }
 
 /*

@@ -10,6 +10,8 @@ Dual purpose: table model used for build GUI and save text report.
 package niobenchrefactoring.model;
 
 import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 
 public class TableAsyncChannel extends TableChannel
@@ -17,10 +19,10 @@ public class TableAsyncChannel extends TableChannel
 @Override public String[][] getRowsValues()
     {
     return new String[][]
-        { { "Median, Read"    , "-" , "-" , "-" } ,
-          { "Write"           , "-" , "-" , "-" } ,
-          { "Average, Read"   , "-" , "-" , "-" } ,
-          { "Write"           , "-" , "-" , "-" } };
+        { { "Median, Read"    , "-" , "-" , "-" , "-" } ,
+          { "Write"           , "-" , "-" , "-" , "-" } ,
+          { "Average, Read"   , "-" , "-" , "-" , "-" } ,
+          { "Write"           , "-" , "-" , "-" , "-" } };
     }
 
 /*
@@ -43,6 +45,16 @@ Update table for each measured value from Report Monitor.
                         break;
                     case WRITE_ID:
                         cellsHelper( async[i], 1 );
+                        show = true;
+                        break;
+                    case TOTAL_READ_ID:
+                        valueHelper( async[i].current, 0, 4 );
+                        valueHelper( async[i].current, 2, 4 );
+                        show = true;
+                        break;
+                    case TOTAL_WRITE_ID:
+                        valueHelper( async[i].current, 1, 4 );
+                        valueHelper( async[i].current, 3, 4 );
                         show = true;
                         break;
                     }

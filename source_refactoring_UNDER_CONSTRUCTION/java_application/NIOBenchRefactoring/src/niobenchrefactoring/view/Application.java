@@ -27,6 +27,8 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import niobenchrefactoring.controller.HandlerAbout;
 import niobenchrefactoring.controller.HandlerCancel;
 import niobenchrefactoring.controller.HandlerClear;
@@ -219,14 +221,6 @@ public void open()
     Container c = getContentPane();
     c.setLayout( sl );
     selectionHelper();
-    
-    // centering cells in table
-    DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-    renderer.setHorizontalAlignment( SwingConstants.CENTER );
-    for ( int i=0; i<table.getColumnCount(); i++ )
-        { 
-        table.getColumnModel().getColumn(i).setCellRenderer( renderer ); 
-        }
 
     // positioning up right buttons, this buttons used for open child windows
     for( int i=COL_UP; i<=COL_DOWN; i++ )
@@ -354,11 +348,56 @@ private void selectionHelper()
     int index = tabs.getSelectedIndex();
     if ( ( index >= 0 )&&( index < panels.length ) )
         {
+        // get required table model from just  selected tab panel
         table.setModel( panels[index].getTableModel() );
+        // centering cells in table
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment( SwingConstants.CENTER );
+        for ( int i=0; i<table.getColumnCount(); i++ )
+            { 
+            table.getColumnModel().getColumn(i).setCellRenderer( renderer ); 
+            }
+        // optimize table columns width by content
+        optimizeColumnsWidths( table, 140 );
+        // update table visualization and select panel
         table.repaint();
         selectedPanel = panels[index];
         }
     }
+
+/*
+Helper for optimize table columns width
+*/
+
+public void optimizeColumnsWidths( JTable table, int x )
+    {
+    TableModel tm = table.getModel();
+    int n = tm.getColumnCount();
+    int m = tm.getRowCount();
+    int k = 0;
+    double[] max = new double[n];
+    for ( int i=0; i<n; i++ ) { max[i] = tm.getColumnName(i).length(); }
+    for ( int i=0; i<m; i++ )
+        {
+        for ( int j=0; j<n; j++ )
+            {
+            k = ((String)(tm.getValueAt(i,j))).length();
+            if ( max[j] < k ) { max[j] = k; }
+            }
+        }
+    double scale = 0.0;
+    for ( int i=0; i<n; i++ ) { scale = scale + max[i]; }
+    scale = x / scale;
+    
+        for ( int i=0; i<n; i++ ) 
+            { 
+            TableColumn tc = table.getColumnModel().getColumn(i);
+            tc.setPreferredWidth( (int)( max[i] * scale ) );
+            }
+    }
+    
+
+
 
 /*
 Support callbacks from "Run" button handler

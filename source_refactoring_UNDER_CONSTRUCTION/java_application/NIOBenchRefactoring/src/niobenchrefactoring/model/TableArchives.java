@@ -10,6 +10,8 @@ Dual purpose: table model used for build GUI and save text report.
 package niobenchrefactoring.model;
 
 import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 
 public class TableArchives extends TableChannel
@@ -17,12 +19,12 @@ public class TableArchives extends TableChannel
 @Override public String[][] getRowsValues()
     {
     return new String[][]
-        { { "Median, Write"   , "-" , "-" , "-" } ,
-          { "Pack"            , "-" , "-" , "-" } ,
-          { "Unpack"          , "-" , "-" , "-" } ,
-          { "Average, Write"  , "-" , "-" , "-" } ,
-          { "Pack"            , "-" , "-" , "-" } ,
-          { "Unpack"          , "-" , "-" , "-" } };
+        { { "Median, Write"   , "-" , "-" , "-" , "-" } ,
+          { "Pack"            , "-" , "-" , "-" , "-" } ,
+          { "Unpack"          , "-" , "-" , "-" , "-" } ,
+          { "Average, Write"  , "-" , "-" , "-" , "-" } ,
+          { "Pack"            , "-" , "-" , "-" , "-" } ,
+          { "Unpack"          , "-" , "-" , "-" , "-" } };
     }
 
 /*
@@ -37,6 +39,14 @@ Update table for each measured value from Report Monitor.
         async[WRITE_ID] = async[READ_ID];
         async[READ_ID] = temp;
         }
+
+    if ( ( async.length >= TOTAL_WRITE_ID )&&( async.length >= TOTAL_READ_ID ) )
+        {
+        StateAsync temp = async[TOTAL_WRITE_ID];
+        async[TOTAL_WRITE_ID] = async[TOTAL_READ_ID];
+        async[TOTAL_READ_ID] = temp;
+        }
+
     super.measurementNotify( async );
     }
 

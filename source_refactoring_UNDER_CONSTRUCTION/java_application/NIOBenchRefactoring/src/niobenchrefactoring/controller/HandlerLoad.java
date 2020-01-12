@@ -37,6 +37,7 @@ public class HandlerLoad extends Handler
 private final static JFileChooser CHOOSER = new JFileChooser();    
 private final static String DEFAULT_EXT  = "txt";
 private final static String DEFAULT_FILE = "report" + "." + DEFAULT_EXT;
+private final static int DOWN_LINES = 5;
 
 public HandlerLoad( Application application )
     {
@@ -113,14 +114,15 @@ public HandlerLoad( Application application )
         if ( table != null )
             {
             tableModel = table.getTableModel();
-            if ( ( tableModel != null ) && ( tableModel.getRowCount() >= 4 ) )
+            if ( ( tableModel != null ) && 
+                 ( tableModel.getRowCount() >= DOWN_LINES ) )
                 {
                 int rows = tableModel.getRowCount();
                 int columns = tableModel.getColumnCount();
-                downKeys = new String[4];
-                downValues = new String[4][columns - 1];
-                int j = rows - 4;
-                for( int i=0; i<4; i++ )
+                downKeys = new String[DOWN_LINES];
+                downValues = new String[DOWN_LINES][columns - 1];
+                int j = rows - DOWN_LINES;
+                for( int i=0; i<DOWN_LINES; i++ )
                     {
                     downKeys[i] = tableModel.getValueAt( j, 0 );
                     j++;
@@ -143,7 +145,8 @@ public HandlerLoad( Application application )
             if ( ( summaryKeys != null ) &&
                  ( summaryCount < summaryKeys.length ) )
                 {
-                String[] values = summaryHelper( s, summaryKeys[summaryCount] );
+                String[] values = 
+                        summaryHelper( s, summaryKeys[summaryCount], 4 );
                 if ( ( values != null ) && 
                      ( values.length == summaryValues[summaryCount].length ) )
                     {
@@ -155,7 +158,8 @@ public HandlerLoad( Application application )
             if ( ( downKeys != null ) && 
                  ( downCount < downKeys.length ) )
                 {
-                String[] values = summaryHelper( s, downKeys[downCount] );
+                String[] values = 
+                        summaryHelper( s, downKeys[downCount], 3 );
                 if ( ( values != null ) && 
                      ( values.length == downValues[downCount].length ) )
                     {
@@ -212,8 +216,8 @@ public HandlerLoad( Application application )
                         }
                     }
                 }
-            int tableCount = tableModel.getRowCount() - 4;
-            for( int i=0; i<4; i++ )
+            int tableCount = tableModel.getRowCount() - DOWN_LINES;
+            for( int i=0; i<DOWN_LINES; i++ )
                 {
                 if ( downValues[i].length == tableModel.getColumnCount() - 1 )
                     {
@@ -272,7 +276,7 @@ Helpers
 private final static Pattern SUMMARY_PATTERN = 
         Pattern.compile( "\\W*\\d+(,|\\.)*\\d+\\W*" );
 
-private String[] summaryHelper( String s, String key )
+private String[] summaryHelper( String s, String key, int patternLength )
     {
     String[] result = null;
     s = s.trim();
@@ -288,7 +292,7 @@ private String[] summaryHelper( String s, String key )
             }
         result = list.toArray( new String[list.size()] );
         }
-    if ( ( result != null )&&( result.length == 3 ) )
+    if ( ( result != null ) &&( result.length == patternLength ) )
         return result;
     else
         return null;
@@ -363,6 +367,5 @@ private Measure measureHelper( String s )
         }
     return result;
     }
-
 
 }

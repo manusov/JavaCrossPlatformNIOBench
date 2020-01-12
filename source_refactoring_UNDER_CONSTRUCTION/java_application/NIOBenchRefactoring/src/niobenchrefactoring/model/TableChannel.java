@@ -12,6 +12,9 @@ package niobenchrefactoring.model;
 import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
+import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 
 public class TableChannel extends AbstractTableModel
@@ -42,18 +45,19 @@ private String unitsSelect()
 String[] getColumnsNames()
     {
     return new String[] 
-        { "Value, " + unitsSelect() , "Actual" , "Minimum" , "Maximum" };
+        { "Value, " + unitsSelect() , 
+          "Actual" , "Minimum" , "Maximum" , "Integral" };
     }
 
 String[][] getRowsValues()
     {
     return new String[][]
-        { { "Median, Read"    , "-" , "-" , "-" } ,
-          { "Write"           , "-" , "-" , "-" } ,
-          { "Copy"            , "-" , "-" , "-" } ,
-          { "Average, Read"   , "-" , "-" , "-" } ,
-          { "Write"           , "-" , "-" , "-" } ,
-          { "Copy"            , "-" , "-" , "-" } };
+        { { "Median, Read"    , "-" , "-" , "-" , "-" } ,
+          { "Write"           , "-" , "-" , "-" , "-" } ,
+          { "Copy"            , "-" , "-" , "-" , "-" } ,
+          { "Average, Read"   , "-" , "-" , "-" , "-" } ,
+          { "Write"           , "-" , "-" , "-" , "-" } ,
+          { "Copy"            , "-" , "-" , "-" , "-" } };
     }
 
 /*
@@ -122,6 +126,21 @@ public void measurementNotify( StateAsync[] async )
                         break;
                     case COPY_ID:
                         cellsHelper( async[i], 2 );
+                        show = true;
+                        break;
+                    case TOTAL_READ_ID:
+                        valueHelper( async[i].current, 0, 4 );
+                        valueHelper( async[i].current, 3, 4 );
+                        show = true;
+                        break;
+                    case TOTAL_WRITE_ID:
+                        valueHelper( async[i].current, 1, 4 );
+                        valueHelper( async[i].current, 4, 4 );
+                        show = true;
+                        break;
+                    case TOTAL_COPY_ID:
+                        valueHelper( async[i].current, 2, 4 );
+                        valueHelper( async[i].current, 5, 4 );
                         show = true;
                         break;
                     }
