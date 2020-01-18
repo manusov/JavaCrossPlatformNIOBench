@@ -58,13 +58,9 @@ MeasureDeleteFile:
 push ebx esi edi ebp
 
 ;--- Clear output variables ---
-push edi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_DWORDS
-rep stosd
-pop edi
+call HelperClearOPB
 
+;--- Delete file ---
 lea ebx,IPB_SRC_PATH        ; EBX = Parm#1 = Pointer to source file path
 mov eax,10                  ; EAX = Function code = SYS_UNLINK
 int 80h

@@ -40,19 +40,17 @@
 ; QWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
-; Use OS-specific scratch pad at OPB;[80-95], 16 bytes (for timer API)         ;
-; 4024 BYTES [IPB+72] = Reserved                                               ;
+;                                                                              ;
+; DATA AREA from [OPB+64] to [OPB+128] can be used for                         ; 
+; OS-scefific undocumented scratch pads                                        ;                                                                   
+; Use OS-specific scratch pad at OPB[80-95], 16 bytes (for timer API)          ;
+; 3968 BYTES [OPB+128] = Reserved                                              ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
 MeasureDeleteFile:
 push rbx rsi rdi rbp r12 r13 r14 r15
 ;--- Clear output variables ---
-push rdi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_QWORDS
-rep stosq
-pop rdi
+call HelperClearOPB
 ;--- Alignment stack and reserve stack space for WinAPI, 32 bytes ---
 mov rbp,rsp                   ; save RSP
 and rsp,0FFFFFFFFFFFFFFF0h    ; align 16

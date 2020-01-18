@@ -24,23 +24,51 @@ private final static String[] LIBRARY_EXTENSIONS =
     { ".dll"     , ".dll"     , ".so"           , ".so"           };
 private final static int LIBRARY_COUNT = LIBRARY_NAMES.length;
 
-// This is one block, not limit maximum library size
+/*
+This is one block, not limit maximum library size
+*/
 private final static int BINARY_SIZE = 16384;  
 private static int binaryType = -1;
 private static boolean binaryValid = false;
 private static File library;
 
-// Public constants for native functions select and status encoding
-// ID constants for functions without IPB
+/*
+Public constants for native functions select and status encoding
+ID constants for functions without IPB
+*/
 public final static int GET_LIBRARY_NAME = 0;
 public final static int GET_LIBRARY_INFO = 1;
-// ID constants for functions with IPB
+
+/*
+ID constants for functions with IPB
+*/
 public final static int GET_RANDOM_DATA     = 0;
 public final static int MEASURE_READ_FILE   = 1;
 public final static int MEASURE_WRITE_FILE  = 2;
 public final static int MEASURE_COPY_FILE   = 3;
-public final static int MEASURE_MIXED_IO    = 4;
-public final static int MEASURE_DELETE_FILE = 5;
+public final static int MEASURE_DELETE_FILE = 4;
+
+/*
+// old native model with this functions is rejected
+public final static int MEASURE_READ_SEQUENCE   = 5;
+public final static int MEASURE_WRITE_SEQUENCE  = 6;
+public final static int MEASURE_COPY_SEQUENCE   = 7;
+public final static int MEASURE_DELETE_SEQUENCE = 8;
+public final static int MEASURE_WRITE_COPY_READ = 9;
+public final static int MEASURE_MIXED_IO        = 10;
+*/
+/*
+Support native model with precision measurements and timer underflow tolerant
+note single file can be selected as group with N=1.
+*/
+/*
+public final static int PRECISION_FILE  = 5;  // one file write, copy, read
+public final static int PRECISION_GROUP = 6;  // group write, copy, read
+public final static int PRECISION_MIX   = 7;  // group with randomized address
+*/
+public final static int PRECISION_LINEAR = 5;  // write, copy, read N files
+public final static int PRECISION_MIXED  = 6;  // mixed IO, random sequence
+
 // offsets for IPB addressing, units = asm quad words = java long
 public final static int IPB_REQUEST_ID     = 0;
 public final static int IPB_REQUEST_SIZE   = 1;
@@ -48,8 +76,15 @@ public final static int IPB_BLOCK_SIZE     = 2;
 public final static int IPB_SRC_ATTRIBUTES = 3;
 public final static int IPB_DST_ATTRIBUTES = 4;
 public final static int IPB_ITERATIONS     = 5;
+public final static int IPB_FILE_COUNT     = 6;
 public final static int IPB_SRC_PATH       = 1024/8;
 public final static int IPB_DST_PATH       = 2048/8;
+// paths strings locations for sequences of files with
+// name generation by native code
+public final static int IPB_SRC_PATH_PREFIX  = 1024/8;
+public final static int IPB_SRC_PATH_POSTFIX = 1024/8 + 512/8;
+public final static int IPB_DST_PATH_PREFIX  = 2048/8;
+public final static int IPB_DST_PATH_POSTFIX = 2048/8 + 512/8;
 // offsets for OPB addressing, units = asm quad words = java long
 public final static int OPB_BUFFER_BASE    = 0;
 public final static int OPB_BUFFER_SIZE    = 1;
@@ -59,7 +94,16 @@ public final static int OPB_OPERATION_SIZE = 4;
 public final static int OPB_TIMER_DELTA    = 5;
 public final static int OPB_LAST_OPERATION = 6;
 public final static int OPB_LAST_ERROR     = 7;
-public final static int OPB_DATA_ARRAY     = 4096/8;
+// support precision mode
+public final static int OPB_HANDLES_SRC_BASE = 16;
+public final static int OPB_HANDLES_DST_BASE = 17;
+public final static int OPB_TIMER_READ       = 18;
+public final static int OPB_TIMER_WRITE      = 19;
+public final static int OPB_TIMER_COPY       = 20;
+public final static int OPB_TOTAL_READ       = 21;
+public final static int OPB_TOTAL_WRITE      = 22;
+public final static int OPB_TOTAL_COPY       = 23;
+public final static int OPB_DATA_ARRAY       = 4096/8;
 // constant for size and alignment reservations at IPB and OPB + data buffer
 public final static int FILE_API_IPB_SIZE    = 4096/8;
 public final static int FILE_API_OPB_SIZE    = 4096/8;

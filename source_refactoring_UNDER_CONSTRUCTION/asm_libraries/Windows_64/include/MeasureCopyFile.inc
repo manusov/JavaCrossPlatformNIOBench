@@ -40,53 +40,26 @@
 ; QWORD [OPB+56] = Last called OS API type:                                    ;
 ;    0=None,  1=Open for read,  2=Read,  3=Open for write,  4=Write,           ;
 ;    5=Close, 6=Delete                                                         ;
-; Use OS-specific scratch pad at OPB;[80-95], 16 bytes (for timer API)         ;
-; 4024 BYTES [IPB+72] = Reserved                                               ;
+;                                                                              ;
+; DATA AREA from [OPB+64] to [OPB+128] can be used for                         ; 
+; OS-scefific undocumented scratch pads                                        ;                                                                   
+; Use OS-specific scratch pad at OPB[80-95], 16 bytes (for timer API)          ;
+; 3968 BYTES [OPB+128] = Reserved                                              ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
 MeasureCopyFile:
 push rbx rsi rdi rbp r12 r13 r14 r15
 ;--- Clear output variables ---
-push rdi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_QWORDS
-rep stosq
-pop rdi
+call HelperClearOPB
 ;--- Alignment stack and reserve stack space for WinAPI, 32 bytes ---
 mov rbp,rsp                   ; save RSP
 and rsp,0FFFFFFFFFFFFFFF0h    ; align 16
 push rbp          ; must be aligned by 16 with next operation
 sub rsp,32+24     ; make parameter shadow plus >4 parameters for Win API
 ;--- Calculate aligned base and size for memory buffer ---
-lea rbx,OPB_DATA_ARRAY
-test ebx,0FFFh
-jz @f
-and rbx,0FFFFFFFFFFFFF000h
-add rbx,00000000000001000h
-@@:
-mov OPB_BUFFER_BASE,rbx        ; RBX = Work buffer base
-mov rbp,IPB_BLOCK_SIZE
-mov OPB_BUFFER_SIZE,rbp        ; RBP = Work buffer size
+call HelperDTA                ; RBX = Work buffer base, RBP = Work buffer size
 ;--- Open SOURCE file for Read, note create file function used for open file ---
-lea rcx,IPB_SRC_PATH           ; RCX    = Parm#1 = Pointer to file path
-mov edx,GENERIC_READ           ; RDX    = Parm#2 = Desired access
-xor r8d,r8d                    ; R8     = Parm#3 = Share mode = 0
-xor r9d,r9d                    ; R9     = Parm#4 = Security attributes = 0
-mov PARM_5,OPEN_EXISTING       ; Parm#5 = Creation disposition
-mov eax,FILE_ATTRIBUTE_NORMAL
-test IPB_SRC_ATTRIBUTES,00000001b
-jz @f
-or eax,FILE_FLAG_NO_BUFFERING
-@@:
-test IPB_SRC_ATTRIBUTES,00000010b
-jz @f
-or eax,FILE_FLAG_WRITE_THROUGH
-@@:
-mov PARM_6,rax                 ; Parm#6 = File attribute and flags 
-mov PARM_7,r8                  ; Parm#7 = 0 = Template file handle, not used
-call [CreateFileA]
-mov OPB_SRC_HANDLE,rax
+call HelperOpenSrcRead
 test rax,rax                   ; RAX = 0 for typical errors
 jz @f
 cmp rax,-1                     ; RAX = FFFFFFFFFFFFFFFFh if file not found
@@ -94,24 +67,7 @@ cmp rax,-1                     ; RAX = FFFFFFFFFFFFFFFFh if file not found
 mov eax,STEP_OPEN_READ 
 jz ErrorFileContext            ; Here ZF=1(Z) if any error condition detected 
 ;--- Open/Create DESTINATION file for Write ---
-lea rcx,IPB_DST_PATH           ; RCX    = Parm#1 = Pointer to file path
-mov edx,GENERIC_WRITE          ; RDX    = Parm#2 = Desired access
-xor r8d,r8d                    ; R8     = Parm#3 = Share mode = 0
-xor r9d,r9d                    ; R9     = Parm#4 = Security attributes = 0
-mov PARM_5,CREATE_ALWAYS       ; Parm#5 = Creation disposition
-mov eax,FILE_ATTRIBUTE_NORMAL
-test IPB_DST_ATTRIBUTES,00000001b
-jz @f
-or eax,FILE_FLAG_NO_BUFFERING
-@@:
-test IPB_DST_ATTRIBUTES,00000010b
-jz @f
-or eax,FILE_FLAG_WRITE_THROUGH
-@@:
-mov PARM_6,rax                 ; Parm#6 = File attribute and flags 
-mov PARM_7,r8                  ; Parm#7 = 0 = Template file handle, not used
-call [CreateFileA]
-mov OPB_DST_HANDLE,rax
+call HelperCreateDstWrite
 test rax,rax                   ; RAX = 0 for typical errors
 mov eax,STEP_OPEN_WRITE 
 jz ErrorFileContext 
@@ -126,6 +82,7 @@ xor r12,r12
 .ReadWriteBlock:
 ;--- Read one block from source file ---
 mov rbx,OPB_BUFFER_BASE
+xor r15,r15
 .ReadBlock:
 mov rcx,OPB_SRC_HANDLE         ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                    ; RDX = Parm#2 = Pointer to buffer
@@ -199,10 +156,7 @@ mov OPB_OPERATION_SIZE,r14
 ;--- Get and store stop timer value ---
 lea rcx,OPB_TRANSIT_T2
 call [GetSystemTimeAsFileTime]
-mov rax,OPB_TRANSIT_T2
-sub rax,OPB_TRANSIT_T1
-imul rax,rax,100
-mov OPB_TIMER_DELTA,rax
+call HelperDeltaTime
 ;--- Close SOURCE file after READ ---
 mov rcx,OPB_SRC_HANDLE   ; RCX = Parm#1 = Pointer to file path
 call [CloseHandle]

@@ -37,7 +37,7 @@
 ; MUST RETURN ERROR WHEN NOT EXISTED, 
 ; VERIFY ALL BITMAPS FOR OPEN/CREATE FILES FLAGS
 
-include 'include\Equations.inc'
+include 'include\BaseEquations.inc'
 
 format ELF executable 3
 segment readable executable
@@ -53,21 +53,21 @@ lea esi,[IPB]
 lea edi,[OPB]
 
 ;---
-;mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
-;mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-;mov eax,00000011b                    ; FILE_FLAGS
-;mov IPB_SRC_ATTRIBUTES,eax
-;mov IPB_ITERATIONS,500               ; 5 ; 1
-;lea ecx,[ReadFileName]
-;lea edx,IPB_SRC_PATH
-;@@:
-;mov al,[ecx]
-;mov [edx],al
-;inc ecx
-;inc edx
-;cmp al,0
-;jne @b
-;call MeasureReadFile
+mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
+mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
+mov eax,00000011b                    ; FILE_FLAGS
+mov IPB_SRC_ATTRIBUTES,eax
+mov IPB_ITERATIONS,500               ; 5 ; 1
+lea ecx,[ReadFileName]
+lea edx,IPB_SRC_PATH
+@@:
+mov al,[ecx]
+mov [edx],al
+inc ecx
+inc edx
+cmp al,0
+jne @b
+call MeasureReadFile
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
@@ -183,9 +183,9 @@ int 80h
 ;--------------------------------------------------------------;
 StringWriteSelected:
 test al,al
-jz StringWrite   ; Go if required first string, skip find operation
+jz StringWrite1   ; Go if required first string, skip find operation
 cmp al,ah
-ja StringWrite   ; Go if wrong selector above limit
+ja StringWrite1   ; Go if wrong selector above limit
 mov ah,al
 ;--- Skip AH strings ---
 cld
@@ -206,7 +206,7 @@ jnz @b      ; Repeat cycle for skip required number of strings
 ;          EDI = Modified by copy                              ;
 ;          Memory at [Input EDI] modified                      ; 
 ;--------------------------------------------------------------;
-StringWrite:
+StringWrite1:
 cld
 @@:
 lodsb
@@ -255,7 +255,7 @@ ret
 ; OUTPUT:  EDI = New Destination Pointer (flat)                ;
 ;                modified because string write                 ;
 ;--------------------------------------------------------------;
-DecimalPrint32:
+; DecimalPrint32:
 cld
 push eax ebx ecx edx
 mov bh,80h-10       ; BH = Variable for left zeroes print control
@@ -351,18 +351,18 @@ pop eax
 ret
 
 ;---------- Library main functionality ----------------------------------------;
+include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
 include 'include\MeasureReadFile.inc'
 include 'include\MeasureWriteFile.inc'
 include 'include\MeasureCopyFile.inc'
-include 'include\MeasureMixedIO.inc'
 include 'include\MeasureDeleteFile.inc'
 
-;---------- Data -----------------------------------------------------------;
+;---------- Data --------------------------------------------------------------;
 
 segment readable writeable
 ;--- Transit buffer for text ---
-TextBuffer                 DB  1024 DUP (?)       ; Buffer for text block built
+TextBuffer     DB  1024 DUP (?)   ; Buffer for text block built
 ;--- File I/O debug support ---
 ReadFileName   DB  'a1.bin',0     ; 'C:\TEMP\a1.bin',0
 WriteFileName  DB  'a2.bin',0     ; 'C:\TEMP\a2.bin',0

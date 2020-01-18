@@ -11,10 +11,9 @@ public class DebugNativeIO
     
 private final String SRC_FILE_NAME = "/home/manusov/PROJECTS/NB/a1.bin";
 private final String DST_FILE_NAME = "/home/manusov/PROJECTS/NB/a2.bin";
-
     
-private final PAL pal;
-private boolean binaryValid = false;
+final PAL pal;
+boolean binaryValid = false;
 
 DebugNativeIO()
     {
@@ -195,11 +194,6 @@ void testCopy()
         System.out.println( s );
         }
 
-    }
-
-void testMixedIO()
-    {
-    
     }
 
 void testDelete()

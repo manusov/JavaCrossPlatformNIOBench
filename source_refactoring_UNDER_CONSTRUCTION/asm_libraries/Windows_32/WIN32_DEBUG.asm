@@ -2,7 +2,7 @@
 ;     Module for debug, this fragment used for run under debugger (OllyDbg).   ;    
 ;------------------------------------------------------------------------------;
 include 'win32a.inc'
-include 'include\Equations.inc'
+include 'include\BaseEquations.inc'
 format PE GUI
 entry start
 section '.text' code readable executable
@@ -10,27 +10,27 @@ start:
 lea esi,[IPB]
 lea edi,[OPB]
 ;---
-;mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
-;mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-;;-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
-;;-mov IPB_SRC_ATTRIBUTES,eax
-;mov IPB_SRC_ATTRIBUTES,00000011b
-;mov IPB_ITERATIONS,5
-;lea ecx,[ReadFileName]
-;lea edx,IPB_SRC_PATH
-;@@:
-;mov al,[ecx]
-;mov [edx],al
-;inc ecx
-;inc edx
-;cmp al,0
-;jne @b
-;call MeasureReadFile
-;; debug point
+mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
+mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
+;-mov eax,FILE_FLAG_NO_BUFFERING + FILE_FLAG_WRITE_THROUGH + FILE_ATTRIBUTE_NORMAL
+;-mov IPB_SRC_ATTRIBUTES,eax
+mov IPB_SRC_ATTRIBUTES,00000011b
+mov IPB_ITERATIONS,5
+lea ecx,[ReadFileName]
+lea edx,IPB_SRC_PATH
+@@:
+mov al,[ecx]
+mov [edx],al
+inc ecx
+inc edx
+cmp al,0
+jne @b
+call MeasureReadFile
+; debug point
 ;INT3
-;mov eax,OPB_LAST_ERROR
-;mov ecx,OPB_OPERATION_SIZE_L
-;mov edx,OPB_OPERATION_SIZE_H
+mov eax,OPB_LAST_ERROR
+mov ecx,OPB_OPERATION_SIZE_L
+mov edx,OPB_OPERATION_SIZE_H
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
@@ -102,11 +102,11 @@ mov edx,OPB_OPERATION_SIZE_H
 push 0
 call [ExitProcess]
 ;---------- Library main functionality ----------------------------------------;
+include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
 include 'include\MeasureReadFile.inc'
 include 'include\MeasureWriteFile.inc'
 include 'include\MeasureCopyFile.inc'
-include 'include\MeasureMixedIO.inc'
 include 'include\MeasureDeleteFile.inc'
 ;---------- Data section ------------------------------------------------------;
 section '.data' data readable writeable

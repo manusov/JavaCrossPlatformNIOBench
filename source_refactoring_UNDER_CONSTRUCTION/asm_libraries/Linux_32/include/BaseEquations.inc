@@ -66,5 +66,10 @@ OPB_TRANSIT_T2_NS     EQU  dword [edi + 108]
 OPB_TRANSIT_SEEK      EQU  [edi + 120]  ; usage removed
 ; this required for restore ESI, EDI, 
 ; because temporary used by Linux 32 calling convention
-BACKUP_ESI            EQU  dword [esp + 08]
-BACKUP_EDI            EQU  dword [esp + 04]
+; BACKUP_ESI          EQU  dword [esp + 08]
+; BACKUP_EDI          EQU  dword [esp + 04]
+; same fields used after NEAR CALL (esp-4)
+; SUBR_BACKUP_ESI     EQU  dword [esp + 08 + 04]
+; SUBR_BACKUP_EDI     EQU  dword [esp + 04 + 04]
+
+

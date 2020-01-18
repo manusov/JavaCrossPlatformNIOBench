@@ -25,7 +25,7 @@
 SYS_WRITE     = 1    ; Linux API functions (syscall numbers)
 SYS_NANOSLEEP = 35
 SYS_EXIT      = 60
-include 'include\Equations.inc'
+include 'include\BaseEquations.inc'
 ;---
 DUMP_REGION = OPB
 DUMP_TYPE   = 4      ; 0=None, 1=8bit, 2=16bit, 3=32bit, 
@@ -42,21 +42,21 @@ lea rdi,[OPB]
 mov r14,rsi
 mov r15,rdi
 ;---
-;mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
-;mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
-;mov eax,00000011b                    ; FILE_FLAGS
-;mov IPB_SRC_ATTRIBUTES,rax
-;mov IPB_ITERATIONS,500               ; 5 ; 1
-;lea rcx,[ReadFileName]
-;lea rdx,IPB_SRC_PATH
-;@@:
-;mov al,[rcx]
-;mov [rdx],al
-;inc rcx
-;inc rdx
-;cmp al,0
-;jne @b
-;call MeasureReadFile
+mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
+mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
+mov eax,00000011b                    ; FILE_FLAGS
+mov IPB_SRC_ATTRIBUTES,rax
+mov IPB_ITERATIONS,500               ; 5 ; 1
+lea rcx,[ReadFileName]
+lea rdx,IPB_SRC_PATH
+@@:
+mov al,[rcx]
+mov [rdx],al
+inc rcx
+inc rdx
+cmp al,0
+jne @b
+call MeasureReadFile
 ;---
 mov IPB_REQUEST_SIZE, 10*1024*1024   ; 1310720   ; 16384
 mov IPB_BLOCK_SIZE,   1024*1024      ; 131072    ; 4096
@@ -127,10 +127,10 @@ mov rsi,rdi
 mov eax,ebp
 call HexPrint16              ; Print address
 mov edx,4
-call StringWrite
+call StringWrite1
 mov rsi,StringInterval
 mov edx,3
-call StringWrite
+call StringWrite1
 ;---
 IF DUMP_TYPE = 1             ; Dump for 8-bit, hex
 mov ecx,16
@@ -144,7 +144,7 @@ call HexPrint8
 mov al,' '
 stosb
 mov edx,3
-call StringWrite
+call StringWrite1
 loop MemoryDump              ; End cycle for write bytes at dump string
 END IF
 ;---
@@ -160,7 +160,7 @@ call HexPrint16
 mov al,' '
 stosb
 mov edx,5
-call StringWrite
+call StringWrite1
 loop MemoryDump              ; End cycle for write bytes at dump string
 END IF
 ;---
@@ -176,7 +176,7 @@ call HexPrint32
 mov al,' '
 stosb
 mov edx,9
-call StringWrite
+call StringWrite1
 loop MemoryDump              ; End cycle for write bytes at dump string
 END IF
 ;---
@@ -192,7 +192,7 @@ call HexPrint64
 mov al,' '
 stosb
 mov edx,17
-call StringWrite
+call StringWrite1
 loop MemoryDump              ; End cycle for write bytes at dump string
 END IF
 ;---
@@ -210,7 +210,7 @@ mov rax,[rbx]
 add rbx,8
 call FloatingPrint64
 mov edx,16
-call StringWrite
+call StringWrite1
 loop MemoryDump              ; End cycle for write bytes at dump string
 END IF
 ;---
@@ -242,7 +242,7 @@ syscall
 ;---------------------------------------------------;
 ParameterWrite:
 push rax
-call StringWrite
+call StringWrite1
 pop rax
 test eax,eax
 jz BadParameter
@@ -252,7 +252,7 @@ ja BadParameter
 mov rdi,StringBuffer
 push rdi
 xor esi,esi
-call DecimalPrint32
+call DecimalPrint32_1
 pop rsi
 mov rdx,rdi
 sub rdx,rsi
@@ -262,7 +262,7 @@ mov rsi,StringUnknown
 mov edx,1
 ValidParameter:
 ; No RET, continue in the next subroutine
-jmp StringWrite
+jmp StringWrite1
 
 ;---------------------------------------------------;
 ; Text string console output with LF = Line Feed    ;
@@ -271,7 +271,7 @@ jmp StringWrite
 ; OUTPUT: None                                      ;
 ;---------------------------------------------------;
 StringWriteLF:
-call StringWrite
+call StringWrite1
 ; No RET, continue in the next subroutine
 ;---------------------------------------------------;
 ; LF = Line Feed console output                     ;
@@ -288,7 +288,7 @@ mov edx,1
 ;         RDX=String size                           ;
 ; OUTPUT: None                                      ;
 ;---------------------------------------------------;
-StringWrite:
+StringWrite1:
 mov edi,1                  ; STDOUT
 mov eax,SYS_WRITE          ; EAX = Linux API function (syscall number)
 push rbx rcx rsi rbp       ; RBX, RCX, RSI, RBP non-volatile for this program
@@ -302,7 +302,7 @@ ret
 ; OUTPUT:  RDI = New Destination Pointer (flat)        ;
 ;                modified because string write         ;
 ;------------------------------------------------------;
-DecimalPrint32:
+DecimalPrint32_1:
 cld
 push rbx rcx                 ; Note RAX, RDX is volatile
 mov ebx,esi
@@ -401,13 +401,13 @@ stosb
 pop rax
 ret
 ;---------- Library main functionality ----------------------------------------;
+include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
 include 'include\MeasureReadFile.inc'
 include 'include\MeasureWriteFile.inc'
 include 'include\MeasureCopyFile.inc'
-include 'include\MeasureMixedIO.inc'
 include 'include\MeasureDeleteFile.inc'
-;---------- Data -----------------------------------------------------------;
+;---------- Data --------------------------------------------------------------;
 segment readable writeable
 ;--- Text output support ---
 StringInterval:

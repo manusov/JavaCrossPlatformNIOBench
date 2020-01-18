@@ -51,11 +51,9 @@ mov r14,rsi                 ; R14 = Pointer to IPB
 mov r15,rdi                 ; R15 = Pointer to OPB
 
 ;--- Clear output variables ---
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_QWORDS
-rep stosq
+call HelperClearOPB
 
+;--- Delete file ---
 lea rdi,IPB_SRC_PATH        ; Parm#1 = Pointer to source file path
 mov eax,SYS_UNLINK
 syscall

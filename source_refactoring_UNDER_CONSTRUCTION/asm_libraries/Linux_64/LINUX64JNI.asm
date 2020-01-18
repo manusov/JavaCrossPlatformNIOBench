@@ -190,27 +190,30 @@ inc dword [rdi]
 pop rbx
 ret
 ;---------- Library main functionality ----------------------------------------;
-include 'include\Equations.inc'
+include 'include\BaseEquations.inc'
+include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
 include 'include\MeasureReadFile.inc'
 include 'include\MeasureWriteFile.inc'
 include 'include\MeasureCopyFile.inc'
-include 'include\MeasureMixedIO.inc'
 include 'include\MeasureDeleteFile.inc'
+include 'include\PrecisionLinear.inc'
+include 'include\PrecisionMixed.inc'
 ;--- Functions pointers, for IPB absent ---
 FunctionCount      =   3
 FunctionSelector   DQ  GetLibraryName    ; 0 = Get native library ASCII name
                    DQ  GetLibraryInfo    ; 1 = Get native library information  
                    DQ  0  
 ;--- Functions pointers, for IPB present ---
-iFunctionCount     =   7
-iFunctionSelector  DQ  GetRandomData      ; 0 = Get array of random data
-                   DQ  MeasureReadFile    ; 1 = Read file
-                   DQ  MeasureWriteFile   ; 2 = Write file
-                   DQ  MeasureCopyFile    ; 3 = Copy file
-                   DQ  MeasureMixedIO     ; 4 = Mixed read/write
-                   DQ  MeasureDeleteFile  ; 5 = Delete file                   
-                   DQ  0                  ; Reserved unused
+iFunctionCount     =   8
+iFunctionSelector  DQ  GetRandomData         ; 0 = Get array of random data
+                   DQ  MeasureReadFile       ; 1 = Read file
+                   DQ  MeasureWriteFile      ; 2 = Write file
+                   DQ  MeasureCopyFile       ; 3 = Copy file
+                   DQ  MeasureDeleteFile     ; 4 = Delete file
+                   DQ  PrecisionLinear       ; 5 = Write, Copy, Read per 1 call
+                   DQ  PrecisionMixed        ; 6 = Tandom mixed IO per 1 call
+                   DQ  0                     ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.03.00 for Linux x64.',0  
+LibraryName        DB  'NIOBench native library v0.04.00 for Linux x64.',0  
 

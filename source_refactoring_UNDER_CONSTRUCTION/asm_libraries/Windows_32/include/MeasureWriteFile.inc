@@ -59,43 +59,11 @@
 MeasureWriteFile:
 push ebx esi edi ebp
 ;--- Clear output variables ---
-push edi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_DWORDS
-rep stosd
-pop edi
+call HelperClearOPB
 ;--- Calculate aligned base and size for memory buffer ---
-lea ebx,OPB_DATA_ARRAY
-test ebx,0FFFh
-jz @f
-and ebx,0FFFFF000h
-add ebx,000001000h
-@@:
-mov OPB_BUFFER_BASE,ebx        ; EBX = Work buffer base
-mov ebp,IPB_BLOCK_SIZE
-mov OPB_BUFFER_SIZE,ebp        ; EBP = Work buffer size
+call HelperDTA                 ; EBX = Work buffer base, EBP = Work buffer size
 ;--- Open/Create file for Write ---
-xor eax,eax                    ; This for compact push zeroes
-push eax                       ; Parm#7 = 0 = Template file handle, not used
-mov ecx,FILE_ATTRIBUTE_NORMAL
-test IPB_SRC_ATTRIBUTES,00000001b
-jz @f
-or ecx,FILE_FLAG_NO_BUFFERING
-@@:
-test IPB_SRC_ATTRIBUTES,00000010b
-jz @f
-or ecx,FILE_FLAG_WRITE_THROUGH
-@@:
-push ecx                       ; Parm#6 = File attribute and flags
-push CREATE_ALWAYS             ; Parm#5 = Creation disposition
-push eax                       ; Parm#4 = Security attributes = 0
-push eax                       ; Parm#3 = Share mode = 0  
-push GENERIC_WRITE             ; Parm#2 = Desired access
-lea eax,IPB_SRC_PATH
-push eax                       ; Parm#1 = Pointer to file path  
-call [CreateFileA]
-mov OPB_SRC_HANDLE,eax
+call HelperOpenSrcWrite
 test eax,eax                   ; EAX = 0 for typical errors
 mov eax,STEP_OPEN_WRITE 
 jz ErrorFileContext 
@@ -157,17 +125,7 @@ jnz .WriteMeasurement
 lea eax,OPB_TRANSIT_T2
 push eax
 call [GetSystemTimeAsFileTime]
-mov eax,OPB_TRANSIT_T2_L
-mov ecx,OPB_TRANSIT_T2_H
-sub eax,OPB_TRANSIT_T1_L
-sbb ecx,OPB_TRANSIT_T1_H
-mov ebx,100
-mul ebx
-mov OPB_TIMER_DELTA_L,eax
-mov OPB_TIMER_DELTA_H,edx
-mov eax,ecx
-mul ebx
-add OPB_TIMER_DELTA_H,eax
+call HelperDeltaTime
 ;--- Close file after Read ---
 push OPB_SRC_HANDLE            ; Parm#1 = Pointer to file path
 call [CloseHandle]

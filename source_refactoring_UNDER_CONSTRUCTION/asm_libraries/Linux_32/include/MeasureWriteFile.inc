@@ -58,41 +58,17 @@ MeasureWriteFile:
 push ebx esi edi ebp
 
 ;--- Clear output variables ---
-push edi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_DWORDS
-rep stosd
-pop edi
+call HelperClearOPB
 
 ;--- Calculate aligned base and size for memory buffer ---
-lea eax,OPB_DATA_ARRAY
-test eax,0FFFh
-jz @f
-and eax,0FFFFF000h
-add eax,000001000h
-@@:
-mov OPB_BUFFER_BASE,eax     ; Setup Work buffer base
-mov eax,IPB_BLOCK_SIZE
-mov OPB_BUFFER_SIZE,eax     ; Setup Work buffer size
+call HelperDTA                ; Setup Work buffer base and Work buffer size
 
 ;--- Create source file ---
-push esi edi
-lea ebx,IPB_SRC_PATH          ; EBX = Parm#1 = Pointer to source file path
-mov ecx,FILE_FLAGS_BLANK      ; ECX = Parm#2 = File operation mode flags
-test IPB_SRC_ATTRIBUTES,00000011b
-jz @f
-or ecx,FILE_FLAG_O_DIRECT
-@@:
-mov edx,FILE_SHARE_MODE       ; EDX = Parm#3 = File access read-write mode flags
-mov eax,5                     ; EAX = Function code = SYS_OPEN
-int 80h
-pop edi esi
+call HelperOpenSrcWrite
 test eax,eax
 jz ErrorFileContext
 cmp eax,7FFFFFFFh
 ja ErrorFileContext
-mov OPB_SRC_HANDLE,eax
 
 ;--- Get and store time at file WRITE start ---
 push esi edi
@@ -171,19 +147,7 @@ test eax,eax
 jnz ErrorWrite
 
 ;--- Calculate delta-time in nanoseconds ---
-mov eax,OPB_TRANSIT_T2_S
-sub eax,OPB_TRANSIT_T1_S       ; EAX = Delta seconds
-mov ebx,1000000000             ; EBX = Nanoseconds per second
-mul ebx                        ; EDX:EAX = Delta nanoseconds, addend #1 by seconds
-xchg ebx,eax
-mov ecx,edx                    ; ECX:EBX = Delta nanoseconds, addend #1 by seconds
-mov eax,OPB_TRANSIT_T2_NS
-sub eax,OPB_TRANSIT_T1_NS      ; EDX:EAX = Delta nanoseconds, addend #2 by nanoseconds
-cdq
-add eax,ebx
-adc edx,ecx                   ; EDX:EAX = sum of addends #1, #2, total delta in nanoseconds 
-mov OPB_TIMER_DELTA_L,eax
-mov OPB_TIMER_DELTA_H,edx
+call HelperDeltaTime
 
 ;--- Close file ---
 mov ebx,OPB_SRC_HANDLE      ; EBX = Parm#1 = Source file descriptor, handle

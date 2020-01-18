@@ -194,13 +194,15 @@ inc dword [edi]
 pop ebx
 ret
 ;---------- Library main functionality ----------------------------------------;
-include 'include\Equations.inc'
+include 'include\BaseEquations.inc'
+include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
 include 'include\MeasureReadFile.inc'
 include 'include\MeasureWriteFile.inc'
 include 'include\MeasureCopyFile.inc'
-include 'include\MeasureMixedIO.inc'
 include 'include\MeasureDeleteFile.inc'
+include 'include\PrecisionLinear.inc'
+include 'include\PrecisionMixed.inc'
 ;---------- Data section -------------------------------------------------------
 section '.data' data readable writeable
 ;--- Functions pointers, for IPB absent ---
@@ -209,16 +211,17 @@ FunctionSelector   DD  GetLibraryName     ; 0 = Get native library ASCII name
                    DD  GetLibraryInfo     ; 1 = Get native library information  
                    DD  0  
 ;--- Functions pointers, for IPB present ---
-iFunctionCount     =   7
-iFunctionSelector  DD  GetRandomData      ; 0 = Get array of random data
-                   DD  MeasureReadFile    ; 1 = Read file
-                   DD  MeasureWriteFile   ; 2 = Write file
-                   DD  MeasureCopyFile    ; 3 = Copy file
-                   DD  MeasureMixedIO     ; 4 = Mixed read/write
-                   DD  MeasureDeleteFile  ; 5 = Delete file                   
-                   DD  0                  ; Reserved unused
+iFunctionCount     =   8
+iFunctionSelector  DD  GetRandomData         ; 0 = Get array of random data
+                   DD  MeasureReadFile       ; 1 = Read file
+                   DD  MeasureWriteFile      ; 2 = Write file
+                   DD  MeasureCopyFile       ; 3 = Copy file
+                   DD  MeasureDeleteFile     ; 4 = Delete file
+                   DD  PrecisionLinear       ; 5 = Write, Copy, Read per 1 call
+                   DD  PrecisionMixed        ; 6 = Tandom mixed IO per 1 call
+                   DD  0                     ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.03.00 for Windows ia32.',0  
+LibraryName        DB  'NIOBench native library v0.04.00 for Windows ia32.',0  
 ;--- Data for detect WOW64 ---
 LibName  DB  'KERNEL32',0
 FncName  DB  'IsWow64Process',0

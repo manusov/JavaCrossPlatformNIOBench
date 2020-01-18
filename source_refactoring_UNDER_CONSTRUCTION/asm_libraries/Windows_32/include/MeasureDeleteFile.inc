@@ -59,12 +59,7 @@
 MeasureDeleteFile:
 push ebx esi edi ebp
 ;--- Clear output variables ---
-push edi
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_DWORDS
-rep stosd
-pop edi
+call HelperClearOPB
 ;--- Delete file ---
 lea eax,IPB_SRC_PATH           
 push eax                ; Parm#1 = Pointer to file path

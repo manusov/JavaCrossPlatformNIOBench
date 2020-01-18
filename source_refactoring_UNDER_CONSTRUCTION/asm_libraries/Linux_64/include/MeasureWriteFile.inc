@@ -51,38 +51,18 @@ mov r14,rsi                 ; R14 = Pointer to IPB
 mov r15,rdi                 ; R15 = Pointer to OPB
 
 ;--- Clear output variables ---
-cld
-xor eax,eax
-mov ecx,OPB_CLEAR_QWORDS
-rep stosq
+call HelperClearOPB
 
 ;--- Calculate aligned base and size for memory buffer ---
-lea rbx,OPB_DATA_ARRAY
-test ebx,0FFFh
-jz @f
-and rbx,0FFFFFFFFFFFFF000h
-add rbx,00000000000001000h
-@@:
-mov OPB_BUFFER_BASE,rbx     ; RBX = Work buffer base
-mov rbp,IPB_BLOCK_SIZE
-mov OPB_BUFFER_SIZE,rbp     ; RBP = Work buffer size
+call HelperDTA               ; RBX = Work buffer base , RBP = Work buffer size
 
 ;--- Create source file ---
-lea rdi,IPB_SRC_PATH        ; RDI = Parm#1 = Pointer to source file path
-mov esi,FILE_FLAGS_BLANK    ; RSI = Parm#2 = File operation mode flags
-test IPB_SRC_ATTRIBUTES,00000011b
-jz @f
-or esi,FILE_FLAG_O_DIRECT
-@@:
-mov edx,FILE_SHARE_MODE     ; RDX = Parm#3 = File access read-write mode flags
-mov eax,SYS_OPEN            ; RAX = Function code, open file
-syscall
+call HelperOpenSrcWrite
 mov ecx,STEP_OPEN_WRITE
 test rax,rax
 jz ErrorFileContext
 cmp rax,7FFFFFFFh
 ja ErrorFileContext
-mov OPB_SRC_HANDLE,rax      ; Store source file handle
 
 ;--- Get and store time at file WRITE start ---
 xor edi,edi                 ; RDI = Parm#1 = Timer select, 0 means CLOCK_REALTIME
@@ -151,15 +131,7 @@ test rax,rax
 jnz ErrorFileContext
 
 ;--- Calculate delta-time in nanoseconds ---
-mov rax,1000000000          ; RAX = Nanoseconds per one second
-mul OPB_TRANSIT_T1_S        ; First qword = Seconds
-add rax,OPB_TRANSIT_T1_NS   ; Second qword = Nanoseconds
-xchg rcx,rax
-mov rax,1000000000          ; RAX = Nanoseconds per one second
-mul OPB_TRANSIT_T2_S        ; First qword = Seconds
-add rax,OPB_TRANSIT_T2_NS   ; Second qword = Nanoseconds
-sub rax,rcx                 ; RAX = After operation time, RCX = Before operation time
-mov OPB_TIMER_DELTA,rax     ; Return delta = RAX-RCX nanoseconds per COPY operation 
+call HelperDeltaTime
 
 ;--- Close file ---
 mov rdi,OPB_SRC_HANDLE      ; RDI = Parm#1 = Source file descriptor, handle
