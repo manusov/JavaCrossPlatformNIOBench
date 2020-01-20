@@ -30,13 +30,15 @@ import static niobenchrefactoring.resources.PAL.PRECISION_LINEAR;
 
 public class DebugNativeLinear extends DebugNativeIO
 {
-private final String SRC_PREFIX    = "C:\\TEMP\\src";
+// private final String SRC_PREFIX    = "C:\\TEMP\\src";
+private final String SRC_PREFIX    = "src";
 private final String SRC_POSTFIX   = ".bin";
-private final String DST_PREFIX    = "C:\\TEMP\\dst";
+// private final String DST_PREFIX    = "C:\\TEMP\\dst";
+private final String DST_PREFIX    = "dst";
 private final String DST_POSTFIX   = ".bin";
 
-private final int FILE_SIZE        = 100 * 1024 * 1024;   // 512 * 1024;
-private final int BLOCK_SIZE       = 10 * 1024 * 1024;    // 4 * 1024;
+private final int FILE_SIZE        = 10 * 1024 * 1024;   // 512 * 1024;
+private final int BLOCK_SIZE       = 1 * 1024 * 1024;    // 4 * 1024;
 private final int FILE_COUNT       = 10;
 private final int ITERATIONS_COUNT = 5;
 

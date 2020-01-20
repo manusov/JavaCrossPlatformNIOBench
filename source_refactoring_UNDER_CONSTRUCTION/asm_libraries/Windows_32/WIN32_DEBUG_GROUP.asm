@@ -1,15 +1,14 @@
 ;------------------------------------------------------------------------------;
-;     Module for debug, this fragment used for run under debugger (FDBG).      ;    
+;     Module for debug, this fragment used for run under debugger (OllyDbg).   ;    
 ;------------------------------------------------------------------------------;
-include 'win64a.inc'
+include 'win32a.inc'
 include 'include\BaseEquations.inc'
-format PE64 GUI
+format PE GUI
 entry start
 section '.text' code readable executable
 start:
-sub rsp,8*5
-lea rsi,[IPB]
-lea rdi,[OPB]
+lea esi,[IPB]
+lea edi,[OPB]
 ;---
 
 mov IPB_REQUEST_SIZE, 65536
@@ -18,34 +17,37 @@ mov IPB_SRC_ATTRIBUTES,00000011b
 mov IPB_ITERATIONS,5
 mov IPB_FILE_COUNT,20
 
-lea rcx,[ReadPrefix]
-lea rdx,IPB_SRC_PATH_PREFIX
+lea ecx,[ReadPrefix]
+lea edx,IPB_SRC_PATH_PREFIX
 call StringHelper
-lea rcx,[ReadPostfix]
-lea rdx,IPB_SRC_PATH_POSTFIX
+lea ecx,[ReadPostfix]
+lea edx,IPB_SRC_PATH_POSTFIX
 call StringHelper
-lea rcx,[WritePrefix]
-lea rdx,IPB_DST_PATH_PREFIX
+lea ecx,[WritePrefix]
+lea edx,IPB_DST_PATH_PREFIX
 call StringHelper
-lea rcx,[WritePostfix]
-lea rdx,IPB_DST_PATH_POSTFIX
+lea ecx,[WritePostfix]
+lea edx,IPB_DST_PATH_POSTFIX
 call StringHelper
 
 call PrecisionLinear
 
 ;--- Exit OS ---
-xor ecx,ecx
+push 0
 call [ExitProcess]
 ;--- Helper ---
 StringHelper:
 @@:
-mov al,[rcx]
-mov [rdx],al
-inc rcx
-inc rdx
+mov al,[ecx]
+mov [edx],al
+inc ecx
+inc edx
 cmp al,0
 jne @b
 ret
+
+
+
 ;---------- Library main functionality ----------------------------------------;
 include 'include\BaseRoutines.inc'
 include 'include\GetRandomData.inc'
@@ -63,7 +65,7 @@ WritePostfix  DB  '.bin',0
 align 4096
 IPB           DB  4096      DUP (?)
 OPB           DB  4096      DUP (?)
-BUFFER        DB  1024*1024 DUP (?)
+BUFFER        DB  1024*1024 DUP (?)  ; 16384 DUP (?)
 BUFALIGN      DB  4096      DUP (?)
 ;---------- Import section ----------------------------------------------------;
 section '.idata' import data readable writeable

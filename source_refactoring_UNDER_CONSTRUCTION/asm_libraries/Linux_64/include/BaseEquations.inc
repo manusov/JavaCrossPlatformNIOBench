@@ -70,44 +70,68 @@ SYS_GETAFFINITY  = 204
 SYS_SETMEMPOLICY = 238    ; Note alternative codes
 SYS_GETMEMPOLICY = 239    ; Note alternative codes
 ;--- Constants equations ------------------------------------------------------; 
-FILE_FLAGS_BLANK    EQU  00000042h
-FILE_FLAG_O_DIRECT  EQU  00004000h
-FILE_SHARE_MODE     EQU  -1         ; note old value is 00000C00h required sudo
+FILE_FLAGS_BLANK      EQU  00000042h
+FILE_FLAG_O_DIRECT    EQU  00004000h
+FILE_SHARE_MODE       EQU  -1         ; note old value is 00000C00h required sudo
 ;---------- File I/O benchmarking support functions, equations ----------------;
 ; IPB (Input Parameters Block) layout declaration
-IPB_REQUEST_ID      EQU  qword [r14 + 00] 
-IPB_REQUEST_SIZE    EQU  qword [r14 + 08]
-IPB_BLOCK_SIZE      EQU  qword [r14 + 16]
-IPB_SRC_ATTRIBUTES  EQU  qword [r14 + 24]
-IPB_DST_ATTRIBUTES  EQU  qword [r14 + 32]
-IPB_ITERATIONS      EQU  qword [r14 + 40]
-IPB_SRC_PATH        EQU  [r14 + 1024]
-IPB_DST_PATH        EQU  [r14 + 2048]
+IPB_REQUEST_ID        EQU  qword [r14 + 00] 
+IPB_REQUEST_SIZE      EQU  qword [r14 + 08]
+IPB_BLOCK_SIZE        EQU  qword [r14 + 16]
+IPB_SRC_ATTRIBUTES    EQU  qword [r14 + 24]
+IPB_DST_ATTRIBUTES    EQU  qword [r14 + 32]
+IPB_ITERATIONS        EQU  qword [r14 + 40]
+; IPB layout continue, fields for "Precision" operations groups functions
+IPB_FILE_COUNT        EQU  qword [r14 + 48]
+; IPB layout continue, paths strings
+IPB_SRC_PATH          EQU  [r14 + 1024]
+IPB_DST_PATH          EQU  [r14 + 2048]
+; IPB layout continue, paths strings for "Precision" ops. groups functions
+IPB_SRC_PATH_PREFIX   EQU  [r14 + 1024]
+IPB_SRC_PATH_POSTFIX  EQU  [r14 + 1024 + 512]
+IPB_DST_PATH_PREFIX   EQU  [r14 + 2048]
+IPB_DST_PATH_POSTFIX  EQU  [r14 + 2048 + 512]
 ; OPB (Output Parameters Block) layout declaration
-OPB_BUFFER_BASE     EQU  qword [r15 + 00]
-OPB_BUFFER_SIZE     EQU  qword [r15 + 08]
-OPB_SRC_HANDLE      EQU  qword [r15 + 16]
-OPB_DST_HANDLE      EQU  qword [r15 + 24]
-OPB_OPERATION_SIZE  EQU  qword [r15 + 32]
-OPB_TIMER_DELTA     EQU  qword [r15 + 40]
-OPB_LAST_OPERATION  EQU  qword [r15 + 48]
-OPB_LAST_ERROR      EQU  qword [r15 + 56]
-OPB_DATA_ARRAY      EQU  [r15 + 4096]
-OPB_CLEAR_QWORDS    EQU  9  
+OPB_CLEAR_QWORDS      EQU  4096 / 8
+OPB_BUFFER_BASE       EQU  qword [r15 + 00]
+OPB_BUFFER_SIZE       EQU  qword [r15 + 08]
+OPB_SRC_HANDLE        EQU  qword [r15 + 16]
+OPB_DST_HANDLE        EQU  qword [r15 + 24]
+OPB_OPERATION_SIZE    EQU  qword [r15 + 32]
+OPB_TIMER_DELTA       EQU  qword [r15 + 40]
+OPB_LAST_OPERATION    EQU  qword [r15 + 48]
+OPB_LAST_ERROR        EQU  qword [r15 + 56]
+OPB_DATA_ARRAY        EQU  [r15 + 4096]
+; OPB layout continue, fields for "Precision" operations groups functions  
+OPB_HANDLES_SRC_BASE  EQU  qword [r15 + 128]
+OPB_HANDLES_DST_BASE  EQU  qword [r15 + 136]
+OPB_TIMER_READ        EQU  qword [r15 + 144]
+OPB_TIMER_WRITE       EQU  qword [r15 + 152]
+OPB_TIMER_COPY        EQU  qword [r15 + 160]
+OPB_TOTAL_READ        EQU  qword [r15 + 168]
+OPB_TOTAL_WRITE       EQU  qword [r15 + 176]
+OPB_TOTAL_COPY        EQU  qword [r15 + 184]
+OPB_COMPLEX_PATH      EQU  [r15 + 1024] 
 ; Step identification constants
-STEP_NONE           EQU  0
-STEP_OPEN_READ      EQU  1
-STEP_READ           EQU  2
-STEP_OPEN_WRITE     EQU  3
-STEP_WRITE          EQU  4
-STEP_CLOSE          EQU  5
-STEP_DELETE         EQU  6
+STEP_NONE             EQU  0
+STEP_OPEN_READ        EQU  1
+STEP_READ             EQU  2
+STEP_OPEN_WRITE       EQU  3
+STEP_WRITE            EQU  4
+STEP_CLOSE            EQU  5
+STEP_DELETE           EQU  6
 ; transit fields
-OPB_TRANSIT_T1      EQU  [r15 + 80]
-OPB_TRANSIT_T1_S    EQU  qword [r15 + 80]
-OPB_TRANSIT_T1_NS   EQU  qword [r15 + 88]
-OPB_TRANSIT_T2      EQU  [r15 + 96]
-OPB_TRANSIT_T2_S    EQU  qword [r15 + 96]
-OPB_TRANSIT_T2_NS   EQU  qword [r15 + 104]
-OPB_TRANSIT_SEEK    EQU  [r15 + 112]  ; usage removed
+OPB_TRANSIT_T1        EQU  [r15 + 80]
+OPB_TRANSIT_T1_S      EQU  qword [r15 + 80]
+OPB_TRANSIT_T1_NS     EQU  qword [r15 + 88]
+OPB_TRANSIT_T2        EQU  [r15 + 96]
+OPB_TRANSIT_T2_S      EQU  qword [r15 + 96]
+OPB_TRANSIT_T2_NS     EQU  qword [r15 + 104]
+; OPB_TRANSIT_SEEK    EQU  [r15 + 112]  ; usage removed
+OPB_TRANSIT_BLOCK     EQU  qword [r15 + 112]
+OPB_TRANSIT_FILE      EQU  dword [r15 + 120]
+OPB_TRANSIT_MEASURE   EQU  dword [r15 + 124]   
+
+
+
 

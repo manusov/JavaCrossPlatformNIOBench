@@ -47,8 +47,9 @@ private class FunctionDrawPanel extends JPanel
         Color[] drawColors = new Color[] 
             { Color.BLUE , Color.RED , Color.MAGENTA };
         Font axisFont = new Font ( "Verdana", Font.PLAIN, 10 );
-        Font textFont = new Font ( "Verdana", Font.BOLD + Font.ITALIC, 14 );
-
+//      Font textFont = new Font ( "Verdana", Font.BOLD + Font.ITALIC, 14 );
+        Font textFont = new Font ( "Verdana", Font.BOLD, 14 );
+//
         Rectangle r = g.getClipBounds();
         g.setColor( backgroundColor );
         g.setFont( axisFont );

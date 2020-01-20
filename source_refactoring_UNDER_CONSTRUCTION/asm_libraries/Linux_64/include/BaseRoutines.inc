@@ -149,6 +149,11 @@ ret
 ;           OPB_DST_HANDLE                                            ;
 ;---------------------------------------------------------------------;
 
+;--- Entry #5 = create Source file for Write, use complex path string ---
+HelperCreateSrcGroup:
+lea rdi,OPB_COMPLEX_PATH
+jmp L1
+
 ;--- Entry #1 = open Source file for Read ---
 HelperOpenSrcRead:
 ; This place reserved for customize open/create
@@ -159,8 +164,9 @@ HelperOpenSrcWrite:
 
 ;--- Common branch ---
 L0:
-push rcx                    ; This for RSP alignment because API used
 lea rdi,IPB_SRC_PATH        ; RDI = Parm#1 = Pointer to source file path
+L1:
+push rcx                    ; This for RSP alignment because API used
 mov esi,FILE_FLAGS_BLANK    ; RSI = Parm#2 = File operation mode flags
 test IPB_SRC_ATTRIBUTES,00000011b
 jz @f
@@ -173,10 +179,16 @@ mov OPB_SRC_HANDLE,rax      ; Store source file handle
 pop rcx                     ; This for RSP alignment because API used
 ret
 
+;--- Entry #6 = create Destination file for Write, use complex path string ---
+HelperCreateDstGroup:
+lea rdi,OPB_COMPLEX_PATH
+jmp L2
+
 ;--- Entry #3 = create Destination file for Write ---
 HelperCreateDstWrite:
-push rcx                    ; This for RSP alignment because API used
 lea rdi,IPB_DST_PATH        ; RDI = Parm#1 = Pointer to destination file path
+L2:
+push rcx                    ; This for RSP alignment because API used
 mov esi,FILE_FLAGS_BLANK    ; RSI = Parm#2 = File operation mode flags
 test IPB_DST_ATTRIBUTES,00000011b
 jz @f
@@ -196,7 +208,8 @@ ret
 ;          variables:                                                 ;
 ;           OPB_TRANSIT_T1, OPB_TRANSIT_T2                            ;
 ;                                                                     ;
-; Output:  variables:                                                 ;
+; Output:  RAX = Timer delta, units = 1 ns                            ;
+;          variables:                                                 ;
 ;           OPB_TIMER_DELTA                                           ;
 ;---------------------------------------------------------------------;
 HelperDeltaTime:

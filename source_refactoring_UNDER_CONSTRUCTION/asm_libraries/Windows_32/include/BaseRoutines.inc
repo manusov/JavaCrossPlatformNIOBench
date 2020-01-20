@@ -151,60 +151,72 @@ ret
 ;           OPB_DST_HANDLE                                            ;  
 ;---------------------------------------------------------------------;
 
+;--- Entry #5 = create Source file for Write, use complex path string ---
+HelperCreateSrcGroup:
+lea eax,OPB_COMPLEX_PATH                ; RCX = Parm#1 = Pointer to file path
+mov edx,GENERIC_READ OR GENERIC_WRITE   ; RDX = Parm#2 = Desired access
+jmp L2
+
 ;--- Entry #1 = open Source file for Read ---
 HelperOpenSrcRead:
+lea eax,IPB_SRC_PATH
 mov ecx,OPEN_EXISTING       ; ECX = value for Parm#5 = Creation disposition
 mov edx,GENERIC_READ        ; EDX = value for Parm#2 = Desired access 
 jmp L0
 
 ;--- Entry #2 = create Source file for Write ---
 HelperOpenSrcWrite:
-mov ecx,CREATE_ALWAYS       ; ECX = value for Parm#5 = Creation disposition
+lea eax,IPB_SRC_PATH
 mov edx,GENERIC_WRITE       ; EDX = value for Parm#2 = Desired access
+L2:
+mov ecx,CREATE_ALWAYS       ; ECX = value for Parm#5 = Creation disposition
 
 ;--- Common branch ---
 L0:
 push 0                         ; Parm#7 = 0 = Template file handle, not used
-mov eax,FILE_ATTRIBUTE_NORMAL
+push FILE_ATTRIBUTE_NORMAL     ; Parm#6 = File attribute and flags
 test IPB_SRC_ATTRIBUTES,00000001b
 jz @f
-or eax,FILE_FLAG_NO_BUFFERING
+or dword [esp],FILE_FLAG_NO_BUFFERING
 @@:
 test IPB_SRC_ATTRIBUTES,00000010b
 jz @f
-or eax,FILE_FLAG_WRITE_THROUGH
+or dword [esp],FILE_FLAG_WRITE_THROUGH
 @@:
-push eax                       ; Parm#6 = File attribute and flags
 push ecx                       ; Parm#5 = Creation disposition
-xor eax,eax                    ; This for compact push zeroes
-push eax                       ; Parm#4 = Security attributes = 0
-push eax                       ; Parm#3 = Share mode = 0  
+push 0                         ; Parm#4 = Security attributes = 0
+push 0                         ; Parm#3 = Share mode = 0  
 push edx                       ; Parm#2 = Desired access
-lea eax,IPB_SRC_PATH
 push eax                       ; Parm#1 = Pointer to file path  
 call [CreateFileA]
 mov OPB_SRC_HANDLE,eax
 ret
 
+;--- Entry #6 = open Destination file for Write, use complex path string --- 
+HelperCreateDstGroup:
+lea eax,OPB_COMPLEX_PATH       ; EAX = Parm#1 = Pointer to file path
+jmp L3
+
 ;--- Entry #3 = create Destination file for Write ---
 HelperCreateDstWrite:
-xor eax,eax                    ; This for compact push zeroes
-push eax                       ; Parm#7 = 0 = Template file handle, not used
-mov ecx,FILE_ATTRIBUTE_NORMAL
+lea eax,IPB_DST_PATH           ; EAX = Parm#1 = Pointer to file path
+L3:
+
+;--- Entry #3 = create Destination file for Write ---
+push 0                         ; Parm#7 = 0 = Template file handle, not used
+push FILE_ATTRIBUTE_NORMAL     ; Parm#6 = File attribute and flags
 test IPB_DST_ATTRIBUTES,00000001b
 jz @f
-or ecx,FILE_FLAG_NO_BUFFERING
+or dword [esp],FILE_FLAG_NO_BUFFERING
 @@:
 test IPB_DST_ATTRIBUTES,00000010b
 jz @f
-or ecx,FILE_FLAG_WRITE_THROUGH
+or dword [esp],FILE_FLAG_WRITE_THROUGH
 @@:
-push ecx                       ; Parm#6 = File attribute and flags
 push CREATE_ALWAYS             ; Parm#5 = Creation disposition
-push eax                       ; Parm#4 = Security attributes = 0
-push eax                       ; Parm#3 = Share mode = 0  
+push 0                         ; Parm#4 = Security attributes = 0
+push 0                         ; Parm#3 = Share mode = 0  
 push GENERIC_WRITE             ; Parm#2 = Desired access
-lea eax,IPB_DST_PATH
 push eax                       ; Parm#1 = Pointer to file path  
 call [CreateFileA]
 mov OPB_DST_HANDLE,eax
@@ -217,7 +229,9 @@ ret
 ;          variables:                                                 ;
 ;           OPB_TRANSIT_T1, OPB_TRANSIT_T2                            ;
 ;                                                                     ;
-; Output:  variables:                                                 ;
+; Output:  EDX:EAX = Timer delta value, units = 1 ns                  ;
+;          EDX = high dword, EAX = low dword                          ;
+;          variables:                                                 ;
 ;           OPB_TIMER_DELTA                                           ;
 ;---------------------------------------------------------------------;
 HelperDeltaTime:
@@ -232,4 +246,7 @@ mov OPB_TIMER_DELTA_H,edx
 mov eax,ecx
 mul ebx
 add OPB_TIMER_DELTA_H,eax
+;--- support return EDX:EAX ---
+mov eax,OPB_TIMER_DELTA_L
+mov edx,OPB_TIMER_DELTA_H
 ret

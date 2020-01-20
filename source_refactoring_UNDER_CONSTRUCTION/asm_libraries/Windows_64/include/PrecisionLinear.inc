@@ -32,10 +32,10 @@
 ; QWORD [IPB+48] = Number of files per series,                                 ; 
 ;                  note 1 file per series means legacy NIOBench scenario       ; 
 ; DATA AREA 968 BYTES [IPB+56] = Reserved                                      ; 
-; 1024 BYTES [IPB+1024] = Source file path PRIFIX string, null terminated      ;
-; 1024 BYTES [IPB+1536] = Source file path POSTFIX string, null terminated     ;
-; 1024 BYTES [IPB+2048] = Destination file path PREFIX string, null terminated ;
-; 1024 BYTES [IPB+2560] = Destination file path POSTFIX string, null term.     ;
+; 512 BYTES [IPB+1024] = Source file path PRIFIX string, null terminated       ;
+; 512 BYTES [IPB+1536] = Source file path POSTFIX string, null terminated      ;
+; 512 BYTES [IPB+2048] = Destination file path PREFIX string, null terminated  ;
+; 512 BYTES [IPB+2560] = Destination file path POSTFIX string, null term.      ;
 ;                      For operations with series of files, file ID generated  ; 
 ;                      as decimal number string between PREFIX and POSTFIX     ;
 ; DATA AREA 1024 BYTES [IPB+3072] = Reserved                                   ;  
@@ -83,6 +83,7 @@
 ; DATA AREA 2048 BYTES from [OPB+2048] to [OPB+4095] = Reserved                ;
 ;                                                                              ;
 ;------------------------------------------------------------------------------;
+
 PrecisionLinear:
 push rbx rsi rdi rbp r12 r13 r14 r15
 ;--- Clear output variables ---
@@ -214,7 +215,7 @@ call [GetSystemTimeAsFileTime]
 mov r12,OPB_HANDLES_SRC_BASE   ; R12 = Pointer to array of opened src. handles 
 mov r14,OPB_HANDLES_DST_BASE   ; R14 = Pointer to array of opened src. handles
 mov r13,IPB_FILE_COUNT         ; R13 = Files counter
-;--- Cycle for write files ---
+;--- Cycle for copy files ---
 .CopyFiles:
 xor ebp,ebp
 xor r15,r15
