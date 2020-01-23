@@ -274,7 +274,7 @@ add ebx,ecx
 add OPB_TRANSIT_BLOCK,ecx
 mov eax,IPB_BLOCK_SIZE
 cmp OPB_TRANSIT_BLOCK,eax
-jb .WriteCopyBlock
+jb .WriteCopyBlock  ;  BUG, target = ReadCopyBlock
 .ReadCopyDone:
 ;--- Write one block to destination file ---
 mov OPB_TRANSIT_BLOCK,0

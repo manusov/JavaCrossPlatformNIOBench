@@ -27,7 +27,7 @@
 ;                  see Linux Sys Call Reference, OPEN function, parm#2         ;
 ; QWORD [IPB+32] = Destination file performance attributes,                    ;
 ;                  D0 = Read sync, D1 = Write Sync, other reserved             ; 
-;;                  see Linux Sys Call Reference, OPEN function, parm#2        ;
+;                  see Linux Sys Call Reference, OPEN function, parm#2         ;
 ; QWORD [IPB+40] = Number of measurement repeats iterations                    ;
 ; QWORD [IPB+48] = Number of files per series,                                 ; 
 ;                  note 1 file per series means legacy NIOBench scenario       ; 
@@ -384,7 +384,7 @@ jnz ErrorFileContext
 call HelperDeltaTime
 mov OPB_TIMER_READ,rax
 
-;========== Source and Destination Files Delete phase =================;
+;========== Source and Destination Files Delete phase =========================;
 
 ;--- Delete source files ---
 mov rbx,OPB_HANDLES_SRC_BASE   ; RBX = Pointer to handles list

@@ -30,7 +30,7 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearRead extends IOtask
 {
 private final static String IOTASK_NAME = "Read/Linear/Native";
-private final static int NATIVE_READ_REPEATS = 5;
+private final static int NATIVE_READ_REPEATS = 5; // 1; // 5;
 
 /*
 Constructor stores IO scenario object

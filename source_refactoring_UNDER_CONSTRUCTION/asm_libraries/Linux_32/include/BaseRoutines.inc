@@ -119,7 +119,9 @@ ret
 ; Input:   EDI = Pointer to IPB, used for this routine                ; 
 ;          EDI = Pointer to OPB, used for this routine                ;
 ;                                                                     ;
-; Output:  variables updated:                                         ;
+; Output:  EAX = Work buffer base                                     ;
+;          ECX = Work buffer size                                     ;            
+;          variables updated:                                         ;
 ;           OPB_BUFFER_BASE                                           ;
 ;           OPB_BUFFER_SIZE                                           ;
 ;---------------------------------------------------------------------;
@@ -131,8 +133,8 @@ and eax,0FFFFF000h
 add eax,000001000h
 @@:
 mov OPB_BUFFER_BASE,eax     ; Setup Work buffer base
-mov eax,IPB_BLOCK_SIZE
-mov OPB_BUFFER_SIZE,eax     ; Setup Work buffer size
+mov ecx,IPB_BLOCK_SIZE
+mov OPB_BUFFER_SIZE,ecx     ; Setup Work buffer size
 ret
 
 ;--- Helpers for open and create files -------------------------------;
@@ -149,6 +151,11 @@ ret
 ;           OPB_DST_HANDLE                                            ;
 ;---------------------------------------------------------------------;
 
+;--- Entry #5 = create Source file for Write, use complex path string ---
+HelperCreateSrcGroup:
+lea ebx,OPB_COMPLEX_PATH
+jmp L1
+
 ;--- Entry #1 = open Source file for Read ---
 HelperOpenSrcRead:
 ; This place reserved for customize open/create
@@ -159,8 +166,9 @@ HelperOpenSrcWrite:
 
 ;--- Common branch ---
 L0:
-push esi edi
 lea ebx,IPB_SRC_PATH          ; EBX = Parm#1 = Pointer to source file path
+L1:
+push esi edi
 mov ecx,FILE_FLAGS_BLANK      ; ECX = Parm#2 = File operation mode flags
 test IPB_SRC_ATTRIBUTES,00000011b
 jz @f
@@ -173,10 +181,16 @@ pop edi esi
 mov OPB_SRC_HANDLE,eax        ; Store source file handle
 ret
 
+;--- Entry #6 = create Destination file for Write, use complex path string ---
+HelperCreateDstGroup:
+lea ebx,OPB_COMPLEX_PATH
+jmp L2
+
 ;--- Entry #3 = create Destination file for Write ---
 HelperCreateDstWrite:
-push esi edi
 lea ebx,IPB_DST_PATH          ; EBX = Parm#1 = Pointer to destination file path
+L2:
+push esi edi
 mov ecx,FILE_FLAGS_BLANK      ; ECX = Parm#2 = File operation mode flags
 test IPB_DST_ATTRIBUTES,00000011b
 jz @f
@@ -196,7 +210,9 @@ ret
 ;          variables:                                                 ;
 ;           OPB_TRANSIT_T1, OPB_TRANSIT_T2                            ;
 ;                                                                     ;
-; Output:  variables:                                                 ;
+; Output:  EDX:EAX = Timer delta value, units = 1 ns                  ;
+;          EDX = high dword, EAX = low dword                          ;
+;          variables:                                                 ;
 ;           OPB_TIMER_DELTA                                           ;
 ;---------------------------------------------------------------------;
 HelperDeltaTime:

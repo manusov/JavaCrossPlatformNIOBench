@@ -32,7 +32,7 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearCopy extends IOtask
 {
 private final static String IOTASK_NAME = "Copy/Linear/Native";
-private final static int NATIVE_COPY_REPEATS = 5;
+private final static int NATIVE_COPY_REPEATS = 5; // 1; // 5;
 
 /*
 Constructor stores IO scenario object

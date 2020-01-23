@@ -37,7 +37,7 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write/Linear/Native";
-private final static int NATIVE_WRITE_REPEATS = 5;
+private final static int NATIVE_WRITE_REPEATS = 5; // 1; // 5;
 
 /*
 Constructor stores IO scenario object
