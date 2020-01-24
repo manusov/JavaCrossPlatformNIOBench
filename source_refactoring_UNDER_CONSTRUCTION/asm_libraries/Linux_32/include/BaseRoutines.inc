@@ -28,7 +28,7 @@ ret
 ;          EAX = File number                                   ;
 ;          EBX = Pointer to destination string for build path  ;
 ;                                                              ;
-; Output:  Destination string at input R8 updated              ; 
+; Output:  Destination string at input EBX, updated            ; 
 ;                                                              ;
 ; For example, "C:\TEMP\src05.bin" build as:                   ;
 ; prefix string  = "C:\TEMP\src", 0                            ;

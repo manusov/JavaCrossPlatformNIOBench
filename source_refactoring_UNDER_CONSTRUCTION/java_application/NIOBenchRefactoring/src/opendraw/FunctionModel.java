@@ -82,13 +82,16 @@ public FunctionModel( FunctionControllerInterface x )
 @Override public BigDecimal getXmin()
     {
     String s = "1";
-    if ( getXmax().intValue() > 10 ) s = "0";
+    // if ( getXmax().intValue() > 10 ) s = "0";
+    //
     return new BigDecimal( s );
     }
         
 @Override public BigDecimal getXmax()
     {
-    return new BigDecimal( maxCount );
+    // return new BigDecimal( maxCount );
+    return new BigDecimal( maxCount + 1 );
+    //
     }
         
 @Override public BigDecimal getXsmallUnits()

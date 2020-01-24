@@ -431,6 +431,67 @@ mov OPB_TIMER_READ_H,edx
 
 ;========== Source and Destination Files Delete phase =========================;
 
+; ;--- Delete source files ---
+; mov ebx,OPB_HANDLES_SRC_BASE   ; EBX = Pointer to handles list
+; xor ebp,ebp                    ; EBP = Files counter
+; .DeleteSrc:
+; push esi edi ebx ebp
+; mov ebx,[ebx]      ; EBX = Parm#1 = Source file descriptor, handle
+; mov eax,6          ; EAX = Function code = SYS_CLOSE
+; int 80h
+; pop ebp ebx edi esi
+; test eax,eax
+; ;- jnz @f  ; BUG, ebx corrupted at next string 3
+; lea ecx,IPB_SRC_PATH_PREFIX
+; lea edx,IPB_SRC_PATH_POSTFIX
+; lea ebx,OPB_COMPLEX_PATH
+; mov eax,ebp
+; call HelperComplexPath
+; push esi edi ebx ebp
+; lea ebx,OPB_COMPLEX_PATH    ; EBX = Parm#1 = Pointer to source file path
+; mov eax,10                  ; EAX = Function code = SYS_UNLINK
+; int 80h
+; pop ebp ebx edi esi
+; @@:
+; test eax,eax
+; mov eax,STEP_DELETE
+; jnz ErrorFileContext
+; add ebx,8
+; inc ebp
+; cmp ebp,IPB_FILE_COUNT       ; EBP = Files counter
+; jb .DeleteSrc
+; ;--- Delete destination files ---
+; mov ebx,OPB_HANDLES_DST_BASE   ; EBX = Pointer to handles list
+; xor ebp,ebp                    ; EBP = Files counter
+; .DeleteDst:
+; push esi edi ebx ebp
+; mov ebx,[ebx]      ; EBX = Parm#1 = Source file descriptor, handle
+; mov eax,6          ; EAX = Function code = SYS_CLOSE
+; int 80h
+; pop ebp ebx edi esi
+; test eax,eax
+; ;- jnz @f  ; BUG, ebx corrupted at next string 3
+; lea ecx,IPB_DST_PATH_PREFIX
+; lea edx,IPB_DST_PATH_POSTFIX
+; lea ebx,OPB_COMPLEX_PATH
+; mov eax,ebp
+; call HelperComplexPath
+; push esi edi ebx ebp
+; lea ebx,OPB_COMPLEX_PATH    ; EBX = Parm#1 = Pointer to source file path
+; mov eax,10                  ; EAX = Function code = SYS_UNLINK
+; int 80h
+; pop ebp ebx edi esi 
+; @@:
+; test eax,eax
+; mov eax,STEP_DELETE
+; jnz ErrorFileContext
+; add ebx,8
+; inc ebp
+; cmp ebp,IPB_FILE_COUNT       ; EBP = Files counter
+; jb .DeleteDst
+;
+
+
 ;--- Delete source files ---
 mov ebx,OPB_HANDLES_SRC_BASE   ; EBX = Pointer to handles list
 xor ebp,ebp                    ; EBP = Files counter
@@ -441,13 +502,13 @@ mov eax,6          ; EAX = Function code = SYS_CLOSE
 int 80h
 pop ebp ebx edi esi
 test eax,eax
-;- jnz @f  ; BUG
+jnz @f
+push esi edi ebx ebp
 lea ecx,IPB_SRC_PATH_PREFIX
 lea edx,IPB_SRC_PATH_POSTFIX
 lea ebx,OPB_COMPLEX_PATH
 mov eax,ebp
 call HelperComplexPath
-push esi edi ebx ebp
 lea ebx,OPB_COMPLEX_PATH    ; EBX = Parm#1 = Pointer to source file path
 mov eax,10                  ; EAX = Function code = SYS_UNLINK
 int 80h
@@ -470,13 +531,13 @@ mov eax,6          ; EAX = Function code = SYS_CLOSE
 int 80h
 pop ebp ebx edi esi
 test eax,eax
-;- jnz @f  ; BUG
+jnz @f
+push esi edi ebx ebp
 lea ecx,IPB_DST_PATH_PREFIX
 lea edx,IPB_DST_PATH_POSTFIX
 lea ebx,OPB_COMPLEX_PATH
 mov eax,ebp
 call HelperComplexPath
-push esi edi ebx ebp
 lea ebx,OPB_COMPLEX_PATH    ; EBX = Parm#1 = Pointer to source file path
 mov eax,10                  ; EAX = Function code = SYS_UNLINK
 int 80h
@@ -490,6 +551,8 @@ inc ebp
 cmp ebp,IPB_FILE_COUNT       ; EBP = Files counter
 jb .DeleteDst
 
+
 ;--- Go to pop registers and done ---
+
 jmp ExitFileContext 
 

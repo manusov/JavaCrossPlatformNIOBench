@@ -304,11 +304,29 @@ private class ThreadRun extends Thread
         date = new Date();
         long t2 = date.getTime();
         double seconds = ( t2 - t1 ) / 1000.0;
+/*        
         msg = String.format
             ( "--- Benchmark done at %s ---\r\n" + 
               "Duration include service time is %.3f seconds\r\n",  
               date.toString(), seconds );
         logHelper( msg );
+*/
+        msg = String.format
+            ( "--- Benchmark done at %s ---\r\n", date.toString() );
+        String msgDuration;
+        if ( ( seconds > 0 )&&( seconds < Integer.MAX_VALUE ) )
+            {
+            int d = (int)seconds;
+            msgDuration = String.format
+                ( "Duration include service time is" + 
+                  " %02d:%02d:%02d (%d seconds)", 
+                  d / 3600, d / 60 % 60, d % 60, d );
+            }
+            else
+            {
+            msgDuration = "Duration time measurement FAILED";
+            }
+        logHelper( msg + msgDuration + "\r\n" );
         /*
         Get integral time measurement results and write to text log.
         Mark medians in the statistics table.
