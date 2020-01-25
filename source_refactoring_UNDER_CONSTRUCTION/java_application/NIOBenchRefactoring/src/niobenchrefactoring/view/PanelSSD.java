@@ -16,6 +16,7 @@ import niobenchrefactoring.model.TableSSD;
 class PanelSSD extends PanelNative // ApplicationPanel 
 {
 private final TableChannel tableModel = new TableSSD();
+final static int DEFAULT_READ_WRITE_SSD = 4;
 
 @Override String getTabName() 
     {

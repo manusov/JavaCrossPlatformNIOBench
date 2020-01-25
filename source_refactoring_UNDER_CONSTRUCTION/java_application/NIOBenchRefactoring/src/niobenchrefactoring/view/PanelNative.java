@@ -12,12 +12,29 @@ package niobenchrefactoring.view;
 
 import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.IOscenarioNative;
+import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_1;
+import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableNative;
 
 class PanelNative extends PanelChannel  // ApplicationPanel
 {
 private final TableChannel tableModel = new TableNative();
+// special support for "R/W" option
+final static int DEFAULT_READ_WRITE_NATIVE_MBPS = 0;
+final static int DEFAULT_READ_WRITE_NATIVE_IOPS = 1;
+final static int[] NATIVE_RW_ENCODER = { RW_GROUP_5, RW_GROUP_1 };
+
+/*
+final static String SET_READ_WRITE_NATIVE[] =
+    { "File group 5 repeats", "File group no repeats",
+      "Single file 5 repeats", "Single file no repeats",
+      "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",
+      "Read only", "Write only",
+      "Performance = F(Size)" };
+*/
+final static String SET_READ_WRITE_NATIVE[] =
+    { "File group 5 repeats", "File group no repeats" };
 
 @Override String getTabName() 
     {
@@ -53,12 +70,12 @@ Differrent panels has different options restrictions.
     {
     // labels with combo names, located left
     labels[TEXT_COUNT + ID_ADDRESS_PATTERN].setEnabled( false );
-    labels[TEXT_COUNT + ID_READ_WRITE].setEnabled( false );
+    // labels[TEXT_COUNT + ID_READ_WRITE].setEnabled( false );
     labels[TEXT_COUNT + ID_THREAD_COUNT].setEnabled( false );
     labels[TEXT_COUNT + ID_FAST_COPY].setEnabled( false );
     // combo boxes
     boxes[ID_ADDRESS_PATTERN].setEnabled( false );
-    boxes[ID_READ_WRITE].setEnabled( false );
+    // boxes[ID_READ_WRITE].setEnabled( false );
     boxes[ID_THREAD_COUNT].setEnabled( false );
     boxes[ID_FAST_COPY].setEnabled( false );
     }
@@ -77,15 +94,23 @@ final static int DEFAULT_COPY_SYNC_NATIVE       = 1;
 @Override public void setDefaults( SCENARIO scenario )
     {
     super.setDefaults( scenario );
+    boxes[ID_READ_WRITE].removeAllItems();
     if ( scenario == SCENARIO.MBPS )
         {  // this settings for MBPS scenario, not for IOPS scenario
         boxes[ID_FILE_SIZE].setSelectedIndex( DEFAULT_FILE_SIZE_MBPS_NATIVE );
         boxes[ID_BLOCK_SIZE].setSelectedIndex( DEFAULT_BLOCK_SIZE_MBPS_NATIVE );
+        helperComboString( ID_READ_WRITE, SET_READ_WRITE_NATIVE, 
+                           DEFAULT_READ_WRITE_NATIVE_MBPS );
         }
-        // this settings for both MBPS and IOPS scenarios
-        boxes[ID_READ_SYNC].setSelectedIndex( DEFAULT_READ_SYNC_NATIVE );
-        boxes[ID_WRITE_SYNC].setSelectedIndex( DEFAULT_WRITE_SYNC_NATIVE );
-        boxes[ID_COPY_SYNC].setSelectedIndex( DEFAULT_COPY_SYNC_NATIVE );
+    else
+        {
+        helperComboString( ID_READ_WRITE, SET_READ_WRITE_NATIVE, 
+                           DEFAULT_READ_WRITE_NATIVE_IOPS );
+        }
+    // this settings for both MBPS and IOPS scenarios
+    boxes[ID_READ_SYNC].setSelectedIndex( DEFAULT_READ_SYNC_NATIVE );
+    boxes[ID_WRITE_SYNC].setSelectedIndex( DEFAULT_WRITE_SYNC_NATIVE );
+    boxes[ID_COPY_SYNC].setSelectedIndex( DEFAULT_COPY_SYNC_NATIVE );
     }
 
 /*
@@ -116,7 +141,17 @@ Support "Run" button
 @Override public int optionThreadCount()        { return 0;    }
 @Override public int optionDataMode()           { return 0;    }
 @Override public int optionAddressMode()        { return 0;    }
-@Override public int optionRwMode()             { return 0;    }
+*/
+
+@Override public int optionRwMode()
+    {
+    int n = super.optionRwMode();
+    int m = NATIVE_RW_ENCODER.length;
+    if ( n >= m ) n = 0;
+    return NATIVE_RW_ENCODER[n];
+    }
+
+/*
 @Override public int optionFastCopy()           { return 0;    }
 @Override public int optionReadSync()           { return 0;    }
 @Override public int optionWriteSync()          { return 0;    }

@@ -12,6 +12,7 @@ package niobenchrefactoring.model;
 
 import static niobenchrefactoring.model.IOscenario.READ_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
+import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
 import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
@@ -30,7 +31,8 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearRead extends IOtask
 {
 private final static String IOTASK_NAME = "Read/Linear/Native";
-private final static int NATIVE_READ_REPEATS = 5; // 1; // 5;
+// private final static int NATIVE_READ_REPEATS = 5; // 1; // 5;
+private final int repeats;
 
 /*
 Constructor stores IO scenario object
@@ -38,6 +40,14 @@ Constructor stores IO scenario object
 IOtaskNativeLinearRead( IOscenarioNative ios )
     {
     super( ios );
+    if ( ios.readWriteMode == RW_GROUP_5 )
+        {
+        repeats = 5;
+        }
+    else
+        {
+        repeats = 1;
+        }
     }
 
 /*
@@ -61,7 +71,7 @@ Run IO task
                           FILE_ATTRIBUTE_WRITE_SYNC;
             }
         iosn.ipb[IPB_SRC_ATTRIBUTES] = attributes;
-        iosn.ipb[IPB_ITERATIONS] = NATIVE_READ_REPEATS;
+        iosn.ipb[IPB_ITERATIONS] = repeats;                           // NATIVE_READ_REPEATS;
         transmitStringToIPB( iosn.namesSrc[i], iosn.ipb, IPB_SRC_PATH );
         // start measurement time
         iosn.statistics.startInterval( READ_ID, 0 );
@@ -71,7 +81,7 @@ Run IO task
         // Single file measured copy report about start and stop
         // TODO. USE opb[OPB_OPERATION_SIZE]
         double nanoseconds = iosn.opb[OPB_TIMER_DELTA];
-        long delta = (long)( nanoseconds / (double)NATIVE_READ_REPEATS );
+        long delta = (long)( nanoseconds / (double)repeats );         // NATIVE_READ_REPEATS );
         iosn.statistics.sendMBPS( READ_ID, iosn.fileSize, delta );
         // Single file measured read end
         iosn.setSync( i+1, iosn.lastError, READ_ID, IOTASK_NAME );
@@ -87,7 +97,7 @@ Run IO task
         }
         //
         iosn.statistics.
-            sendMBPS( TOTAL_READ_ID, iosn.totalSize * NATIVE_READ_REPEATS,
+            sendMBPS( TOTAL_READ_ID, iosn.totalSize * repeats,        // NATIVE_READ_REPEATS,
                       System.nanoTime() );
         // All files total measured read cycle end
 

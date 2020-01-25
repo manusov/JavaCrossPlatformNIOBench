@@ -12,6 +12,7 @@ package niobenchrefactoring.model;
 
 import static niobenchrefactoring.model.IOscenario.COPY_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
+import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
 import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
@@ -32,7 +33,8 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearCopy extends IOtask
 {
 private final static String IOTASK_NAME = "Copy/Linear/Native";
-private final static int NATIVE_COPY_REPEATS = 5; // 1; // 5;
+// private final static int NATIVE_COPY_REPEATS = 5; // 1; // 5;
+private final int repeats;
 
 /*
 Constructor stores IO scenario object
@@ -40,6 +42,14 @@ Constructor stores IO scenario object
 IOtaskNativeLinearCopy( IOscenarioNative ios )
     {
     super( ios );
+    if ( ios.readWriteMode == RW_GROUP_5 )
+        {
+        repeats = 5;
+        }
+    else
+        {
+        repeats = 1;
+        }
     }
 
 /*
@@ -64,7 +74,7 @@ Run IO task
             }
         iosn.ipb[IPB_SRC_ATTRIBUTES] = attributes;
         iosn.ipb[IPB_DST_ATTRIBUTES] = attributes;
-        iosn.ipb[IPB_ITERATIONS] = NATIVE_COPY_REPEATS;
+        iosn.ipb[IPB_ITERATIONS] = repeats;                           // NATIVE_COPY_REPEATS;
         transmitStringToIPB( iosn.namesSrc[i], iosn.ipb, IPB_SRC_PATH );
         transmitStringToIPB( iosn.namesDst[i], iosn.ipb, IPB_DST_PATH );
         // start measurement time
@@ -75,7 +85,7 @@ Run IO task
         // Single file measured copy report about start and stop
         // TODO. USE opb[OPB_OPERATION_SIZE]
         double nanoseconds = iosn.opb[OPB_TIMER_DELTA];
-        long delta = (long)( nanoseconds / (double)NATIVE_COPY_REPEATS );
+        long delta = (long)( nanoseconds / (double)repeats );         // NATIVE_COPY_REPEATS );
         iosn.statistics.sendMBPS( COPY_ID, iosn.fileSize, delta );
         
         // Single file measured copy end
@@ -92,7 +102,7 @@ Run IO task
         }
         //
         iosn.statistics.
-            sendMBPS( TOTAL_COPY_ID, iosn.totalSize * NATIVE_COPY_REPEATS,
+            sendMBPS( TOTAL_COPY_ID, iosn.totalSize * repeats,        // NATIVE_COPY_REPEATS,
                       System.nanoTime() );
         // All files total measured copy cycle end
     }

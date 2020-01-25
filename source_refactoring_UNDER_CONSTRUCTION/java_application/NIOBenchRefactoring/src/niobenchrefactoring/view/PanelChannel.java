@@ -204,7 +204,6 @@ final static String SET_ADDRESS_PATTERN[] =
 // read-write mode option
 final static int ID_READ_WRITE = 6;
 final static int DEFAULT_READ_WRITE = 0;
-final static int DEFAULT_READ_WRITE_SSD = 4;
 final static String SET_READ_WRITE[] =
     { "Read/Write no mix", 
       "R/W 50/50 mixed", "R/W 70/30 mixed", "R/W 30/70 mixed",

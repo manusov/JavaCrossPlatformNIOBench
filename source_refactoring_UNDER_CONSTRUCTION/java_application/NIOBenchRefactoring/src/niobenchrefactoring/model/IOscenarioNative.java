@@ -27,6 +27,12 @@ final long[] ipb;
 final long[] opb;
 
 /*
+Special values for "R/W" option at Native test panel.
+*/
+public final static int RW_GROUP_5 = 10;
+public final static int RW_GROUP_1 = 11;
+
+/*
 Default constructor
 */
 public IOscenarioNative( PAL pal )
@@ -120,7 +126,7 @@ Run performance scenario
         threadHelper( iotRead );
         }
 
-    if ( readWriteMode == READ_WRITE )
+    if ( ( readWriteMode != READ_ONLY ) || ( readWriteMode != WRITE_ONLY ) )
         {
         setSync( 0, lastError, DELETE_ID, DELETE_NAME );
         /*

@@ -11,7 +11,7 @@ package niobenchrefactoring.resources;
 
 public class About 
 {
-private final static String VERSION_NAME = "v0.01.25";
+private final static String VERSION_NAME = "v0.01.26";
 
 private final static String VENDOR_NAME  = "(C)2020 IC Book Labs";
 private final static String SHORT_NAME   = "NIOBench " + VERSION_NAME;
