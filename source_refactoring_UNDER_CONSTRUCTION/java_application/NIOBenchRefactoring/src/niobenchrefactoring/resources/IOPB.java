@@ -33,7 +33,7 @@ public static String receiveStringFromOPB( long[] data )
 
 public static void receiveBytesFromOPB( long[] qwords, byte[] bytes )
     {
-    int k=0;
+    int k = 0;
     for ( int i=0; i<qwords.length; i++ )
         {
         long q = qwords[i];
@@ -81,4 +81,25 @@ public static void transmitStringToIPB( String s, long[] ipb, int base )
         }
     }
 
+/*
+This irregular because OPB contains input data, refactoring required.
+Or assignment old OPB = OPB + DTA (Data Transfer Area)
+*/
+public static void transmitBytesToOPB
+            ( long[] qwords, byte[] bytes, int offset, int length )
+    {
+    int k = 0;
+    for ( int i=0; i<length; i++ )
+        {
+        long q = 0;
+        for( int j=0; j<8; j++ )
+            {
+            long lb = (long)( ( (long) bytes[k] ) & 0xFFL ) ;
+            lb = lb << ( j * 8 );
+            q = q | lb;
+            k++;
+            }
+        qwords[i + offset] = q;
+        }
+    }
 }

@@ -9,6 +9,7 @@ write files, copy files, read files.
 
 package niobenchrefactoring.model;
 
+import niobenchrefactoring.resources.IOPB;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import niobenchrefactoring.resources.PAL;
 import static niobenchrefactoring.resources.PAL.FILE_API_IPB_SIZE;
@@ -65,6 +66,15 @@ public IOscenarioNative
     this.pal = pal;
     ipb = new long[ FILE_API_IPB_SIZE ];
     opb = new long[ FILE_API_OPB_SIZE + OPB_ALIGNMENT_ADDEND + blockSize / 8 ];
+
+    // initializing data (OPB + DTA)
+    int offset = FILE_API_OPB_SIZE;
+    int length = OPB_ALIGNMENT_ADDEND;
+    IOPB.transmitBytesToOPB( opb, dataBlock, offset, length );
+    offset = FILE_API_OPB_SIZE + OPB_ALIGNMENT_ADDEND;
+    length = blockSize / 8;
+    IOPB.transmitBytesToOPB( opb, dataBlock, offset, length );
+    //
     }
 
 /*

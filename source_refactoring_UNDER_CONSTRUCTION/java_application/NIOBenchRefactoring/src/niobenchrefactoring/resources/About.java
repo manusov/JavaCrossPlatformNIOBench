@@ -3,15 +3,15 @@ NIOBench. Mass storage and file I/O benchmark utility.
 (C)2020 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
-Vendor, Product and Version description strings, 
-pictogram resource reference, GUI geometry data.
+Vendor, Product and Version description strings, web site link, 
+pictogram resource reference.
 */
 
 package niobenchrefactoring.resources;
 
 public class About 
 {
-private final static String VERSION_NAME = "v0.01.26";
+private final static String VERSION_NAME = "v0.01.27";
 
 private final static String VENDOR_NAME  = "(C)2020 IC Book Labs";
 private final static String SHORT_NAME   = "NIOBench " + VERSION_NAME;
