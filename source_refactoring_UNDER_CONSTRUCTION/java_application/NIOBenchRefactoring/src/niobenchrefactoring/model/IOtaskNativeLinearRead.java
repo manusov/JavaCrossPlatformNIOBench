@@ -31,7 +31,7 @@ import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
 public class IOtaskNativeLinearRead extends IOtask
 {
 private final static String IOTASK_NAME = "Read/Linear/Native";
-// private final static int NATIVE_READ_REPEATS = 5; // 1; // 5;
+private final static int NATIVE_READ_DEFAULT_REPEATS = 5;
 private final int repeats;
 
 /*
@@ -42,7 +42,7 @@ IOtaskNativeLinearRead( IOscenarioNative ios )
     super( ios );
     if ( ios.readWriteMode == RW_GROUP_5 )
         {
-        repeats = 5;
+        repeats = NATIVE_READ_DEFAULT_REPEATS;
         }
     else
         {
@@ -51,7 +51,7 @@ IOtaskNativeLinearRead( IOscenarioNative ios )
     }
 
 /*
-Run IO task
+Run IO task = read files group by native method
 */
 @Override public void run()
     {
@@ -61,6 +61,8 @@ Run IO task
     //
     for( int i=0; i<iosn.fileCount; i++ )
         {
+        if ( isInterrupted() || interrupt ) break;
+        //
         iosn.ipb[IPB_REQUEST_ID]   = MEASURE_READ_FILE;
         iosn.ipb[IPB_REQUEST_SIZE] = iosn.fileSize;
         iosn.ipb[IPB_BLOCK_SIZE]   = iosn.blockSize;
@@ -71,21 +73,29 @@ Run IO task
                           FILE_ATTRIBUTE_WRITE_SYNC;
             }
         iosn.ipb[IPB_SRC_ATTRIBUTES] = attributes;
-        iosn.ipb[IPB_ITERATIONS] = repeats;                           // NATIVE_READ_REPEATS;
+        iosn.ipb[IPB_ITERATIONS] = repeats;
         transmitStringToIPB( iosn.namesSrc[i], iosn.ipb, IPB_SRC_PATH );
         // start measurement time
         iosn.statistics.startInterval( READ_ID, 0 );
-        // call Read File function
+        // call Read File function, note unified DTA located just after OPB
         int status = iosn.pal.entryBinary
             ( iosn.ipb, iosn.opb, iosn.ipb.length, iosn.opb.length );
         // Single file measured copy report about start and stop
-        // TODO. USE opb[OPB_OPERATION_SIZE]
+        // TODO. USE opb[OPB_OPERATION_SIZE] returned by native code
         double nanoseconds = iosn.opb[OPB_TIMER_DELTA];
-        long delta = (long)( nanoseconds / (double)repeats );         // NATIVE_READ_REPEATS );
+        long delta = (long)( nanoseconds / (double)repeats );
+        // detect time measurement errors
+        if ( delta <= 0 )
+            {
+            iosn.lastError = 
+                    new StatusEntry( false, "OS timer underflow at read"  );
+            break;
+            }
+        // send results if timer valid
         iosn.statistics.sendMBPS( READ_ID, iosn.fileSize, delta );
         // Single file measured read end
         iosn.setSync( i+1, iosn.lastError, READ_ID, IOTASK_NAME );
-        // check errors
+        // check file I/O errors
         long a = iosn.opb[OPB_LAST_ERROR];
         long b = iosn.opb[OPB_LAST_OPERATION];
         if ( ( status <= 0 )&&( b != 0 ) )
@@ -96,9 +106,8 @@ Run IO task
             }
         }
         //
-        iosn.statistics.
-            sendMBPS( TOTAL_READ_ID, iosn.totalSize * repeats,        // NATIVE_READ_REPEATS,
-                      System.nanoTime() );
+        iosn.statistics.sendMBPS
+            ( TOTAL_READ_ID, iosn.totalSize * repeats, System.nanoTime() );
         // All files total measured read cycle end
 
     }

@@ -14,9 +14,17 @@ class IOtask extends Thread
 {
     
 final IOscenario ios;
+boolean interrupt = false;
 
 IOtask( IOscenario ios )
     {
     this.ios = ios;
     }
+
+@Override public void interrupt()
+    {
+    super.interrupt();
+    interrupt = true;
+    }
+
 }

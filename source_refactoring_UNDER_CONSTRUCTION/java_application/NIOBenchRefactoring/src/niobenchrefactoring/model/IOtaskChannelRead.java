@@ -32,7 +32,7 @@ Run IO task
 */
 
 private int i = 0;
-private boolean interrupt = false;
+// private boolean interrupt = false;
 
 @Override public void run()
     {

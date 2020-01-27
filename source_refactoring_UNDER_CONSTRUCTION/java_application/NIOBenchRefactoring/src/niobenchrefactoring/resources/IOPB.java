@@ -82,11 +82,13 @@ public static void transmitStringToIPB( String s, long[] ipb, int base )
     }
 
 /*
-This irregular because OPB contains input data, refactoring required.
-Or assignment old OPB = OPB + DTA (Data Transfer Area)
+Note about DTA.
+DTA base + OPB base + OPB size.
+DTA = Data Transfer Area,
+OPB = Output Parameters Block.
 */
-public static void transmitBytesToOPB
-            ( long[] qwords, byte[] bytes, int offset, int length )
+public static void transmitBytesToDTA
+            ( long[] dstQwords, byte[] srcBytes, int dstOffset, int length )
     {
     int k = 0;
     for ( int i=0; i<length; i++ )
@@ -94,12 +96,12 @@ public static void transmitBytesToOPB
         long q = 0;
         for( int j=0; j<8; j++ )
             {
-            long lb = (long)( ( (long) bytes[k] ) & 0xFFL ) ;
+            long lb = (long)( ( (long) srcBytes[k] ) & 0xFFL ) ;
             lb = lb << ( j * 8 );
             q = q | lb;
             k++;
             }
-        qwords[i + offset] = q;
+        dstQwords[i + dstOffset] = q;
         }
     }
 }
