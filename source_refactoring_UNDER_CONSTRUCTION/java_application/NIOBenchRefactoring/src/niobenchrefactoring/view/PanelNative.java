@@ -20,11 +20,18 @@ import niobenchrefactoring.model.TableNative;
 class PanelNative extends PanelChannel  // ApplicationPanel
 {
 private final TableChannel tableModel = new TableNative();
-// special support for "R/W" option
-final static int DEFAULT_READ_WRITE_NATIVE_MBPS = 0;
-final static int DEFAULT_READ_WRITE_NATIVE_IOPS = 1;
-final static int[] NATIVE_RW_ENCODER = { RW_GROUP_5, RW_GROUP_1 };
-
+/*
+Overrides for some defaults at "Native OS API" panel
+*/
+private final static int DEFAULT_FILE_SIZE_MBPS_NATIVE  = 13;
+private final static int DEFAULT_BLOCK_SIZE_MBPS_NATIVE = 12;
+private final static int DEFAULT_READ_SYNC_NATIVE       = 1;
+/*
+special support for "R/W" option at "Native OS API" panel
+*/
+private final static int DEFAULT_READ_WRITE_NATIVE_MBPS = 0;
+private final static int DEFAULT_READ_WRITE_NATIVE_IOPS = 1;
+private final static int[] NATIVE_RW_ENCODER = { RW_GROUP_5, RW_GROUP_1 };
 /*
 final static String SET_READ_WRITE_NATIVE[] =
     { "File group 5 repeats", "File group no repeats",
@@ -33,8 +40,21 @@ final static String SET_READ_WRITE_NATIVE[] =
       "Read only", "Write only",
       "Performance = F(Size)" };
 */
-final static String SET_READ_WRITE_NATIVE[] =
+private final static String SET_READ_WRITE_NATIVE[] =
     { "File group 5 repeats", "File group no repeats" };
+/*
+special support for "Write sync", "Copy sync" options at "Native OS API" panel
+*/
+private final static int DEFAULT_WRITE_SYNC_NATIVE      = 1;
+private final static int DEFAULT_COPY_SYNC_NATIVE       = 1;
+private final static String SET_WRITE_SYNC_NATIVE[] =
+    { SET_WRITE_SYNC[0], SET_WRITE_SYNC[1]  };
+private final static String SET_COPY_SYNC_NATIVE[] =
+    { SET_COPY_SYNC[0], SET_COPY_SYNC[1]  };
+
+/*
+Base functionality
+*/
 
 @Override String getTabName() 
     {
@@ -85,12 +105,6 @@ Public method for initializing at start and re-initializing by buttons:
 "Default MBPS" , "Default IOPS".
 This method can be called from button handler.
 */
-final static int DEFAULT_FILE_SIZE_MBPS_NATIVE  = 13;
-final static int DEFAULT_BLOCK_SIZE_MBPS_NATIVE = 12;
-final static int DEFAULT_READ_SYNC_NATIVE       = 1;
-final static int DEFAULT_WRITE_SYNC_NATIVE      = 1;
-final static int DEFAULT_COPY_SYNC_NATIVE       = 1;
-
 @Override public void setDefaults( SCENARIO scenario )
     {
     super.setDefaults( scenario );
@@ -107,10 +121,18 @@ final static int DEFAULT_COPY_SYNC_NATIVE       = 1;
         helperComboString( ID_READ_WRITE, SET_READ_WRITE_NATIVE, 
                            DEFAULT_READ_WRITE_NATIVE_IOPS );
         }
+    // this options sets + settings assignment for both MBPS and IOPS scenarios
+    boxes[ID_WRITE_SYNC].removeAllItems();
+    helperComboString( ID_WRITE_SYNC, SET_WRITE_SYNC_NATIVE, 
+                       DEFAULT_WRITE_SYNC_NATIVE );
+    boxes[ID_COPY_SYNC].removeAllItems();
+    helperComboString( ID_COPY_SYNC, SET_COPY_SYNC_NATIVE, 
+                       DEFAULT_COPY_SYNC_NATIVE );
     // this settings for both MBPS and IOPS scenarios
     boxes[ID_READ_SYNC].setSelectedIndex( DEFAULT_READ_SYNC_NATIVE );
-    boxes[ID_WRITE_SYNC].setSelectedIndex( DEFAULT_WRITE_SYNC_NATIVE );
-    boxes[ID_COPY_SYNC].setSelectedIndex( DEFAULT_COPY_SYNC_NATIVE );
+    // boxes[ID_WRITE_SYNC].setSelectedIndex( DEFAULT_WRITE_SYNC_NATIVE );
+    // boxes[ID_COPY_SYNC].setSelectedIndex( DEFAULT_COPY_SYNC_NATIVE );
+    
     }
 
 /*
