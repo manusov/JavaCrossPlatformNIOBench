@@ -173,7 +173,7 @@ public FunctionModel( FunctionControllerInterface x )
         }
     }
 
-@Override public void updateValue( BigDecimal[] x ) 
+@Override public void updateValue( BigDecimal[] x, boolean increment ) 
     {
     if ( currentCounts[0] < maxCount )
         {
@@ -183,7 +183,10 @@ public FunctionModel( FunctionControllerInterface x )
             if ( x[i] != null )
                 {
                 function[i][currentCounts[i]] = x[i];
-                currentCounts[i]++;
+                if ( ( i != 0 )|| increment )
+                    {
+                    currentCounts[i]++;
+                    }
                 }
             }
         }

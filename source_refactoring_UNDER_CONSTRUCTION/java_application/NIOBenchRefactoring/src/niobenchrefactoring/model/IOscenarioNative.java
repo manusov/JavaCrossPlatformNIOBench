@@ -30,8 +30,10 @@ final long[] opb;
 /*
 Special values for "R/W" option at Native test panel.
 */
-public final static int RW_GROUP_5 = 10;
-public final static int RW_GROUP_1 = 11;
+public final static int RW_GROUP_5  = 10;
+public final static int RW_GROUP_1  = 11;
+public final static int RW_SINGLE_5 = 12;
+public final static int RW_SINGLE_1 = 13;
 
 /*
 Default constructor
@@ -108,49 +110,60 @@ Run performance scenario
 */
 @Override public void run()
     {
-    if ( addressMode == ADDRESS_SEQUENTAL )
-        {  // initialize tasks for sequental address branch
-        iotWrite = new IOtaskNativeLinearWrite( this );
-        iotCopy  = new IOtaskNativeLinearCopy( this );
-        iotRead  = new IOtaskNativeLinearRead( this );
-        }
-    else
-        {  // initialize tasks for randomized address branch
-        iotWrite = new IOtaskNativeRandomWrite( this );
-        iotCopy  = new IOtaskNativeRandomCopy( this );
-        iotRead  = new IOtaskNativeRandomRead( this );
-        }
-
-    if ( ( readWriteMode != READ_ONLY ) &&
-         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
-        {
-        preDelay( writeDelay, WRITE_DELAY_NAME );
+    if ( ( readWriteMode == RW_SINGLE_5 ) || ( readWriteMode == RW_SINGLE_1 ) )
+        {  // single file mode
+        iotWrite = new IOtaskNativeSingle( this );
         threadHelper( iotWrite );
         }
     
-    if ( ( readWriteMode != READ_ONLY ) && 
-         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
-        {
-        preDelay( copyDelay, COPY_DELAY_NAME );
-        threadHelper( iotCopy );
-        }
-    
-    if ( ( readWriteMode != WRITE_ONLY ) && 
-         ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
-        {
-        preDelay( readDelay, READ_DELAY_NAME );
-        threadHelper( iotRead );
-        }
+    else if ( ( readWriteMode == RW_GROUP_5 ) || 
+              ( readWriteMode == RW_GROUP_1 ) )
+        {  // file group mode, initializing test scenario
+        if ( addressMode == ADDRESS_SEQUENTAL )
+            {  // initialize tasks for sequental address branch
+            iotWrite = new IOtaskNativeLinearWrite( this );
+            iotCopy  = new IOtaskNativeLinearCopy( this );
+            iotRead  = new IOtaskNativeLinearRead( this );
+            }
+        else
+            {  // initialize tasks for randomized address branch
+            iotWrite = new IOtaskNativeRandomWrite( this );
+            iotCopy  = new IOtaskNativeRandomCopy( this );
+            iotRead  = new IOtaskNativeRandomRead( this );
+            }
 
-    if ( ( readWriteMode != READ_ONLY ) || ( readWriteMode != WRITE_ONLY ) )
-        {
-        setSync( 0, lastError, DELETE_ID, DELETE_NAME );
-        /*
-        Phase = Delete, note about files not deleted in WRITE_ONLY mode.
-        Note delete operation cycles for all files is not interruptable.
-        */
-        deleteNative( namesSrc );
-        deleteNative( namesDst );
+        // file group mode, execute test scenario
+        if ( ( readWriteMode != READ_ONLY ) &&
+             ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+            {
+            preDelay( writeDelay, WRITE_DELAY_NAME );
+            threadHelper( iotWrite );
+            }
+    
+        if ( ( readWriteMode != READ_ONLY ) && 
+             ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+            {
+            preDelay( copyDelay, COPY_DELAY_NAME );
+            threadHelper( iotCopy );
+            }
+    
+        if ( ( readWriteMode != WRITE_ONLY ) && 
+             ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
+            {
+            preDelay( readDelay, READ_DELAY_NAME );
+            threadHelper( iotRead );
+            }
+
+        if ( ( readWriteMode != READ_ONLY ) || ( readWriteMode != WRITE_ONLY ) )
+            {
+            setSync( 0, lastError, DELETE_ID, DELETE_NAME );
+            /*
+            Phase = Delete, note about files not deleted in WRITE_ONLY mode.
+            Note delete operation cycles for all files is not interruptable.
+            */
+            deleteNative( namesSrc );
+            deleteNative( namesDst );
+            }
         }
     }
 

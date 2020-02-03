@@ -27,6 +27,8 @@ import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
 import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import static niobenchrefactoring.model.IOscenario.WRITE_ONLY;
+import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_1;
+import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_5;
 import niobenchrefactoring.model.StateAsync;
 import niobenchrefactoring.model.StateSync;
 import niobenchrefactoring.model.StatusEntry;
@@ -48,7 +50,6 @@ private boolean runStop = false;
 private boolean interrupt = false;
 private boolean error = false;
 private Thread threadRun;
-private final static String MESSAGE_INTERRUPTED = "Test interrupted";
 private String unitsString;
 private final static int ASYNC_PAUSE = 10;  // milliseconds
 
@@ -149,7 +150,7 @@ private class ThreadRun extends Thread
             }
         logHelper( null );
         tableHelper( (StateSync) null );
-        drawHelper( null );
+        drawHelper( null, false );
         
         /*
         Initializing variables
@@ -173,6 +174,9 @@ private class ThreadRun extends Thread
             phaseCount = 2;             // write + copy = 2 phases
             deleteAddend = 0;
             }
+        
+        boolean tripleDraw = ( rwMode == RW_SINGLE_5 ) || 
+                             ( rwMode == RW_SINGLE_1 );
         
         addendPercentage = 
             ACTIVE_PERCENTAGE / ( fileCount * phaseCount + deleteAddend );
@@ -236,22 +240,25 @@ private class ThreadRun extends Thread
                 if ( sync.phaseID != previousID )
                     {
                     previousID = sync.phaseID;
-                    childDrawModel.resetCount();
+                    if ( ! tripleDraw )
+                        {
+                        childDrawModel.resetCount();
+                        }
                     }
                 
                 switch ( sync.phaseID )
                     {
                     case READ_ID:
                         bd[1] = new BigDecimal( sync.current );
-                        drawHelper( bd );
+                        drawHelper( bd, true  );
                         break;
                     case WRITE_ID:
                         bd[2] = new BigDecimal( sync.current );
-                        drawHelper( bd );
+                        drawHelper( bd, ! tripleDraw );
                         break;
                     case COPY_ID:
                         bd[3] = new BigDecimal( sync.current );
-                        drawHelper( bd );
+                        drawHelper( bd, ! tripleDraw );
                         break;
                     }
                 // get next sync result, update table if last pass
@@ -527,13 +534,13 @@ private void tableMedianHelper( StateAsync[] async )
     tableHelper( (StateSync) null );
     }
 
-private void drawHelper( BigDecimal[] bd )
+private void drawHelper( BigDecimal[] bd, boolean increment )
     {
     if ( ( childDraw != null )&&( childDrawModel != null ) )
         {
         if ( bd != null )
             {
-            childDrawModel.updateValue( bd );
+            childDrawModel.updateValue( bd, increment );
             childDrawModel.rescaleYmax();
             }
         childDraw.repaint();

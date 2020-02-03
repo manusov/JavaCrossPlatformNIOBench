@@ -38,6 +38,7 @@ public BigDecimal getYbigUnits();      // get big graduation for Y axis
 
 public void rescaleXmax( int x );        // set x-scale by input x
 public void rescaleYmax();               // set y-scale automatically by values
-public void updateValue( BigDecimal[] x );  // add new element to array
+public void updateValue( BigDecimal[] x, boolean increment );
+                                         // add new element to array
 public void resetCount();                // reset for write-read-copy all seq.
 }

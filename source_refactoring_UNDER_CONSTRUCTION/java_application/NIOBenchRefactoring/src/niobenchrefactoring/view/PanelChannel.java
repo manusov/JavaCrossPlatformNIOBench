@@ -924,7 +924,8 @@ Build IO scenario with options settings, defined in this panel
     }
 
 /*
-Return text information about options settings at start IO scenario
+Return text information about options settings at start IO scenario,
+it used for text report
 */
 @Override public String reportIOscenario()
     {
@@ -956,7 +957,11 @@ Return text information about options settings at start IO scenario
             }
         else if ( i < TEXT_COUNT + COMBO_COUNT )
             {
+            // get dynamically created selected item string from JComboBox
             s = (String)( boxes[i - TEXT_COUNT].getSelectedItem() );
+            // remove html tags and special sequences for simplify text string
+            s = s.replaceAll( "\\<.*?>", "" ).replaceAll( "&nbsp", "" );
+            // trim and append string to report
             sb.append( s.trim() );
             }
         else

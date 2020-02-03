@@ -247,7 +247,7 @@ public HandlerLoad( Application application )
                     Measure measure = measureValues.get( i );
                     BigDecimal[] bd = measure.numbers;
                     bd[0] = bd[0].subtract( BigDecimal.ONE );
-                    fim.updateValue( bd );
+                    fim.updateValue( bd, true );
                     fim.rescaleYmax();
                     }
                 draw.repaint();

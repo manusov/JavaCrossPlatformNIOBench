@@ -14,6 +14,8 @@ import niobenchrefactoring.model.IOscenario;
 import niobenchrefactoring.model.IOscenarioNative;
 import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_1;
 import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
+import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_1;
+import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_5;
 import niobenchrefactoring.model.TableChannel;
 import niobenchrefactoring.model.TableNative;
 
@@ -31,7 +33,8 @@ special support for "R/W" option at "Native OS API" panel
 */
 private final static int DEFAULT_READ_WRITE_NATIVE_MBPS = 0;
 private final static int DEFAULT_READ_WRITE_NATIVE_IOPS = 1;
-private final static int[] NATIVE_RW_ENCODER = { RW_GROUP_5, RW_GROUP_1 };
+private final static int[] NATIVE_RW_ENCODER = 
+    { RW_GROUP_5, RW_GROUP_1, RW_SINGLE_5, RW_SINGLE_1 };
 /*
 final static String SET_READ_WRITE_NATIVE[] =
     { "File group 5 repeats", "File group no repeats",
@@ -41,7 +44,8 @@ final static String SET_READ_WRITE_NATIVE[] =
       "Performance = F(Size)" };
 */
 private final static String SET_READ_WRITE_NATIVE[] =
-    { "File group 5 repeats", "File group no repeats" };
+    { "File group 5 repeats"  , "File group no repeats"  ,
+      "Single file 5 repeats" , "Single file no repeats" };
 /*
 special support for "Write sync", "Copy sync" options at "Native OS API" panel
 */
