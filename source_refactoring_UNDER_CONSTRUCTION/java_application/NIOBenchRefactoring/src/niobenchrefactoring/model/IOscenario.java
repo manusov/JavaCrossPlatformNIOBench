@@ -478,8 +478,9 @@ void threadHelper( Thread t )
 /*
 Helper for time delay with seconds visualization
 */
-void preDelay( int milliseconds, String name )
+boolean preDelay( int milliseconds, String name )
     {
+    StatusEntry se = new StatusEntry( true, null );
     if ( milliseconds > 0 )
         {
         int seconds = milliseconds / 1000;
@@ -490,15 +491,17 @@ void preDelay( int milliseconds, String name )
             for( i=0; i<seconds; i++ )
                 {
                 setSync( i, lastError, DELAY_ID, name );
-                delay( 1000 );
+                se = delay( 1000 );
+                if ( ! se.flag ) break;
                 }
             }
-        if ( milliseconds > 0 )
+        if ( ( milliseconds > 0 )&&( se.flag ) )
             {  // delay tail
             setSync( i, lastError, DELAY_ID, name );
-            delay( milliseconds );
+            se = delay( milliseconds );
             }
         }
+    return se.flag;
     }
 
 /*

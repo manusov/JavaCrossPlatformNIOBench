@@ -36,6 +36,7 @@ final ZipOutputStream[] zos;
 /*
 Default constructor
 */
+/*
 public IOscenarioArchives()
     {
     super();
@@ -48,6 +49,7 @@ public IOscenarioArchives()
     zos = new ZipOutputStream[fileCount];
     zipInitHelper();
     }
+*/
 
 /*
 Constructor with parameters

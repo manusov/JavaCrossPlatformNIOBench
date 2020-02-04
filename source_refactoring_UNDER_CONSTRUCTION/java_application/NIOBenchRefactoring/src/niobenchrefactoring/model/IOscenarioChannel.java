@@ -45,6 +45,7 @@ final ByteBuffer[] byteBufferTail;
 /*
 Default constructor
 */
+/*
 public IOscenarioChannel()
     {
     super();
@@ -54,6 +55,7 @@ public IOscenarioChannel()
     byteBufferTail = new ByteBuffer[threadCount];
     buffersInitHelper();
     }
+*/
 
 /*
 Constructor with parameters
@@ -85,15 +87,28 @@ Helper for class constructor
 */    
 private void buffersInitHelper()
     {
-    for( int i=0; i<threadCount; i++ )
-        {
-        byteBuffer[i] = ByteBuffer.allocateDirect( blockSize );
-        byteBuffer[i].put( dataBlock );
-        if ( tailSize != 0 )
+    /*
+    Pre-check memory size for prevent out-of-memory exception    
+    */
+    Runtime r = Runtime.getRuntime();
+    long max = r.maxMemory();
+    if ( ( (long)blockSize * (long)threadCount * 2 ) <= max )
+        {  // memory allocation
+        for( int i=0; i<threadCount; i++ )
             {
-            byteBufferTail[i] = ByteBuffer.allocateDirect( tailSize );
-            byteBufferTail[i].put( dataBlock, 0, tailSize );
+            byteBuffer[i] = ByteBuffer.allocateDirect( blockSize );
+            byteBuffer[i].put( dataBlock );
+            if ( tailSize != 0 )
+                {
+                byteBufferTail[i] = ByteBuffer.allocateDirect( tailSize );
+                byteBufferTail[i].put( dataBlock, 0, tailSize );
+                }
             }
+        }
+    else
+        {  // insufficient memory reporting
+        lastError = new StatusEntry
+            ( false, "Memory limit error, change block or threads" );
         }
     }
 
@@ -102,6 +117,12 @@ Run performance scenario
 */
 @Override public void run()
     {
+    if ( ! errorCheck() )
+        {  // this used for exit by memory overflow pre-detection
+        setSync( 0, lastError, 0, "N/A" );
+        return;
+        }
+        
     if ( threadCount > 1 )
         {  // initialize tasks for multi-thread branch
         iotWrite = new IOtaskChannelWriteMT( this );
@@ -118,22 +139,28 @@ Run performance scenario
     if ( ( readWriteMode != READ_ONLY ) &&
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        preDelay( writeDelay, WRITE_DELAY_NAME );
-        threadHelper( iotWrite );
+        if ( preDelay( writeDelay, WRITE_DELAY_NAME ) )
+            {
+            threadHelper( iotWrite );
+            }
         }
     
     if ( ( readWriteMode != READ_ONLY ) && 
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        preDelay( copyDelay, COPY_DELAY_NAME );
-        threadHelper( iotCopy );
+        if ( preDelay( copyDelay, COPY_DELAY_NAME ) )
+            {
+            threadHelper( iotCopy );
+            }
         }
     
     if ( ( readWriteMode != WRITE_ONLY ) && 
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        preDelay( readDelay, READ_DELAY_NAME );
-        threadHelper( iotRead );
+        if ( preDelay( readDelay, READ_DELAY_NAME ) )
+            {
+            threadHelper( iotRead );
+            }
         }
     
     if ( readWriteMode == READ_WRITE )

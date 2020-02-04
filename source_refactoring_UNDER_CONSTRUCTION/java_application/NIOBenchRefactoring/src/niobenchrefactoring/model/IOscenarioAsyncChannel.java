@@ -38,6 +38,7 @@ final AsynchronousFileChannel[] channelsSrc;
 // final AsynchronousFileChannel[] channelsDst;
 final ByteBuffer totalBuffer;
 
+/*
 public IOscenarioAsyncChannel()
     {
     super();
@@ -49,6 +50,7 @@ public IOscenarioAsyncChannel()
     if ( tailSize > 0 )
         totalBuffer.put( dataBlock, 0, tailSize );
     }
+*/
 
 public IOscenarioAsyncChannel
     ( String pathSrc, String prefixSrc, String postfixSrc,
@@ -69,16 +71,38 @@ public IOscenarioAsyncChannel
            readDelay, writeDelay, copyDelay, dataBlock );
     channelsSrc = new AsynchronousFileChannel[fileCount];
     // channelsDst = new AsynchronousFileChannel[fileCount];
-    totalBuffer = ByteBuffer.allocateDirect( fileSize );
-    for( int i=0; i<bufferCount; i++ )
-        totalBuffer.put( dataBlock );
-    if ( tailSize > 0 )
-        totalBuffer.put( dataBlock, 0, tailSize );
+    /*
+    Pre-check memory size for prevent out-of-memory exception    
+    */
+    Runtime r = Runtime.getRuntime();
+    long max = r.maxMemory();
+    if ( ( (long)fileSize * (long)fileCount * 2 ) <= max )
+        {  // memory allocation
+        totalBuffer = ByteBuffer.allocateDirect( fileSize );
+        for( int i=0; i<bufferCount; i++ )
+            totalBuffer.put( dataBlock );
+        if ( tailSize > 0 )
+            totalBuffer.put( dataBlock, 0, tailSize );
+        }
+    else
+        {  // insufficient memory reporting
+        lastError = new StatusEntry
+            ( false, "Memory limit error, change file size or count" );
+        totalBuffer = null;
+        }
     }
 
-    
+/*
+Run performance scenario    
+*/
 @Override public void run()
     {
+    if ( ! errorCheck() )
+        {  // this used for exit by memory overflow pre-detection
+        setSync( 0, lastError, 0, "N/A" );
+        return;
+        }
+
     iotWrite = new IOtaskAsyncChannelWrite( this );
     iotRead  = new IOtaskAsyncChannelRead( this );
  
@@ -98,15 +122,19 @@ public IOscenarioAsyncChannel
     if ( ( readWriteMode != READ_ONLY ) &&
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        preDelay( writeDelay, WRITE_DELAY_NAME );
-        threadHelper( iotWrite );
+        if ( preDelay( writeDelay, WRITE_DELAY_NAME ) )
+            {
+            threadHelper( iotWrite );
+            }
         }
 
     if ( ( readWriteMode != WRITE_ONLY ) && 
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        preDelay( readDelay, READ_DELAY_NAME );
-        threadHelper( iotRead );
+        if ( preDelay( readDelay, READ_DELAY_NAME ) )
+            {
+            threadHelper( iotRead );
+            }
         }
 
     if ( readWriteMode == READ_WRITE )
