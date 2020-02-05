@@ -138,6 +138,10 @@ Run performance scenario
         {  // single file mode
         iotWrite = new IOtaskNativeSingle( this );
         threadHelper( iotWrite );
+        if ( ! lastError.flag )
+            {
+            setSync( 0, lastError, 0, "N/A" );
+            }
         }
     
     else if ( ( readWriteMode == RW_GROUP_5 ) || 

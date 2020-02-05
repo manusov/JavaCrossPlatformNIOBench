@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/view/Application.java</file>
-            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOscenarioChannel.java</file>
+            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOtaskNativeLinearRead.java</file>
+            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOtaskNativeSingle.java</file>
             <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOscenarioNative.java</file>
-            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/model/IOscenarioMapped.java</file>
+            <file>file:/C:/3-java/project_niobench_and_nativebench/source_advanced_under_construction/java_application/NIOBenchRefactoring/src/niobenchrefactoring/resources/About.java</file>
         </group>
     </open-files>
 </project-private>
