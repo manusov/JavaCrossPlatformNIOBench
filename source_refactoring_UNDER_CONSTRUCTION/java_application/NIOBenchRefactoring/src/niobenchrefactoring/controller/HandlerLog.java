@@ -27,5 +27,4 @@ public HandlerLog( Application application )
     if ( childLog != null )
         childLog.open();
     }
-    
 }

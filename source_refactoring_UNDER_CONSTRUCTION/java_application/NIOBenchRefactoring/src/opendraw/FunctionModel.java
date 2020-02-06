@@ -37,7 +37,6 @@ public FunctionModel( FunctionControllerInterface x )
     return function;
     }
 
-
 @Override public int[] getCurrentIndexes()
     {
     return new int[] { currentCounts[1], currentCounts[2], currentCounts[3] };
@@ -47,20 +46,6 @@ public FunctionModel( FunctionControllerInterface x )
     {
     return new int[] { maxCount, maxCount, maxCount };
     }
-
-/*
-@Override public void startModel() 
-    {
-    scale = DEFAULT_SCALE_BASE;
-    for( int i=0; i<currentCounts.length; i++ )
-        currentCounts[i] = 0;
-    }
-
-@Override public void stopModel()
-    {
-    // Reserved for operations at stop model
-    }
-*/
 
 @Override public void blankModel() 
     {
@@ -82,16 +67,12 @@ public FunctionModel( FunctionControllerInterface x )
 @Override public BigDecimal getXmin()
     {
     String s = "1";
-    // if ( getXmax().intValue() > 10 ) s = "0";
-    //
     return new BigDecimal( s );
     }
         
 @Override public BigDecimal getXmax()
     {
-    // return new BigDecimal( maxCount );
     return new BigDecimal( maxCount + 1 );
-    //
     }
         
 @Override public BigDecimal getXsmallUnits()
@@ -196,5 +177,4 @@ public FunctionModel( FunctionControllerInterface x )
     {
     currentCounts[0] = 0;
     }
-
 }

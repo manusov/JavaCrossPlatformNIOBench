@@ -7,7 +7,6 @@ IO scenario class for Java NIO Asynchronous Channel benchmark, include phases:
 write files, copy files, read files.
 */
 
-
 /*
 
 TODO. ADD ENABLE-DISABLE OPERATIONS F(MODE), INCLUDE READ-ONLY.
@@ -21,36 +20,18 @@ TODO. SHOW PHASE AND INTERVAL NAMES FOR DELAY INTERVALS
 
 */
 
-
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.HelperDelay.delay;
 import static niobenchrefactoring.model.IOscenario.READ_ONLY;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 public class IOscenarioAsyncChannel extends IOscenario
 {
 final AsynchronousFileChannel[] channelsSrc;
-// final AsynchronousFileChannel[] channelsDst;
 final ByteBuffer totalBuffer;
-
-/*
-public IOscenarioAsyncChannel()
-    {
-    super();
-    channelsSrc = new AsynchronousFileChannel[fileCount];
-    // channelsDst = new AsynchronousFileChannel[fileCount];
-    totalBuffer = ByteBuffer.allocateDirect( fileSize );
-    for( int i=0; i<bufferCount; i++ )
-        totalBuffer.put( dataBlock );
-    if ( tailSize > 0 )
-        totalBuffer.put( dataBlock, 0, tailSize );
-    }
-*/
 
 public IOscenarioAsyncChannel
     ( String pathSrc, String prefixSrc, String postfixSrc,
@@ -70,7 +51,6 @@ public IOscenarioAsyncChannel
            readWriteMode, addressMode, dataMode,
            readDelay, writeDelay, copyDelay, dataBlock );
     channelsSrc = new AsynchronousFileChannel[fileCount];
-    // channelsDst = new AsynchronousFileChannel[fileCount];
     /*
     Pre-check memory size for prevent out-of-memory exception    
     */
@@ -106,19 +86,6 @@ Run performance scenario
     iotWrite = new IOtaskAsyncChannelWrite( this );
     iotRead  = new IOtaskAsyncChannelRead( this );
  
-/*    
-    if ( readWriteMode != READ_ONLY )
-        {
-        delay( writeDelay );
-        threadHelper( iotWrite );
-        }
-
-    if ( readWriteMode != WRITE_ONLY )
-        {
-        delay( readDelay );
-        threadHelper( iotRead );
-        }
-*/
     if ( ( readWriteMode != READ_ONLY ) &&
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
@@ -145,26 +112,8 @@ Run performance scenario
         Note delete operation cycles for all files is not interruptable.
         */
         delete( pathsSrc, channelsSrc );
-        // delete( pathsDst, channelsDst );
         }
     }
-
-/*
-Helper for run thread and wait it termination
-*/
-/*
-private void threadHelper( Thread t )
-    {
-    t.start();
-    int postCount = 3;
-    while( postCount > 0 )
-        {
-        HelperDelay.delay( 150 );
-        if ( ! t.isAlive() )
-            postCount--;
-        }
-    }
-*/
 
 /*
 Helper for delete files

@@ -9,11 +9,10 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskMappedRead extends IOtask
 {

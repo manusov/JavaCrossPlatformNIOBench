@@ -7,10 +7,6 @@ Operation handler for "Default MBPS" button: default settings for options,
 sequental access scenario optimized for bandwidth measurement (MBPS).
 */
 
-// TODO.
-// Required some handlers by scenarios: default MBPS, IOPS, NATIVE ...
-
-
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;

@@ -10,10 +10,8 @@ save report with system information and previous benchmarks/tests results.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileWriter;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import java.io.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import niobenchrefactoring.resources.About;
 import niobenchrefactoring.view.Application;

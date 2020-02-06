@@ -26,19 +26,21 @@ public static void main(String[] args)
     // TotalSize =  fileSize * fileCount * measurementResults
     // for all native scenarios, implement for windows and linux.
     // Linux native libraries yet not calculate TotalSize.
+    // DEBUG FRAGMENT
     DebugNativeIO d = new DebugNativeIO();
     d.testWrite();
     d.testCopy();
     d.testRead();
     d.testDelete();
 */
-/*        
+/*  
+    // DEBUG FRAGMENT
     DebugNativeLinear d = new DebugNativeLinear();
     d.testLinear();
 */
-//
+
     RunApplication ra = new RunApplication();
     ra.run();
-//        
+
     }
 }

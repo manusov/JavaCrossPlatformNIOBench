@@ -9,24 +9,11 @@ Model contain data about performance process and library methods.
 
 package niobenchrefactoring.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class StatisticsModel 
 {
 private final ArrayList<Double>[] arrays;
-
-/*
-StatisticsModel( int arraysCount )
-    {
-    arrays = new ArrayList[arraysCount];
-    for( int i=0; i<arraysCount; i++ )
-        {
-        arrays[i] = new ArrayList<>();
-        }
-    nanoseconds = new long[1][arraysCount];
-    }
-*/
 
 StatisticsModel( int fileThreadsCount, int arraysCount )
     {

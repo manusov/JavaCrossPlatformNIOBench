@@ -10,10 +10,9 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.model.TableSSD;
+import niobenchrefactoring.model.*;
 
-class PanelSSD extends PanelNative // ApplicationPanel 
+class PanelSSD extends PanelNative
 {
 private final TableChannel tableModel = new TableSSD();
 final static int DEFAULT_READ_WRITE_SSD = 4;

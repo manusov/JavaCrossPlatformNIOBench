@@ -10,10 +10,7 @@ check, detect native platform and communication with native library.
 package niobenchrefactoring.resources;
 
 import niobenchrefactoring.NIOBenchRefactoring;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 public class PAL
@@ -23,7 +20,6 @@ private final static String[] LIBRARY_NAMES =
 private final static String[] LIBRARY_EXTENSIONS = 
     { ".dll"     , ".dll"     , ".so"           , ".so"           };
 private final static int LIBRARY_COUNT = LIBRARY_NAMES.length;
-
 /*
 This is one block, not limit maximum library size
 */
@@ -31,14 +27,12 @@ private final static int BINARY_SIZE = 16384;
 private static int binaryType = -1;
 private static boolean binaryValid = false;
 private static File library;
-
 /*
 Public constants for native functions select and status encoding
 ID constants for functions without IPB
 */
 public final static int GET_LIBRARY_NAME = 0;
 public final static int GET_LIBRARY_INFO = 1;
-
 /*
 ID constants for functions with IPB
 */
@@ -47,28 +41,12 @@ public final static int MEASURE_READ_FILE   = 1;
 public final static int MEASURE_WRITE_FILE  = 2;
 public final static int MEASURE_COPY_FILE   = 3;
 public final static int MEASURE_DELETE_FILE = 4;
-
-/*
-// old native model with this functions is rejected
-public final static int MEASURE_READ_SEQUENCE   = 5;
-public final static int MEASURE_WRITE_SEQUENCE  = 6;
-public final static int MEASURE_COPY_SEQUENCE   = 7;
-public final static int MEASURE_DELETE_SEQUENCE = 8;
-public final static int MEASURE_WRITE_COPY_READ = 9;
-public final static int MEASURE_MIXED_IO        = 10;
-*/
 /*
 Support native model with precision measurements and timer underflow tolerant
 note single file can be selected as group with N=1.
 */
-/*
-public final static int PRECISION_FILE  = 5;  // one file write, copy, read
-public final static int PRECISION_GROUP = 6;  // group write, copy, read
-public final static int PRECISION_MIX   = 7;  // group with randomized address
-*/
 public final static int PRECISION_LINEAR = 5;  // write, copy, read N files
 public final static int PRECISION_MIXED  = 6;  // mixed IO, random sequence
-
 // offsets for IPB addressing, units = asm quad words = java long
 public final static int IPB_REQUEST_ID     = 0;
 public final static int IPB_REQUEST_SIZE   = 1;
@@ -122,12 +100,10 @@ public final static long FILE_ATTRIBUTE_READ_SYNC  = 1;
 public final static long FILE_ATTRIBUTE_WRITE_SYNC = 2;
 // special status constant for native width
 public final static int JRE32_UNDER_OS64 = 33;
-
 // Methods for get native platform detection results
 // Binaries types: 0=Win32, 1=Win64, 2=Linux32, 3=Linux64, ... , -1=Unknown
 public int getBinaryType()      { return binaryType;  }
 public boolean getBinaryValid() { return binaryValid; }
-
 // Target native methods
 // entryBinary parameters is IPB, OPB, IPB size, OPB size (size in LONG-QWORDS)
 // IPB = Input Parameters block, OPB = Output Parameters Block

@@ -10,17 +10,11 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
 import java.io.IOException;
-import java.nio.channels.ClosedByInterruptException;
-import java.nio.channels.FileChannel;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.DSYNC;
-import static java.nio.file.StandardOpenOption.SPARSE;
-import static java.nio.file.StandardOpenOption.WRITE;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.nio.channels.*;
+import static java.nio.file.StandardOpenOption.*;
+import java.util.concurrent.*;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskChannelCopyMT extends IOtaskChannelWriteMT
 {
@@ -53,7 +47,6 @@ Run IO task
         if ( j >= iosc.threadCount )
             j = 0;
         }
-    
     /*
     Create files, yet zero size, make this work outside of measured interval,
     cycle for required number of files

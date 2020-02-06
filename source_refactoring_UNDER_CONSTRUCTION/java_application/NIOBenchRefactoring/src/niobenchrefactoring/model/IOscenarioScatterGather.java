@@ -7,7 +7,6 @@ IO scenario class for Java NIO Scatter-Gather files benchmark, include phases:
 write files, copy files, read files.
 */
 
-
 /*
 
 TODO. ADD ENABLE-DISABLE OPERATIONS F(MODE), INCLUDE READ-ONLY.
@@ -21,19 +20,13 @@ TODO. SHOW PHASE AND INTERVAL NAMES FOR DELAY INTERVALS
 
 */
 
-
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.HelperDelay.delay;
-import static niobenchrefactoring.model.IOscenario.READ_ONLY;
-import static niobenchrefactoring.model.IOscenario.WRITE_ONLY;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channel;
-import java.nio.channels.GatheringByteChannel;
-import java.nio.channels.ScatteringByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.*;
+import java.nio.channels.*;
+import java.nio.file.*;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOscenarioScatterGather extends IOscenario
 {
@@ -43,20 +36,6 @@ final GatheringByteChannel[] gatherWriters;
 final ScatteringByteChannel[] scatterReaders;
 final ByteBuffer[] multiBuffer;
 final ByteBuffer[] multiBufferTail;
-
-/*
-Default constructor
-*/
-/*
-public IOscenarioScatterGather()
-    {
-    super();
-    gatherWriters = new GatheringByteChannel[fileCount];
-    scatterReaders = new ScatteringByteChannel[fileCount];
-    multiBuffer = multiBufferInitHelper( blockSize );
-    multiBufferTail = multiBufferInitHelper( tailSize );
-    }
-*/
 
 /*
 Constructor with parameters
@@ -128,28 +107,6 @@ private ByteBuffer[] multiBufferInitHelper( int bufferSize )
         return null;
         }
     }
-    
-    
-/*
-private ByteBuffer[] multiBufferInitHelper()
-    {
-    int n = bufferCount;
-    if ( tailSize > 0 )
-        n++;
-    ByteBuffer[] buffer = new ByteBuffer[n];
-    for( int i=0; i<bufferCount; i++ )
-        {
-        buffer[i] = ByteBuffer.allocateDirect( blockSize );
-        buffer[i].put( dataBlock );
-        }
-    if ( tailSize > 0 )
-        {
-        buffer[bufferCount] = ByteBuffer.allocateDirect( tailSize );
-        buffer[bufferCount].put( dataBlock, 0, tailSize );    
-        }
-    return buffer;
-    }
-*/
 
 /*
 Run performance scenario    
@@ -165,21 +122,6 @@ Run performance scenario
     iotWrite = new IOtaskScatterGatherWrite( this );
     iotCopy  = new IOtaskScatterGatherCopy( this );
     iotRead  = new IOtaskScatterGatherRead( this );
-/*
-    if ( readWriteMode != READ_ONLY )
-        {
-        delay( writeDelay );
-        threadHelper( iotWrite );
-        delay( copyDelay );
-        threadHelper( iotCopy );
-        }
-    
-    if ( readWriteMode != WRITE_ONLY )
-        {
-        delay( readDelay );
-        threadHelper( iotRead );
-        }
-*/
 
     if ( ( readWriteMode != READ_ONLY ) &&
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
@@ -219,23 +161,6 @@ Run performance scenario
         delete( pathsDst, gatherWriters );
         }
     }
-
-/*
-Helper for run thread and wait it termination
-*/
-/*
-private void threadHelper( Thread t )
-    {
-    t.start();
-    int postCount = 3;
-    while( postCount > 0 )
-        {
-        HelperDelay.delay( 150 );
-        if ( ! t.isAlive() )
-            postCount--;
-        }
-    }
-*/
 
 /*
 Helper for delete files

@@ -10,10 +10,9 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
 import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskChannelRead extends IOtask
 {
@@ -30,10 +29,7 @@ IOtaskChannelRead( IOscenarioChannel ios )
 /*
 Run IO task
 */
-
 private int i = 0;
-// private boolean interrupt = false;
-
 @Override public void run()
     {
     IOscenarioChannel iosc = (IOscenarioChannel)ios;

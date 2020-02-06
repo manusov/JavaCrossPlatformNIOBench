@@ -9,8 +9,7 @@ This class is part of CONTROLLER at MODEL/VIEW/CONTROLLER (MVC) functionality.
 
 package niobenchrefactoring.controller;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
+import javax.swing.*;
 import niobenchrefactoring.resources.PAL;
 import niobenchrefactoring.view.Application;
 

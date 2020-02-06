@@ -9,7 +9,6 @@ Note java version-specific handler used for close memory-mapped buffer after
 mapping operation, otherwise files can't be deleted.
 */
 
-
 /*
 
 TODO. ADD ENABLE-DISABLE OPERATIONS F(MODE), INCLUDE READ-ONLY.
@@ -32,19 +31,12 @@ CAN BE SOLUTION BY BUFFER.DUPLICATE.
 
 */
 
-
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.HelperDelay.delay;
-import static niobenchrefactoring.model.IOscenario.READ_ONLY;
-import static niobenchrefactoring.model.IOscenario.WRITE_ONLY;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.*;
+import java.nio.file.*;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOscenarioMapped extends IOscenario
 {
@@ -57,20 +49,6 @@ Vector fields, by number of threads, required for parallel execution
 */
 final ByteBuffer[] byteBuffer;
 final ByteBuffer[] byteBufferTail;
-
-/*
-Default constructor
-*/
-/*
-public IOscenarioMapped()
-    {
-    super();
-    helperUnmap = new HelperUnmap();
-    byteBuffer = new ByteBuffer[threadCount];
-    byteBufferTail = new ByteBuffer[threadCount];
-    buffersInitHelper();
-    }
-*/
 
 /*
 Constructor with parameters
@@ -140,21 +118,6 @@ Run performance scenario
     iotWrite = new IOtaskMappedWrite( this );
     iotCopy  = new IOtaskMappedCopy( this );
     iotRead  = new IOtaskMappedRead( this );
-/*
-    if ( readWriteMode != READ_ONLY )
-        {
-        delay( writeDelay );
-        threadHelper( iotWrite );
-        delay( copyDelay );
-        threadHelper( iotCopy );
-        }
-    
-    if ( readWriteMode != WRITE_ONLY )
-        {
-        delay( readDelay );
-        threadHelper( iotRead );
-        }
-*/
 
     if ( ( readWriteMode != READ_ONLY ) &&
          ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
@@ -195,24 +158,6 @@ Run performance scenario
         }
 
     }
-
-// TODO. MOVE THIS TO PARENT CLASS, REMOVE REPLICATIONS.
-/*
-Helper for run thread and wait it termination
-*/
-/*
-private void threadHelper( Thread t )
-    {
-    t.start();
-    int postCount = 3;
-    while( postCount > 0 )
-        {
-        HelperDelay.delay( 150 );
-        if ( ! t.isAlive() )
-            postCount--;
-        }
-    }
-*/
 
 /*
 Helpers for delete files

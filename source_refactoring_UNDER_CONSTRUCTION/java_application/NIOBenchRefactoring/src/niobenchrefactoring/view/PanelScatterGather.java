@@ -10,12 +10,9 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import niobenchrefactoring.model.IOscenario;
-import niobenchrefactoring.model.IOscenarioScatterGather;
-import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.model.TableScatterGather;
+import niobenchrefactoring.model.*;
 
-class PanelScatterGather extends PanelChannel  // ApplicationPanel
+class PanelScatterGather extends PanelChannel
 {
 private final TableChannel tableModel = new TableScatterGather();
 
@@ -35,17 +32,6 @@ public PanelScatterGather( Application application )
     }
 
 /*
-Additional build method, 
-not make this operations in constructor because overridable warnings.
-*/
-/*
-@Override void build()
-    {
-    // reserved, because same as parent panel - PanelChannel.java
-    }
-*/
-
-/*
 Customize panel with combo boxes, by restrictions for options settings.
 Differrent panels has different options restrictions.
 */
@@ -60,56 +46,6 @@ Differrent panels has different options restrictions.
     boxes[ID_THREAD_COUNT].setEnabled( false );
     boxes[ID_FAST_COPY].setEnabled( false );
     }
-
-/*
-Public method for initializing at start and re-initializing by buttons:
-"Default MBPS" , "Default IOPS".
-This method can be called from button handler.
-*/
-/*
-@Override public void setDefaults( SCENARIO scenario )
-    {
-    // reserved, because same as parent panel - PanelChannel.java
-    }
-*/
-
-/*
-Public method for clear benchmarks results by button: "Clear".
-This method can be called from button handler.
-*/
-/*
-@Override public void clearResults()
-    {
-    // reserved, because same as parent panel - PanelChannel.java
-    // reserved for panel-specific clear, additional to HandlerClear action.
-    }
-*/
-
-/*
-Support "Run" button
-*/
-/*
-// reserved, because same as parent panel - PanelChannel.java
-//
-@Override public void disableGuiBeforeRun()     {              }
-@Override public void enableGuiAfterRun()       {              }
-@Override public String optionSourcePath()      { return null; }
-@Override public String optionDestinationPath() { return null; }
-@Override public int optionFileSize()           { return 0;    }
-@Override public int optionBlockSize()          { return 0;    }
-@Override public int optionFileCount()          { return 0;    }
-@Override public int optionThreadCount()        { return 0;    }
-@Override public int optionDataMode()           { return 0;    }
-@Override public int optionAddressMode()        { return 0;    }
-@Override public int optionRwMode()             { return 0;    }
-@Override public int optionFastCopy()           { return 0;    }
-@Override public int optionReadSync()           { return 0;    }
-@Override public int optionWriteSync()          { return 0;    }
-@Override public int optionCopySync()           { return 0;    }
-@Override public int optionReadDelay()          { return 0;    }
-@Override public int optionWriteDelay()         { return 0;    }
-@Override public int optionCopyDelay()          { return 0;    }
-*/
 
 /*
 Build IO scenario with options settings, defined in this panel
@@ -137,15 +73,4 @@ Build IO scenario with options settings, defined in this panel
           dataBlock );
     return ios;
     }
-
-/*
-Return text information about options settings at start IO scenario
-*/
-/*
-@Override public String reportIOscenario()
-    {
-    // reserved, because same as parent panel - PanelChannel.java
-    return "";
-    }
-*/
 }

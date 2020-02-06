@@ -11,34 +11,10 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+import static niobenchrefactoring.model.IOscenario.*;
 import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_5;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_WRITE_SYNC;
-import static niobenchrefactoring.resources.PAL.IPB_BLOCK_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_DST_ATTRIBUTES;
-import static niobenchrefactoring.resources.PAL.IPB_DST_PATH_POSTFIX;
-import static niobenchrefactoring.resources.PAL.IPB_DST_PATH_PREFIX;
-import static niobenchrefactoring.resources.PAL.IPB_FILE_COUNT;
-import static niobenchrefactoring.resources.PAL.IPB_ITERATIONS;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_ID;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_ATTRIBUTES;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH_POSTFIX;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH_PREFIX;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_ERROR;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_OPERATION;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_COPY;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_READ;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_WRITE;
-import static niobenchrefactoring.resources.PAL.PRECISION_LINEAR;
+import static niobenchrefactoring.resources.PAL.*;
 
 public class IOtaskNativeSingle extends IOtask
 {
@@ -172,7 +148,6 @@ Run IO task = write/copy/read files group by single call of native method
 /*
 Helpers
 */
-
 private String[] nameHelper( String s1 )
     {
     String prefix  = s1;
@@ -185,5 +160,4 @@ private String[] nameHelper( String s1 )
         }
     return new String[] { prefix, postfix };
     }
-
 }

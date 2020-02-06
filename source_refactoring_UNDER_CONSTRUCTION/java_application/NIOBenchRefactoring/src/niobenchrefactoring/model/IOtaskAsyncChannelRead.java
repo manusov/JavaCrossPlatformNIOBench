@@ -9,14 +9,12 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousFileChannel;
-import java.nio.channels.CompletionHandler;
+import java.nio.channels.*;
 import static java.nio.file.StandardOpenOption.READ;
 import java.util.concurrent.CountDownLatch;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskAsyncChannelRead extends IOtask
 {

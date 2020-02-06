@@ -8,11 +8,8 @@ Helper class for Java version-specific operation: memory mapped buffer unmap.
 
 package niobenchrefactoring.model;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
+import java.lang.reflect.*;
+import java.nio.*;
 
 class HelperUnmap 
 {

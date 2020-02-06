@@ -27,5 +27,4 @@ public HandlerTable( Application application )
     if ( childTable != null )
         childTable.open();
     }
-    
 }

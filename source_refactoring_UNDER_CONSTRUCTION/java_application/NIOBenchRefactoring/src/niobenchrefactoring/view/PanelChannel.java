@@ -10,31 +10,16 @@ with tabbed sub-panels.
 
 package niobenchrefactoring.view;
 
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Random;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import niobenchrefactoring.controller.HandlerDestinationPath;
-import niobenchrefactoring.controller.HandlerSourcePath;
-import niobenchrefactoring.model.IOscenario;
-import niobenchrefactoring.model.IOscenarioChannel;
-import niobenchrefactoring.model.TableChannel;
+import javax.swing.*;
+import niobenchrefactoring.controller.*;
+import niobenchrefactoring.model.*;
 import niobenchrefactoring.resources.About;
-import static niobenchrefactoring.resources.IOPB.receiveBytesFromOPB;
-import static niobenchrefactoring.resources.IOPB.receiveStringFromOPB;
+import static niobenchrefactoring.resources.IOPB.*;
 import niobenchrefactoring.resources.PAL;
-import static niobenchrefactoring.resources.PAL.GET_LIBRARY_INFO;
-import static niobenchrefactoring.resources.PAL.GET_LIBRARY_NAME;
-import static niobenchrefactoring.resources.PAL.GET_RANDOM_DATA;
-import static niobenchrefactoring.resources.PAL.JRE32_UNDER_OS64;
+import static niobenchrefactoring.resources.PAL.*;
 
 public class PanelChannel extends ApplicationPanel 
 {
@@ -973,5 +958,4 @@ it used for text report
     sb.append( "\r\n" );
     return sb.toString();
     }
-
 }

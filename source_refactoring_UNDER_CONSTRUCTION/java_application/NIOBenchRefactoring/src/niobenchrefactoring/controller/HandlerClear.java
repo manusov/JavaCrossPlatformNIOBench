@@ -9,14 +9,13 @@ Operation handler for "Clear" button: clear previous results.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.view.Application;
-import niobenchrefactoring.view.ApplicationPanel;
 import opendraw.FunctionController;
 import opendraw.FunctionModelInterface;
 import opendraw.OpenDraw;
 import openlog.OpenLog;
 import opentable.OpenTable;
+import niobenchrefactoring.model.TableChannel;
+import niobenchrefactoring.view.*;
 
 public class HandlerClear extends Handler
 {

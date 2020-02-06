@@ -12,21 +12,13 @@ package niobenchrefactoring.model;
 import niobenchrefactoring.resources.IOPB;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import niobenchrefactoring.resources.PAL;
-import static niobenchrefactoring.resources.PAL.FILE_API_IPB_SIZE;
-import static niobenchrefactoring.resources.PAL.FILE_API_OPB_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_ID;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH;
-import static niobenchrefactoring.resources.PAL.MEASURE_DELETE_FILE;
-import static niobenchrefactoring.resources.PAL.OPB_ALIGNMENT_ADDEND;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_ERROR;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_OPERATION;
+import static niobenchrefactoring.resources.PAL.*;
 
 public class IOscenarioNative extends IOscenario
 {
 final PAL pal;
 final long[] ipb;
 final long[] opb;
-
 /*
 Special values for "R/W" option at Native test panel.
 */
@@ -34,19 +26,6 @@ public final static int RW_GROUP_5  = 10;
 public final static int RW_GROUP_1  = 11;
 public final static int RW_SINGLE_5 = 12;
 public final static int RW_SINGLE_1 = 13;
-
-/*
-Default constructor
-*/
-/*
-public IOscenarioNative( PAL pal )
-    {
-    super();
-    this.pal = pal;
-    ipb = new long[ FILE_API_IPB_SIZE ];
-    opb = new long[ FILE_API_OPB_SIZE + OPB_ALIGNMENT_ADDEND + blockSize / 8 ];
-    }
-*/
 
 /*
 Constructor with parameters

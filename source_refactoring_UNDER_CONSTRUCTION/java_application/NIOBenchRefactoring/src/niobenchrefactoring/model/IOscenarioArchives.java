@@ -10,20 +10,15 @@ Use java built-in zip support.
 
 package niobenchrefactoring.model;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import java.io.*;
+import java.nio.file.*;
+import java.util.zip.*;
 
-public class IOscenarioArchives extends IOscenarioChannel // IOscenario
+public class IOscenarioArchives extends IOscenarioChannel
 {
-private final static String  DEFAULT_PATH_ZIP     = "C:\\TEMP\\";
-private final static String  DEFAULT_PREFIX_ZIP   = "arc";
-private final static String  DEFAULT_POSTFIX_ZIP  = ".zip";
+private final static String DEFAULT_PATH_ZIP     = "C:\\TEMP\\";
+private final static String DEFAULT_PREFIX_ZIP   = "arc";
+private final static String DEFAULT_POSTFIX_ZIP  = ".zip";
 
 final String pathZip;
 final String prefixZip;
@@ -32,24 +27,6 @@ final String[] namesZip;
 final Path[] pathsZip;
 final ZipInputStream[] zis;
 final ZipOutputStream[] zos;
-
-/*
-Default constructor
-*/
-/*
-public IOscenarioArchives()
-    {
-    super();
-    pathZip    = DEFAULT_PATH_ZIP;
-    prefixZip  = DEFAULT_PREFIX_ZIP;
-    postfixZip = DEFAULT_POSTFIX_ZIP;
-    namesZip = new String[fileCount];
-    pathsZip = new Path[fileCount];
-    zis = new ZipInputStream[fileCount];
-    zos = new ZipOutputStream[fileCount];
-    zipInitHelper();
-    }
-*/
 
 /*
 Constructor with parameters
@@ -79,7 +56,6 @@ public IOscenarioArchives
     zos = new ZipOutputStream[fileCount];
     zipInitHelper();
     }
-
 /*
 Helper for class constructor    
 */    
@@ -100,7 +76,6 @@ private void zipInitHelper()
             }
         }
     }
-
 /*
 Run performance scenario    
 */
@@ -109,47 +84,26 @@ Run performance scenario
     iotWrite = new IOtaskChannelWriteMT( this );    
     iotCopy  = new IOtaskArchivePack( this );
     iotRead  = new IOtaskArchiveUnpack( this );
-/*    
-    if ( errorCheck() )
-        {
-        threadHelper( iotWrite );
-        }
-    
-    if ( errorCheck() )
-        {
-        threadHelper( iotCopy );
-        }
-    
-    if ( errorCheck() )
-        {
-        threadHelper( iotRead );
-        }
-*/
 
     if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        // preDelay( writeDelay, WRITE_DELAY_NAME );
         threadHelper( iotWrite );
         }
     
     if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        // preDelay( copyDelay, COPY_DELAY_NAME );
         threadHelper( iotCopy );
         }
     
     if ( ( ! interrupt ) && ( ! isInterrupted() ) && errorCheck() )
         {
-        // preDelay( readDelay, READ_DELAY_NAME );
         threadHelper( iotRead );
         }
-
     setSync( 0, lastError, DELETE_ID, DELETE_NAME );
     delete( pathsSrc, channelsSrc );
     delete( pathsDst, channelsDst );
     deleteZip( pathsZip, zis, zos );
     }
-
 /*
 Helper for delete archive files
 */
@@ -182,5 +136,4 @@ void deleteZip( Path[] path, ZipInputStream[] zis, ZipOutputStream[] zos )
             }
         }
     }
-
 }

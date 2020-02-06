@@ -10,25 +10,10 @@ Io tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
 import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_WRITE_SYNC;
-import static niobenchrefactoring.resources.PAL.IPB_BLOCK_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_DST_ATTRIBUTES;
-import static niobenchrefactoring.resources.PAL.IPB_DST_PATH;
-import static niobenchrefactoring.resources.PAL.IPB_ITERATIONS;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_ID;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_ATTRIBUTES;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH;
-import static niobenchrefactoring.resources.PAL.MEASURE_COPY_FILE;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_ERROR;
-import static niobenchrefactoring.resources.PAL.OPB_LAST_OPERATION;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_DELTA;
+import static niobenchrefactoring.model.IOscenario.*;
+import static niobenchrefactoring.resources.PAL.*;
 
 public class IOtaskNativeLinearCopy extends IOtask
 {

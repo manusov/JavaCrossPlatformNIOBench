@@ -9,17 +9,9 @@ performance = f ( test parameters ).
 
 package opentable;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -129,5 +121,4 @@ private class ChildWindowListener extends WindowAdapter
         childActive = false;  // enable re-open this window if it closed
         }
     }
-    
 }

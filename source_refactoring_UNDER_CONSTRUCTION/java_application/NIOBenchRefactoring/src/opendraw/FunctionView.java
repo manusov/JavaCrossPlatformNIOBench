@@ -9,11 +9,7 @@ Function Y=F(X) drawing view.
 
 package opendraw;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.math.BigDecimal;
 import javax.swing.JPanel;
 
@@ -37,19 +33,15 @@ public FunctionView( FunctionControllerInterface x )
 
 private class FunctionDrawPanel extends JPanel
     {
-    
     @Override public void paint( Graphics g )
         {
-
         Color backgroundColor = Color.WHITE;
         Color axisColor       = Color.BLACK;
         Color gridColor       = Color.LIGHT_GRAY;
         Color[] drawColors = new Color[] 
             { Color.BLUE , Color.RED , Color.MAGENTA };
         Font axisFont = new Font ( "Verdana", Font.PLAIN, 10 );
-//      Font textFont = new Font ( "Verdana", Font.BOLD + Font.ITALIC, 14 );
         Font textFont = new Font ( "Verdana", Font.BOLD, 14 );
-//
         Rectangle r = g.getClipBounds();
         g.setColor( backgroundColor );
         g.setFont( axisFont );

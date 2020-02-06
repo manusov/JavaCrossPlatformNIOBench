@@ -6,22 +6,16 @@ Project second generation, refactoring started at 2019-2020.
 Operation handler for "About" button: show About Info, include web site link.
 */
 
-// TODO.
-// Now this code is part of VIEW, not CONTROLLER,
-// required move to this class really button handler.
-
-
 package niobenchrefactoring.controller;
 
-import niobenchrefactoring.resources.About;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Desktop;
 import java.io.IOException;
 import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import java.net.URI;
 import java.net.URISyntaxException;
+import niobenchrefactoring.resources.About;
 import niobenchrefactoring.view.Application;
 
 public class HandlerAbout extends Handler

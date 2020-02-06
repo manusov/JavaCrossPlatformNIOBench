@@ -9,10 +9,7 @@ Dual purpose: table model used for build GUI and save text report.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class TableAsyncChannel extends TableChannel
 {
@@ -78,6 +75,4 @@ private void cellsHelper( StateAsync entry, int row )
     valueHelper( entry.min,     row+2, 2 );
     valueHelper( entry.max,     row+2, 3 );
     }
-
-
 }

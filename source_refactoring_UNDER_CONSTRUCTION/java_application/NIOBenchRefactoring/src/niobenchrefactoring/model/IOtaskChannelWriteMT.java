@@ -10,20 +10,12 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
 import java.io.IOException;
-import java.nio.channels.ClosedByInterruptException;
-import java.nio.channels.FileChannel;
+import java.nio.channels.*;
 import java.nio.file.Files;
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.DSYNC;
-import static java.nio.file.StandardOpenOption.SPARSE;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import static java.nio.file.StandardOpenOption.*;
+import java.util.concurrent.*;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskChannelWriteMT extends IOtaskChannelWrite
 {
@@ -248,5 +240,4 @@ StatusEntry executorShutdown( ExecutorService executor )
         }
     return new StatusEntry( statusFlag, statusString );
     }
-
 }

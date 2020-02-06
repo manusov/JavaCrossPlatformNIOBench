@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 public class HelperRandom 
 {
-
 /*
 Object for sorting by criteria = x with randomize array of integers = y    
 */
@@ -47,5 +46,4 @@ public static int[] randomArray( int size )
         values[i] = entries[i].y;
     return values;
     }
-    
 }

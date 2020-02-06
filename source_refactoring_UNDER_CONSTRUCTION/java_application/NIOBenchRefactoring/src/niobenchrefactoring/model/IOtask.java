@@ -26,5 +26,4 @@ IOtask( IOscenario ios )
     super.interrupt();
     interrupt = true;
     }
-
 }

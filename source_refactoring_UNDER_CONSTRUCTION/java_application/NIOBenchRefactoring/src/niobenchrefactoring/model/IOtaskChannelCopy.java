@@ -10,15 +10,10 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
 import java.io.IOException;
-import java.nio.channels.ClosedByInterruptException;
-import java.nio.channels.FileChannel;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.DSYNC;
-import static java.nio.file.StandardOpenOption.SPARSE;
-import static java.nio.file.StandardOpenOption.WRITE;
+import java.nio.channels.*;
+import static java.nio.file.StandardOpenOption.*;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class IOtaskChannelCopy extends IOtask
 {
@@ -35,10 +30,7 @@ IOtaskChannelCopy( IOscenarioChannel ios )
 /*
 Run IO task
 */
-
 private int i = 0;
-// private boolean interrupt = false;
-
 @Override public void run()
     {
     IOscenarioChannel iosc = (IOscenarioChannel)ios;

@@ -10,12 +10,7 @@ Dual purpose: table model used for build GUI and save text report.
 package niobenchrefactoring.model;
 
 import javax.swing.table.AbstractTableModel;
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
+import static niobenchrefactoring.model.IOscenario.*;
 
 public class TableChannel extends AbstractTableModel
 {
@@ -157,7 +152,6 @@ public void measurementNotify( StateAsync[] async )
 /*
 Some of this methods not private, can be used by child classes
 */
-
 private void cellsHelper( StateAsync entry, int row )
     {
     valueHelper( entry.median,  row,   1 );
@@ -192,5 +186,4 @@ double[] medianHelper( StateAsync entry )
         }
     return minmax;
     }
-
 }

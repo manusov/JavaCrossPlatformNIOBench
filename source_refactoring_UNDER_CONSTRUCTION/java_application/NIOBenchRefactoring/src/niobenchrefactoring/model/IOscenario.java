@@ -8,7 +8,6 @@ Note IO scenario is highest hierarchy level, IO task is lowest level.
 IO scenario runs a group of IO tasks.
 */
 
-
 /*
 
 TODO.
@@ -21,12 +20,9 @@ CAN MEASURE MBPS AND IOPS BOTH.
 
 */
 
-
 package niobenchrefactoring.model;
 
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.LinkedList;
 import static niobenchrefactoring.model.HelperDelay.delay;
 
@@ -54,7 +50,6 @@ public final static int PACK_ID = READ_ID;
 public final static int UNPACK_ID = COPY_ID;
 public final static int TOTAL_PACK_ID = TOTAL_READ_ID;
 public final static int TOTAL_UNPACK_ID = TOTAL_COPY_ID;
-
 /*
 Names for phases progress visualization
 */
@@ -83,7 +78,6 @@ public final static int DATA_ONE         = 1;
 public final static int DATA_SEQUENTAL   = 2;
 public final static int DATA_RANDOM_SOFT = 3;
 public final static int DATA_RANDOM_HARD = 4;
-
 /*
 Default settings for options variables, part 1 = arguments passed to IOtask
 */
@@ -97,11 +91,6 @@ private final static int     DEFAULT_FILE_COUNT   = 20;
 private final static int     DEFAULT_FILE_SIZE    = 100*1024*1024;
 private final static int     DEFAULT_BLOCK_SIZE   = 10*1024*1024;
 private final static int     DEFAULT_THREAD_COUNT = 1;  // 4;
-private final static boolean DEFAULT_READ_SYNC    = false;
-private final static boolean DEFAULT_WRITE_SYNC   = false;
-private final static boolean DEFAULT_COPY_SYNC    = false;
-private final static boolean DEFAULT_DATA_SPARSE  = false;
-private final static boolean DEFAULT_FAST_COPY    = true;
 /*
 Default settings for options variables, part 2 = arguments used by IOscenario
 */
@@ -170,9 +159,7 @@ this fields directly accessed and updated by IO tasks.
 */
 int phaseID = -1;
 String phaseName = "";
-// double percentage = 0.0;
 StatusEntry lastError;
-
 /*
 Common functionality support group for all child classes
 */
@@ -180,61 +167,6 @@ IOtask iotWrite;
 IOtask iotCopy;
 IOtask iotRead;
 boolean interrupt = false;
-
-/*
-Constructor for options settings by internal defaults
-*/    
-public IOscenario()
-    {
-    pathSrc       = DEFAULT_PATH_SRC;
-    prefixSrc     = DEFAULT_PREFIX_SRC;
-    postfixSrc    = DEFAULT_POSTFIX_SRC;
-    pathDst       = DEFAULT_PATH_DST;
-    prefixDst     = DEFAULT_PREFIX_DST;
-    postfixDst    = DEFAULT_POSTFIX_DST;
-    fileCount     = DEFAULT_FILE_COUNT;
-    fileSize      = DEFAULT_FILE_SIZE;
-    blockSize     = DEFAULT_BLOCK_SIZE;
-    threadCount   = DEFAULT_THREAD_COUNT;
-    readSync      = DEFAULT_READ_SYNC;
-    writeSync     = DEFAULT_WRITE_SYNC;
-    copySync      = DEFAULT_COPY_SYNC;
-    dataSparse    = DEFAULT_DATA_SPARSE;
-    fastCopy      = DEFAULT_FAST_COPY;
-    readWriteMode = DEFAULT_READ_WRITE_MODE;
-    addressMode   = DEFAULT_ADDRESS_MODE;
-    dataMode      = DEFAULT_DATA_MODE;
-    readDelay     = DEFAULT_READ_DELAY;
-    writeDelay    = DEFAULT_WRITE_DELAY;
-    copyDelay     = DEFAULT_COPY_DELAY;
-    dataBlock     = new byte[blockSize];
-    for( int i=0; i<blockSize; i++ )
-        dataBlock[i] = 0;
-    
-    totalSize = 
-        (long)( fileCount & 0xFFFFFFFFL ) * (long)( fileSize & 0xFFFFFFFFL );
-    bufferCount = fileSize / blockSize;
-    tailSize    = fileSize % blockSize;
-    fileSystem = FileSystems.getDefault();
-    namesSrc = new String[fileCount];
-    namesDst = new String[fileCount];
-    pathsSrc = new Path[fileCount];
-    pathsDst = new Path[fileCount];
-    namesAndPathsInitHelper();
-    
-// note async channel is multi-thread (per files) even if thread count = 1
-//    if ( threadCount < 2 )
-//        {
-//        statistics = new StatisticsModel( ID_COUNT );
-//        }
-//    else
-//        {
-    statistics = new StatisticsModel( fileCount, ID_COUNT );
-//        }
-    
-    syncQueue = new LinkedList();
-    lastError = new StatusEntry( true, "OK" );
-    }
 
 /*
 Constructor for options settings by input parameters
@@ -286,7 +218,6 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
         {
         this.dataBlock = dataBlock;
         }
-    
     totalSize = 
         (long)( fileCount & 0xFFFFFFFFL ) * (long)( fileSize & 0xFFFFFFFFL );
     bufferCount = fileSize / blockSize;
@@ -297,20 +228,10 @@ public IOscenario( String pathSrc, String prefixSrc, String postfixSrc,
     pathsSrc = new Path[fileCount];
     pathsDst = new Path[fileCount];
     namesAndPathsInitHelper();
-    
-//    if ( threadCount < 2 )
-//        {
-//        statistics = new StatisticsModel( ID_COUNT );
-//        }
-//    else
-//        {
     statistics = new StatisticsModel( fileCount, ID_COUNT );
-//        }
-
     syncQueue = new LinkedList();
     lastError = new StatusEntry( true, "OK" );
     }
-
 /*
 Helper for class constructor
 */    
@@ -324,7 +245,6 @@ private void namesAndPathsInitHelper()
         pathsDst[i] = fileSystem.getPath( namesDst[i] );
         }
     }
-
 /*
 Get statistics
 */
@@ -332,7 +252,6 @@ public StatisticsModel getStatistics()
     {
     return statistics;
     }
-
 /*
 Asynchronous get I/O performance statistics
 */
@@ -345,7 +264,6 @@ public StateAsync[] getAsync()
         }
     return entries;    
     }
-
 /*
 Asynchronous get current phase name
 */
@@ -354,21 +272,12 @@ public String getPhaseName()
     return phaseName;
     }
 /*
-Asynchronous get current percentage
-*/
-// public double getPercentage()
-//     {
-//     return percentage;
-//     }
-
-/*
 Asynchronous get last error
 */
 public StatusEntry getLastError()
     {
     return lastError;
     }
-
 /*
 Get entry of synchronous statistics
 */
@@ -386,7 +295,6 @@ public StateSync getSync()
             }
         }
     }
-
 /*
 Add entry of synchronous statistics, also used by child class
 */
@@ -418,12 +326,10 @@ void setSync( int count, StatusEntry se, int id, String name  )
             }
         }
     }
-
 /*
 SetSync method overload for parallel multi-thread execution support,
 */
 final private int[] orderedCounts = new int[ID_COUNT];
-
 synchronized void setSync( StatusEntry se, int id, String name  )
     {
     if ( ( id >= 0 )&&( id < ID_COUNT ) )
@@ -432,20 +338,6 @@ synchronized void setSync( StatusEntry se, int id, String name  )
         setSync( orderedCounts[id], se, id, name );
         }
     }
-
-/*
-Clear synchronous statistics, also used by child class
-*/
-/*
-void clearSync()
-    {
-    synchronized( syncQueue )
-        {
-        syncQueue.clear();
-        }
-    }
-*/
-
 /*
 Helper for interrupt when error
 */
@@ -458,8 +350,6 @@ boolean errorCheck()
         return lastError.flag;
         }
     }
-
-
 /*
 Helper for run thread and wait it termination
 */
@@ -474,7 +364,6 @@ void threadHelper( Thread t )
             postCount--;
         }
     }
-
 /*
 Helper for time delay with seconds visualization
 */
@@ -503,7 +392,6 @@ boolean preDelay( int milliseconds, String name )
         }
     return se.flag;
     }
-
 /*
 Interrupt performance scenario    
 */
@@ -515,5 +403,4 @@ Interrupt performance scenario
     super.interrupt();
     interrupt = true;
     }
-
 }

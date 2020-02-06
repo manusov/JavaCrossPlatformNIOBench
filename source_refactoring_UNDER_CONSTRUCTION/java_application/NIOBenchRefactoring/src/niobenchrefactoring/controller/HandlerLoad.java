@@ -11,26 +11,18 @@ can be used for drawings graphical files generation.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import java.util.regex.*;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.view.Application;
-import niobenchrefactoring.view.ApplicationPanel;
-import opendraw.FunctionController;
-import opendraw.FunctionModelInterface;
-import opendraw.OpenDraw;
+import niobenchrefactoring.view.*;
+import opendraw.*;
 import openlog.OpenLog;
-import opentable.OpenTable;
-import opentable.StatisticsTableModel;
+import opentable.*;
 
 public class HandlerLoad extends Handler
 {
@@ -90,8 +82,30 @@ public HandlerLoad( Application application )
         String[] downKeys = null;
         String[][] downValues = null;
         ArrayList<Measure> measureValues = new ArrayList<>();
-            
-        // initializing GUI global objects
+        // report type detection by test names strings
+        String panelPrefix = "--- ";
+        String[] panelsNames = application.getPanelsNames();
+        int n = reportStrings.size();
+        int m = panelsNames.length;
+        boolean b = true;
+        for( int i=0; ( i<n && b ); i++ )
+            {
+            String s = ( reportStrings.get( i ) ).trim();
+            if ( s.startsWith( panelPrefix ) )
+                {
+                s = s.replace( panelPrefix, "" );
+                for( int j=0; j<m; j++ )
+                    {
+                    if ( s.startsWith( panelsNames[j] ) )
+                        {  // name string detected, make tab selection
+                        application.selectTabByReportId( j );
+                        b = false;
+                        break;
+                        }
+                    }
+                }
+            }
+        // report type detection done, initializing GUI global objects
         TableChannel summaryTable = null;
         ApplicationPanel panel = application.getSelectedPanel();
         if ( panel != null )
@@ -109,7 +123,9 @@ public HandlerLoad( Application application )
                     }
                 }
             }
+        // child window = text log
         OpenLog log = application.getChildLog();
+        // child window = table
         OpenTable table = application.getChildTable();
         if ( table != null )
             {
@@ -129,12 +145,11 @@ public HandlerLoad( Application application )
                     }
                 }
             }
+        // child window = draw
         OpenDraw draw = application.getChildDraw();
-        
         // start cycle for interpreting strings of text report
         StringBuilder sb = new StringBuilder
             ( "Log data now loaded from text report file.\r\n" );
-        int n = reportStrings.size();
         for( int i=0; i<n; i++ )
             {
             // raw text store
@@ -175,7 +190,6 @@ public HandlerLoad( Application application )
                 measureValues.add( measure );
                 }
             }
-        
         // update main window summary table by load results
         if ( ( summaryTable != null ) && ( summaryValues != null ) )
             {
@@ -292,8 +306,17 @@ private String[] summaryHelper( String s, String key, int patternLength )
             }
         result = list.toArray( new String[list.size()] );
         }
-    if ( ( result != null ) &&( result.length == patternLength ) )
+    // check and return result strings array
+    if ( ( result != null )&&( result.length == patternLength ) )
         return result;
+    if ( ( result != null )&&( result.length == 2 )&&( patternLength == 3 ) ) 
+        {  // special support for read, write present, copy absent (async. ch.)
+        String[] s1 = result[1].split( "\\s+" );
+        if ( ( s1 != null )&&( s1.length == 2 )&&( s1[1].equals( "-" ) ) )
+            return new String[]{ result[0], s1[0], s1[1] };
+        else
+            return null;
+        }
     else
         return null;
     }
@@ -350,7 +373,6 @@ private Measure measureHelper( String s )
                     {
                     countNumbers++;
                     result.texts[countNumbers] = subs[i];
-                    // result.numbers[countNumbers] = new BigDecimal( subs[i] );
                     String s1 = subs[i].replace( ',', '.' );
                     result.numbers[countNumbers] = new BigDecimal( s1 );
                     }
@@ -367,5 +389,4 @@ private Measure measureHelper( String s )
         }
     return result;
     }
-
 }

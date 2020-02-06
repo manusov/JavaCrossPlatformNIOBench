@@ -9,8 +9,8 @@ Operation handler for "Draw" button: open draw charts window, Y=F(X).
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import niobenchrefactoring.view.Application;
 import opendraw.OpenDraw;
+import niobenchrefactoring.view.Application;
 
 public class HandlerDraw extends Handler
 {
@@ -27,5 +27,4 @@ public HandlerDraw( Application application )
     if ( childDraw != null )
         childDraw.open();
     }
-    
 }

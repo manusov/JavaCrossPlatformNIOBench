@@ -10,13 +10,9 @@ Openable window for drawing, performance = f ( test parameters ).
 
 package opendraw;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 
 public class OpenDraw extends JFrame
@@ -99,5 +95,4 @@ private class ChildWindowListener extends WindowAdapter
         childActive = false;
         }
     }
-    
 }

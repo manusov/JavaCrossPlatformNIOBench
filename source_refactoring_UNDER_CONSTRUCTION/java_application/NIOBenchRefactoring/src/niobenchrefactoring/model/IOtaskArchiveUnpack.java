@@ -9,15 +9,11 @@ IO tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.zip.ZipEntry;
+import static java.nio.file.StandardOpenOption.*;
+import java.util.concurrent.*;
 import java.util.zip.ZipInputStream;
 import static niobenchrefactoring.model.IOscenario.TOTAL_UNPACK_ID;
 import static niobenchrefactoring.model.IOscenario.UNPACK_ID;
@@ -151,5 +147,4 @@ private class UnpackTask implements Callable<StatusEntry>
         return statusEntry;
         }
     }
-
 }

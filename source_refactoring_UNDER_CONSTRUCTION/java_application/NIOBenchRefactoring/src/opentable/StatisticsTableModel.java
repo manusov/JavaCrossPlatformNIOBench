@@ -10,14 +10,8 @@ package opentable;
 
 import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
-import niobenchrefactoring.model.StateAsync;
-import niobenchrefactoring.model.StateSync;
+import static niobenchrefactoring.model.IOscenario.*;
+import niobenchrefactoring.model.*;
 
 public class StatisticsTableModel extends AbstractTableModel 
 {
@@ -227,5 +221,4 @@ public void markMedian( int row, int column )
     s = MARK_STRING + s;
     setValueAt( s, row, column );
     }
-
 }

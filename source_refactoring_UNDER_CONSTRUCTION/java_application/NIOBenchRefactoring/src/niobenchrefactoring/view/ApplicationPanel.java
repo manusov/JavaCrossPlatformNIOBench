@@ -10,8 +10,7 @@ as tabbed sub-panels.
 package niobenchrefactoring.view;
 
 import javax.swing.JPanel;
-import niobenchrefactoring.model.IOscenario;
-import niobenchrefactoring.model.TableChannel;
+import niobenchrefactoring.model.*;
 
 public abstract class ApplicationPanel extends JPanel
 {
@@ -57,5 +56,4 @@ abstract public int optionCopyDelay();
 
 abstract public IOscenario buildIOscenario();
 abstract public String reportIOscenario();
-
 }

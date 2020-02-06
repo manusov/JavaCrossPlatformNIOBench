@@ -7,7 +7,6 @@ IO scenario class for Java NIO Channels and Buffers benchmark, include phases:
 write files, copy files, read files.
 */
 
-
 /*
 
 TODO. ADD ENABLE-DISABLE OPERATIONS F(MODE), INCLUDE READ-ONLY.
@@ -26,8 +25,7 @@ package niobenchrefactoring.model;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 public class IOscenarioChannel extends IOscenario
 {
@@ -41,21 +39,6 @@ Vector fields, by number of threads, required for parallel execution
 */
 final ByteBuffer[] byteBuffer;
 final ByteBuffer[] byteBufferTail;
-
-/*
-Default constructor
-*/
-/*
-public IOscenarioChannel()
-    {
-    super();
-    channelsSrc = new FileChannel[fileCount];
-    channelsDst = new FileChannel[fileCount];
-    byteBuffer = new ByteBuffer[threadCount];
-    byteBufferTail = new ByteBuffer[threadCount];
-    buffersInitHelper();
-    }
-*/
 
 /*
 Constructor with parameters
@@ -200,5 +183,4 @@ void delete( Path[] path, FileChannel[] channel )
             }
         }
     }
-
 }

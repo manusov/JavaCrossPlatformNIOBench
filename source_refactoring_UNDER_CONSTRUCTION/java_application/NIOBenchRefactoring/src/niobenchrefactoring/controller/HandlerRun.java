@@ -13,36 +13,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.HelperDelay.delay;
-import niobenchrefactoring.model.IOscenario;
-import static niobenchrefactoring.model.IOscenario.COMPLETE_ID;
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.DELAY_ID;
-import static niobenchrefactoring.model.IOscenario.DELETE_ID;
-import static niobenchrefactoring.model.IOscenario.ERROR_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ONLY;
-import static niobenchrefactoring.model.IOscenario.STARTING_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_COPY_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_READ_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ONLY;
-import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_1;
-import static niobenchrefactoring.model.IOscenarioNative.RW_SINGLE_5;
-import niobenchrefactoring.model.StateAsync;
-import niobenchrefactoring.model.StateSync;
-import niobenchrefactoring.model.StatusEntry;
-import niobenchrefactoring.model.TableChannel;
-import niobenchrefactoring.view.Application;
-import niobenchrefactoring.view.ApplicationPanel;
-import niobenchrefactoring.view.PanelAsyncChannel;
-import opendraw.FunctionController;
-import opendraw.FunctionModelInterface;
-import opendraw.OpenDraw;
+import static niobenchrefactoring.model.IOscenario.*;
+import static niobenchrefactoring.model.IOscenarioNative.*;
+import niobenchrefactoring.model.*;
+import niobenchrefactoring.view.*;
+import opendraw.*;
 import openlog.OpenLog;
-import opentable.OpenTable;
-import opentable.ReportTableModel;
-import opentable.StatisticsTableModel;
+import opentable.*;
 
 public class HandlerRun extends Handler
 {
@@ -110,7 +87,6 @@ public HandlerRun( Application application )
 /*
 Asynchronous thread for test execution
 */
-
 private class ThreadRun extends Thread
     {
     private final ApplicationPanel panel;
@@ -140,7 +116,6 @@ private class ThreadRun extends Thread
         String msg = String.format
             ( "--- Benchmark runs at %s ---\r\n", date.toString() );
         logHelper( msg );
-        // childDrawModel.startModel();
         childDrawModel.blankModel();
         int fileCount = panel.optionFileCount();
         if ( fileCount > 0 )
@@ -151,14 +126,12 @@ private class ThreadRun extends Thread
         logHelper( null );
         tableHelper( (StateSync) null );
         drawHelper( null, false );
-        
         /*
         Initializing variables
         */
         currentPercentage = 0.0;
         int rwMode = panel.optionRwMode();
         int deleteAddend = 1;
-        
         int phaseCount = 3;             // write + copy + read = 3 phases
         if ( panel instanceof PanelAsyncChannel )
             {
@@ -174,10 +147,8 @@ private class ThreadRun extends Thread
             phaseCount = 2;             // write + copy = 2 phases
             deleteAddend = 0;
             }
-        
         boolean tripleDraw = ( rwMode == RW_SINGLE_5 ) || 
                              ( rwMode == RW_SINGLE_1 );
-        
         addendPercentage = 
             ACTIVE_PERCENTAGE / ( fileCount * phaseCount + deleteAddend );
         error = false;
@@ -236,7 +207,7 @@ private class ThreadRun extends Thread
                 // support openable drawings table
                 BigDecimal[] bd = new BigDecimal[] 
                     { new BigDecimal( sync.count - 1 ), null, null, null };
-                
+                // clear count if current line (read, write or copy) done
                 if ( sync.phaseID != previousID )
                     {
                     previousID = sync.phaseID;
@@ -245,7 +216,7 @@ private class ThreadRun extends Thread
                         childDrawModel.resetCount();
                         }
                     }
-                
+                // select read, write or copy drawings update
                 switch ( sync.phaseID )
                     {
                     case READ_ID:
@@ -288,7 +259,6 @@ private class ThreadRun extends Thread
                 ios.interrupt();
                 }
             }
-        
         /*
         Test main cycle end, check errors and interrupt conditions,
         no visual messages if error, current error message used
@@ -304,20 +274,12 @@ private class ThreadRun extends Thread
             application.updateOperationString
                 ( "Test interrupted.", COMPLETE_ID );
             }
-        
         /*
         Send benchmark done message with time to text log, get milliseconds
         */
         date = new Date();
         long t2 = date.getTime();
         double seconds = ( t2 - t1 ) / 1000.0;
-/*        
-        msg = String.format
-            ( "--- Benchmark done at %s ---\r\n" + 
-              "Duration include service time is %.3f seconds\r\n",  
-              date.toString(), seconds );
-        logHelper( msg );
-*/
         msg = String.format
             ( "--- Benchmark done at %s ---\r\n", date.toString() );
         String msgDuration;
@@ -371,28 +333,23 @@ private class ThreadRun extends Thread
                   "Read = %.3f , Write = %.3f , Copy = %.3f\r\n", 
                   unitsString, totalRead, totalWrite, totalCopy );
             logHelper( msg );
-            
             // IO scenario options to log
             msg = panel.reportIOscenario();
             logHelper( msg );
-            
             // update medians in the openable table
             tableMedianHelper( async );
-            
             // sequental results table to log
             msg = "--- Measurements ---\r\n";
             StringBuilder sb = new StringBuilder( msg );
             ReportTableModel rtm = new ReportTableModel( childTableModel );
             tableToStringHelper( rtm, sb );
             logHelper( sb.toString() );
-            
             // summary table to log
             msg = "--- Summary ---\r\n";
             sb = new StringBuilder( msg );
             tableToStringHelper( table, sb );
             logHelper( sb.toString() );
             }
-        // childDrawModel.stopModel();
         /*
         Done, restore GUI state
         */
@@ -482,7 +439,6 @@ private void tableToStringHelper( AbstractTableModel table, StringBuilder sb )
         }
     }
 
-
 private void logHelper( String s )
     {
     if ( childLog != null )
@@ -547,5 +503,4 @@ private void drawHelper( BigDecimal[] bd, boolean increment )
         childDraw.revalidate();
         }
     }
-
 }

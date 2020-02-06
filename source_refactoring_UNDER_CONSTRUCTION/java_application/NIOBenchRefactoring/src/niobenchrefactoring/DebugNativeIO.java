@@ -1,3 +1,15 @@
+/* 
+NIOBench. Mass storage and file I/O benchmark utility. 
+(C)2020 IC Book Labs, the code is written by Manusov I.V.
+Project second generation, refactoring started at 2019-2020.
+-----------------------------------------------------------------------------
+This class used for debug native linear write/copy/read file group scenario,
+means non-legacy advanced mode without space usage minimization.
+This class can be removed from ready product
+or used for console mode and/or debug mode support.
+*/
+
+
 package niobenchrefactoring;
 
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;

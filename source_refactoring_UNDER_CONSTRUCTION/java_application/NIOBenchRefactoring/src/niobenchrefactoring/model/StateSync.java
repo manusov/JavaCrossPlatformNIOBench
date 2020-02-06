@@ -43,5 +43,4 @@ StateSync( int count, StatusEntry statusEntry, int phaseID, String phaseName )
     this.median = Double.NaN;
     this.phaseName = phaseName;
     }
-
 }

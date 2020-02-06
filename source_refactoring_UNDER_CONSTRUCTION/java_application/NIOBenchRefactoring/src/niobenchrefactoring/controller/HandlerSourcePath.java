@@ -9,8 +9,7 @@ Operation handler for "Browse" button for source path: select path.
 package niobenchrefactoring.controller;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
+import javax.swing.*;
 import niobenchrefactoring.resources.PAL;
 import niobenchrefactoring.view.Application;
 

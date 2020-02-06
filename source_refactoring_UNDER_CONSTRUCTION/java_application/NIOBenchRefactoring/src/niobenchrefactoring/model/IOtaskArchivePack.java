@@ -11,13 +11,11 @@ package niobenchrefactoring.model;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
-import static niobenchrefactoring.model.IOscenario.PACK_ID;
-import static niobenchrefactoring.model.IOscenario.TOTAL_PACK_ID;
+import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskArchivePack extends IOtaskChannelWriteMT // IOtask
+public class IOtaskArchivePack extends IOtaskChannelWriteMT
 {
 private final static String IOTASK_NAME = "Pack/Zip";
 final IOscenarioArchives iosa;
@@ -158,5 +156,4 @@ private class PackTask implements Callable<StatusEntry>
         return statusEntry;
         }
     }
-
 }

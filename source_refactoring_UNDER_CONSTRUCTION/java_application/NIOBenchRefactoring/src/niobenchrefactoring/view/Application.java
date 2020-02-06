@@ -8,51 +8,14 @@ NIOBench GUI application main window frame with tabbed sub-panels
 
 package niobenchrefactoring.view;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultBoundedRangeModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import niobenchrefactoring.controller.HandlerAbout;
-import niobenchrefactoring.controller.HandlerCancel;
-import niobenchrefactoring.controller.HandlerClear;
-import niobenchrefactoring.controller.HandlerDefaultIOPS;
-import niobenchrefactoring.controller.HandlerDefaultMBPS;
-import niobenchrefactoring.controller.HandlerDraw;
-import niobenchrefactoring.controller.HandlerGraph;
-import niobenchrefactoring.controller.HandlerLoad;
-import niobenchrefactoring.controller.HandlerLog;
-import niobenchrefactoring.controller.HandlerReport;
-import niobenchrefactoring.controller.HandlerRun;
-import niobenchrefactoring.controller.HandlerTable;
-import static niobenchrefactoring.model.IOscenario.COMPLETE_ID;
-import static niobenchrefactoring.model.IOscenario.COPY_ID;
-import static niobenchrefactoring.model.IOscenario.DELAY_ID;
-import static niobenchrefactoring.model.IOscenario.DELETE_ID;
-import static niobenchrefactoring.model.IOscenario.ERROR_ID;
-import static niobenchrefactoring.model.IOscenario.READ_ID;
-import static niobenchrefactoring.model.IOscenario.STARTING_ID;
-import static niobenchrefactoring.model.IOscenario.WRITE_ID;
-import niobenchrefactoring.resources.About;
-import niobenchrefactoring.resources.PAL;
-import static niobenchrefactoring.view.PanelChannel.UP_FIRST;
-import static niobenchrefactoring.view.PanelChannel.UP_LAST;
+import javax.swing.table.*;
+import niobenchrefactoring.controller.*;
+import static niobenchrefactoring.model.IOscenario.*;
+import niobenchrefactoring.resources.*;
+import static niobenchrefactoring.view.PanelChannel.*;
 import opendraw.OpenDraw;
 import openlog.OpenLog;
 import opentable.OpenTable;
@@ -203,7 +166,7 @@ public Application( PAL pal, int palWidth )
     // locks for yet not supported or yet buggy panels
     //
     // tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
-    tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
+    // tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
@@ -389,20 +352,16 @@ public void optimizeColumnsWidths( JTable table, int x )
     for ( int i=0; i<n; i++ ) { scale = scale + max[i]; }
     scale = x / scale;
     
-        for ( int i=0; i<n; i++ ) 
-            { 
-            TableColumn tc = table.getColumnModel().getColumn(i);
-            tc.setPreferredWidth( (int)( max[i] * scale ) );
-            }
+    for ( int i=0; i<n; i++ ) 
+        { 
+        TableColumn tc = table.getColumnModel().getColumn(i);
+        tc.setPreferredWidth( (int)( max[i] * scale ) );
+        }
     }
-    
-
-
 
 /*
 Support callbacks from "Run" button handler
 */
-
 private int saveCloseOperation;
 private boolean[] saveButtonsEnable;
 private boolean[] saveTabsEnable;
@@ -562,5 +521,23 @@ public void updateAllDstPaths( String s )
         }
     }
 
+/*
+Functionality for select tab by loaded report type
+*/
 
+public String[] getPanelsNames()
+    {
+    int n = panels.length;
+    String[] s = new String[n];
+    for( int i=0; i<n; i++ )
+        {
+        s[i] = panels[i].getTabName();
+        }
+    return s;
+    }
+
+public void selectTabByReportId( int id )
+    {
+    tabs.setSelectedIndex( id );
+    }
 }

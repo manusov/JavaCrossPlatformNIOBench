@@ -1,32 +1,18 @@
+/* 
+NIOBench. Mass storage and file I/O benchmark utility. 
+(C)2020 IC Book Labs, the code is written by Manusov I.V.
+Project second generation, refactoring started at 2019-2020.
+-----------------------------------------------------------------------------
+This class used for debug native linear write/copy/read single file scenario,
+means legacy mode with space usage minimization.
+This class can be removed from ready product
+or used for console mode and/or debug mode support.
+*/
+
 package niobenchrefactoring;
 
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
-import static niobenchrefactoring.resources.PAL.FILE_API_IPB_SIZE;
-import static niobenchrefactoring.resources.PAL.FILE_API_OPB_SIZE;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_BLANK;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_READ_SYNC;
-import static niobenchrefactoring.resources.PAL.FILE_ATTRIBUTE_WRITE_SYNC;
-import static niobenchrefactoring.resources.PAL.IPB_BLOCK_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_DST_PATH_POSTFIX;
-import static niobenchrefactoring.resources.PAL.IPB_DST_PATH_PREFIX;
-import static niobenchrefactoring.resources.PAL.IPB_FILE_COUNT;
-import static niobenchrefactoring.resources.PAL.IPB_ITERATIONS;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_ID;
-import static niobenchrefactoring.resources.PAL.IPB_REQUEST_SIZE;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_ATTRIBUTES;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH_POSTFIX;
-import static niobenchrefactoring.resources.PAL.IPB_SRC_PATH_PREFIX;
-import static niobenchrefactoring.resources.PAL.OPB_ALIGNMENT_ADDEND;
-import static niobenchrefactoring.resources.PAL.OPB_BUFFER_BASE;
-import static niobenchrefactoring.resources.PAL.OPB_HANDLES_DST_BASE;
-import static niobenchrefactoring.resources.PAL.OPB_HANDLES_SRC_BASE;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_COPY;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_READ;
-import static niobenchrefactoring.resources.PAL.OPB_TIMER_WRITE;
-import static niobenchrefactoring.resources.PAL.OPB_TOTAL_COPY;
-import static niobenchrefactoring.resources.PAL.OPB_TOTAL_READ;
-import static niobenchrefactoring.resources.PAL.OPB_TOTAL_WRITE;
-import static niobenchrefactoring.resources.PAL.PRECISION_LINEAR;
+import static niobenchrefactoring.resources.PAL.*;
 
 public class DebugNativeLinear extends DebugNativeIO
 {
