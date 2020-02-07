@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
 public class OpenDraw extends JFrame
 {
@@ -33,13 +34,22 @@ private final static int X_SHIFT = 30;
 private final static int Y_SHIFT = 30;
 
 /*
+This required for select color legend naming:
+pack-write-unpack or read-write-copy
+*/
+public void setPanelType( APPLICATION_PANELS ap )
+    {
+    controller.setPanelType( ap );
+    }
+
+/*
 Frame class constructor, f = parent frame
 */
-public OpenDraw( JFrame parentFrame, String frameTitle )
+public OpenDraw( JFrame parentFrame, String frameTitle, APPLICATION_PANELS ap )
     {
     super( frameTitle );
     this.parentFrame = parentFrame;
-    controller = new FunctionController();
+    controller = new FunctionController( ap );
     childPanel = controller.getView().getPanel();
     }
 

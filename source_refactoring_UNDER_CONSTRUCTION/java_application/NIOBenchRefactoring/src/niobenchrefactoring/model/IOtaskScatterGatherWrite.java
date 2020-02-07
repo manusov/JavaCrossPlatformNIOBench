@@ -63,9 +63,7 @@ Run IO task
                     b.rewind();
                 int k = 0;
                 while( k < iosg.blockSize )
-                    {
                     k += iosg.gatherWriters[i].write( iosg.multiBuffer );
-                    }
                 j -= iosg.blockSize;
                 }
             // write tail
@@ -75,9 +73,7 @@ Run IO task
                     b.rewind();
                 int k = 0;
                 while ( k < j )
-                    {
                     k += iosg.gatherWriters[i].write( iosg.multiBufferTail );
-                    }
                 }
             //
             iosg.statistics.sendMBPS

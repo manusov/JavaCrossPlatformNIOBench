@@ -11,10 +11,14 @@ This customization required for represent median values as text string
 
 package opentable;
 
+import niobenchrefactoring.view.Application;
+
 public class ReportTableModel extends StatisticsTableModel
 {
-public ReportTableModel( StatisticsTableModel m )
+public ReportTableModel
+        ( StatisticsTableModel m, Application.APPLICATION_PANELS ap )
     {
+    super( ap );
     setRowsValues( m.getRowsValues() );
     }
     

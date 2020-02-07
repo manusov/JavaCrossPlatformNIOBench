@@ -9,15 +9,22 @@ Function Y=F(X) drawing controller.
 
 package opendraw;
 
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
+
 public class FunctionController implements FunctionControllerInterface
 {
 private final FunctionModelInterface model;
 private final FunctionViewInterface view;
 
-public FunctionController()
+public FunctionController( APPLICATION_PANELS ap )
     {
-    model = new FunctionModel( this );
+    model = new FunctionModel( this, ap );
     view = new FunctionView( this );
+    }
+
+@Override public void setPanelType( APPLICATION_PANELS ap )
+    {
+    model.setPanelType( ap );
     }
 
 @Override public FunctionModelInterface getModel()

@@ -341,7 +341,8 @@ private class ThreadRun extends Thread
             // sequental results table to log
             msg = "--- Measurements ---\r\n";
             StringBuilder sb = new StringBuilder( msg );
-            ReportTableModel rtm = new ReportTableModel( childTableModel );
+            ReportTableModel rtm = new ReportTableModel
+                ( childTableModel, application.getPanelType() );
             tableToStringHelper( rtm, sb );
             logHelper( sb.toString() );
             // summary table to log

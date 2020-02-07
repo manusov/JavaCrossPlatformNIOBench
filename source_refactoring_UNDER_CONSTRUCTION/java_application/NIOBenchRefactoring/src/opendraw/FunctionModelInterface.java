@@ -11,9 +11,12 @@ Note. Start/Stop model is not same as Start/Stop benchmarking process.
 package opendraw;
 
 import java.math.BigDecimal;
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
 public interface FunctionModelInterface 
 {
+public void setPanelType( APPLICATION_PANELS ap );  // used for legend naming
+    
 public BigDecimal[][] getFunction();  // get function array { x, y1, ,,, yn }
 public int[] getCurrentIndexes();     // get current indexes per each y-array
 public int[] getMaximumIndexes();     // get maximum indexes per each y-array

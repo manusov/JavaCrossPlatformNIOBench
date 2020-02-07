@@ -64,18 +64,14 @@ Run IO task
                 // read block
                 int k = 0;
                 while( k < iosg.blockSize )
-                    {
                     k += iosg.scatterReaders[i].read( iosg.multiBuffer );
-                    }
                 // rewind all buffers of multi-buffer
                 for ( ByteBuffer b : iosg.multiBuffer )
                     b.rewind();
                 // write block
                 k = 0;
                 while( k < iosg.blockSize )
-                    {
                     k += iosg.gatherWriters[i].write( iosg.multiBuffer );
-                    }
                 j -= iosg.blockSize;
                 }
             // copy write tail
@@ -87,18 +83,14 @@ Run IO task
                 // read block tail
                 int k = 0;
                 while ( k < j )
-                    {
                     k += iosg.scatterReaders[i].read( iosg.multiBufferTail );
-                    }
                 // rewind all buffers of multi-buffer tail    
                 for ( ByteBuffer b : iosg.multiBufferTail )
                     b.rewind();
                 // write block tail
                 k = 0;
                 while ( k < j )
-                    {
                     k += iosg.gatherWriters[i].write( iosg.multiBufferTail );
-                    }
                 }
             
             iosg.statistics.sendMBPS

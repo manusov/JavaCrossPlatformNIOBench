@@ -10,6 +10,7 @@ Function Y=F(X) drawing model.
 package opendraw;
 
 import java.math.BigDecimal;
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
 public class FunctionModel implements FunctionModelInterface
 {
@@ -24,7 +25,14 @@ private int scale;
 private int maxCount;
 private final int[] currentCounts;
 
-public FunctionModel( FunctionControllerInterface x )
+private APPLICATION_PANELS ap;
+
+@Override public void setPanelType( APPLICATION_PANELS ap )
+    {
+    this.ap = ap;
+    }
+
+public FunctionModel( FunctionControllerInterface x, APPLICATION_PANELS ap )
     {
     scale = DEFAULT_SCALE_BASE;
     maxCount = DEFAULT_MAX_COUNT;
@@ -61,7 +69,10 @@ public FunctionModel( FunctionControllerInterface x )
 
 @Override public String[] getYnames()
     {
-    return new String[] { "MBPS  Read", " Write", " Copy" };
+    if ( ( ap != null ) && ( ap == APPLICATION_PANELS.ARCHIVE ) )
+        return new String[] { "MBPS  Pack", " Write", " Unpack" };
+    else
+        return new String[] { "MBPS  Read", " Write", " Copy" };
     }
 
 @Override public BigDecimal getXmin()

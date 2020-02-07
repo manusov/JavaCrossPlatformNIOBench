@@ -14,6 +14,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableCellRenderer;
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
 public class OpenTable extends JFrame
 {
@@ -33,13 +34,18 @@ private final static int Y_SIZE  = 520;
 private final static int X_SHIFT = 400;
 private final static int Y_SHIFT = 220;
 
-public OpenTable( JFrame parentFrame, String frameTitle )
+public void setPanelType( APPLICATION_PANELS ap )
+    {
+    stm.setPanelType( ap );
+    }
+
+public OpenTable( JFrame parentFrame, String frameTitle, APPLICATION_PANELS ap )
     {
     super( frameTitle );
     this.parentFrame = parentFrame;
     SpringLayout sl = new SpringLayout();
     tbp = new JPanel( sl );
-    stm = new StatisticsTableModel();
+    stm = new StatisticsTableModel( ap );
     table = new JTable( stm );
         JScrollPane tbs = new JScrollPane( table );
     DefaultTableCellRenderer tr = new DefaultTableCellRenderer();

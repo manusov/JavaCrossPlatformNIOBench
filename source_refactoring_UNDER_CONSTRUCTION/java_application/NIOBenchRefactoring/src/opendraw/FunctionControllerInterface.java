@@ -9,8 +9,12 @@ Controller interface for MVC (Model, View, Controller) pattern.
 
 package opendraw;
 
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
+
 public interface FunctionControllerInterface 
 {
+public void setPanelType( APPLICATION_PANELS ap );  // used for legend naming
+    
 public FunctionModelInterface getModel(); // get connected model = function
 public FunctionViewInterface getView();   // get connected view = panel
 }

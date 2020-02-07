@@ -52,9 +52,7 @@ Run IO task
                     b.rewind();
                 int k = 0;
                 while( k < iosg.blockSize )
-                    {
                     k += iosg.scatterReaders[i].read( iosg.multiBuffer );
-                    }
                 j -= iosg.blockSize;
                 }
             // read tail
@@ -64,9 +62,7 @@ Run IO task
                     b.rewind();
                 int k = 0;
                 while ( k < j )
-                    {
                     k += iosg.scatterReaders[i].read( iosg.multiBufferTail );
-                    }
                 }
             //
             iosg.statistics.sendMBPS

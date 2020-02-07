@@ -41,9 +41,9 @@ Openable child windows with getters, used by handlers
 private final OpenLog childLog = 
         new OpenLog( this, About.getShortName() + " - Log" );
 private final OpenTable childTable = 
-        new OpenTable( this, About.getShortName() + " - Statistics" );
+        new OpenTable( this, About.getShortName() + " - Statistics", null );
 private final OpenDraw childDraw =
-        new OpenDraw( this, About.getShortName() + " - Charts" );
+        new OpenDraw( this, About.getShortName() + " - Charts", null );
 // getters
 public OpenLog   getChildLog()   { return childLog;   }
 public OpenTable getChildTable() { return childTable; }
@@ -118,7 +118,9 @@ private final static int ROW2_RIGHT = 10;    // About ... Cancel
 private final static int DEFAULT_ID = 3;     // first run-deactivated
 private final static int CANCEL_ID  = 10;    // not deactivated when run
 private final static int RUN_ID     = 11;
-
+/*
+Application panels types enumeration
+*/
 public static enum APPLICATION_PANELS 
     { CHANNEL, 
       ASYNC_CHANNEL, 
@@ -127,6 +129,14 @@ public static enum APPLICATION_PANELS
       ARCHIVE, 
       NATIVE, 
       SSD }
+/*
+current selected panel type
+*/
+APPLICATION_PANELS panelType = null;
+public APPLICATION_PANELS getPanelType()
+    {
+    return panelType;
+    }
 
 /*
 GUI window constructor
@@ -163,13 +173,13 @@ public Application( PAL pal, int palWidth )
         tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
         tabs.setEnabledAt( APPLICATION_PANELS.SSD.ordinal(), false );
         }
-    // locks for yet not supported or yet buggy panels
+    // Locks for yet not supported or yet buggy panels
     //
     // tabs.setEnabledAt( APPLICATION_PANELS.CHANNEL.ordinal(), false );
     // tabs.setEnabledAt( APPLICATION_PANELS.ASYNC_CHANNEL.ordinal(), false );
-    tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
-    tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
-    tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
+    // tabs.setEnabledAt( APPLICATION_PANELS.SCATTER_GATHER.ordinal(), false );
+    // tabs.setEnabledAt( APPLICATION_PANELS.MEMORY_MAPPED.ordinal(), false );
+    // tabs.setEnabledAt( APPLICATION_PANELS.ARCHIVE.ordinal(), false );
     // tabs.setEnabledAt( APPLICATION_PANELS.NATIVE.ordinal(), false );
     tabs.setEnabledAt( APPLICATION_PANELS.SSD.ordinal(), false );
     //
@@ -325,6 +335,11 @@ private void selectionHelper()
         // update table visualization and select panel
         table.repaint();
         selectedPanel = panels[index];
+        // set current selected panel type, 
+        // used for statistics openable table and drawings legend
+        panelType = APPLICATION_PANELS.values()[index];
+        childTable.setPanelType( panelType );
+        childDraw.setPanelType( panelType );
         }
     }
 
@@ -337,14 +352,13 @@ public void optimizeColumnsWidths( JTable table, int x )
     TableModel tm = table.getModel();
     int n = tm.getColumnCount();
     int m = tm.getRowCount();
-    int k = 0;
     double[] max = new double[n];
     for ( int i=0; i<n; i++ ) { max[i] = tm.getColumnName(i).length(); }
     for ( int i=0; i<m; i++ )
         {
         for ( int j=0; j<n; j++ )
             {
-            k = ((String)(tm.getValueAt(i,j))).length();
+            int k = ((String)(tm.getValueAt(i,j))).length();
             if ( max[j] < k ) { max[j] = k; }
             }
         }

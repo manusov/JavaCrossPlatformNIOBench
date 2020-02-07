@@ -12,15 +12,23 @@ import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
 import static niobenchrefactoring.model.IOscenario.*;
 import niobenchrefactoring.model.*;
+import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
 public class StatisticsTableModel extends AbstractTableModel 
 {
 final static String MARK_STRING = "<html><b><font color=blue>";
 final static int EXTRA_LINES = 1 + 5;
-    
-public StatisticsTableModel()
+private APPLICATION_PANELS ap;
+
+public void setPanelType( APPLICATION_PANELS ap )
+    {
+    this.ap = ap;
+    }
+
+public StatisticsTableModel( APPLICATION_PANELS ap )
     {
     blank( 0 );
+    this.ap = ap;
     }
 
 // clear table for next measurement session, n = measurement entries count
@@ -54,7 +62,10 @@ final void blank( int n )
     }
 
 // table model class fields
-private final String[] COLUMNS_NAMES = { "Iteration", "Read", "Write", "Copy" };
+private final String[] COLUMNS_NAMES_RWC =
+    { "Iteration", "Read", "Write", "Copy" };
+private final String[] COLUMNS_NAMES_ARC =
+    { "Iteration", "Pack", "Write", "Unpack" };
 private String[][] rowsValues = null;
 private final String[][] initValues =
     { { "#"        , "-" , "-" , "-" } ,
@@ -65,23 +76,29 @@ private final String[][] initValues =
       { "Integral" , "-" , "-" , "-" } , };
 
 // table model this application-specific public methods
-final String[] getColumnsNames()          { return COLUMNS_NAMES; }
-final String[][] getRowsValues()          { return rowsValues;    }
-final void setRowsValues( String[][] s )  { rowsValues = s;       }
+final String[] getColumnsNames()
+    { 
+    if ( ( ap != null ) && ( ap == APPLICATION_PANELS.ARCHIVE ) )
+        return COLUMNS_NAMES_ARC;
+    else
+        return COLUMNS_NAMES_RWC;
+    }
+final String[][] getRowsValues()          { return rowsValues; }
+final void setRowsValues( String[][] s )  { rowsValues = s;    }
 // table model standard required public methods
-@Override public int getColumnCount()    { return COLUMNS_NAMES.length; }
-@Override public int getRowCount()       { return rowsValues.length;    }
+@Override public int getColumnCount()    { return getColumnsNames().length; }
+@Override public int getRowCount()       { return rowsValues.length;        }
 @Override public String getColumnName( int column )
     {
-    if ( column < COLUMNS_NAMES.length )   
-        return COLUMNS_NAMES[column];
+    if ( column < getColumnsNames().length )   
+        return getColumnsNames()[column];
     else
         return "?";
     }
 
 @Override public String getValueAt( int row, int column )
     { 
-    if ( ( row < rowsValues.length ) && ( column < COLUMNS_NAMES.length ) )
+    if ( ( row < rowsValues.length ) && ( column < getColumnsNames().length ) )
         return rowsValues[row][column];
     else
         return "";
@@ -89,7 +106,7 @@ final void setRowsValues( String[][] s )  { rowsValues = s;       }
 
 @Override public void setValueAt( Object x, int row, int column )
     {
-    if ( ( row < rowsValues.length ) && ( column < COLUMNS_NAMES.length ) &&
+    if ( ( row < rowsValues.length ) && ( column < getColumnsNames().length ) &&
          ( x instanceof String )  )
         rowsValues[row][column] = ( String ) x;
     }
