@@ -35,7 +35,8 @@ public IOscenarioNative
       String pathDst, String prefixDst, String postfixDst,
       int fileCount, int fileSize, int blockSize, int threadCount,
       boolean readSync, boolean writeSync, boolean copySync, 
-      boolean dataSparse, boolean fastCopy,
+      boolean writeSyncSparse, boolean copySyncSparse,
+      boolean fastCopy,
       int readWriteMode, int addressMode, int dataMode,
       int readDelay, int writeDelay, int copyDelay,
       byte[] dataBlock,
@@ -43,7 +44,8 @@ public IOscenarioNative
     {
     super( pathSrc, prefixSrc, postfixSrc, pathDst, prefixDst, postfixDst,
            fileCount, fileSize, blockSize, threadCount,
-           readSync, writeSync, copySync, dataSparse, fastCopy,
+           readSync, writeSync, copySync, writeSyncSparse, copySyncSparse,
+           fastCopy,
            readWriteMode, addressMode, dataMode,
            readDelay, writeDelay, copyDelay, dataBlock );
     this.pal = pal;

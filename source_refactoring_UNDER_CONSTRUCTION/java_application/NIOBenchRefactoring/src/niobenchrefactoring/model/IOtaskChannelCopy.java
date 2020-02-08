@@ -45,7 +45,7 @@ private int i = 0;
             if ( iosc.fastCopy )
                 {
                 iosc.channelsSrc[i] = FileChannel.open( iosc.pathsSrc[i] );
-                if ( iosc.dataSparse )
+                if ( iosc.copySparse )
                     iosc.channelsDst[i] = FileChannel.open
                         ( iosc.pathsDst[i], CREATE, WRITE, DSYNC, SPARSE );
                 else if ( iosc.copySync )
@@ -74,7 +74,7 @@ private int i = 0;
             else
                 {
                 iosc.channelsSrc[i] = FileChannel.open( iosc.pathsSrc[i] );
-                if ( iosc.dataSparse )
+                if ( iosc.copySparse )
                     iosc.channelsDst[i] = FileChannel.open
                         ( iosc.pathsDst[i], CREATE, WRITE, DSYNC, SPARSE );
                 else if ( iosc.copySync )

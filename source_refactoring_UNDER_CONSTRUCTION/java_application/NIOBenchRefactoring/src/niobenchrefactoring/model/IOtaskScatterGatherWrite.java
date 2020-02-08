@@ -43,7 +43,7 @@ Run IO task
             {
             if ( isInterrupted() ) break;
             Files.createFile( iosg.pathsSrc[i] );
-            if ( iosg.dataSparse )
+            if ( iosg.writeSparse )
                 iosg.gatherWriters[i] = FileChannel.open
                     ( iosg.pathsSrc[i], APPEND, DSYNC, SPARSE );
             else if ( iosg.writeSync )

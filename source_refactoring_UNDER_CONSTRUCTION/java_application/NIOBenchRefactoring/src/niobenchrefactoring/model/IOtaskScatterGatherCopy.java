@@ -42,7 +42,7 @@ Run IO task
             {
             if ( isInterrupted() ) break;
             iosg.scatterReaders[i] = FileChannel.open( iosg.pathsSrc[i] );
-            if ( iosg.dataSparse )
+            if ( iosg.copySparse )
                 iosg.gatherWriters[i] = FileChannel.open
                     ( iosg.pathsDst[i], CREATE, WRITE, DSYNC, SPARSE );
             else if ( iosg.copySync )

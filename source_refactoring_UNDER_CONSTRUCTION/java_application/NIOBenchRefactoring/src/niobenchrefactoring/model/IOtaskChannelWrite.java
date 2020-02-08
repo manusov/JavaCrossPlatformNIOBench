@@ -44,7 +44,7 @@ private int i = 0;
             {
             if ( isInterrupted() || interrupt ) break;
             Files.createFile( iosc.pathsSrc[i] );
-            if ( iosc.dataSparse )
+            if ( iosc.writeSparse )
                 iosc.channelsSrc[i] = FileChannel.open
                     ( iosc.pathsSrc[i], APPEND, DSYNC, SPARSE );
             else if ( iosc.writeSync )

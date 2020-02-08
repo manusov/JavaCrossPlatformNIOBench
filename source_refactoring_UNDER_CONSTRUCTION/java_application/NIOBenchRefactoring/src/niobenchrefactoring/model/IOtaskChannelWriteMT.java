@@ -64,7 +64,7 @@ Run IO task
         for( int i=0; i<iosc.fileCount; i++ )
             {
             Files.createFile( iosc.pathsSrc[i] );
-            if ( iosc.dataSparse )
+            if ( iosc.writeSparse )
                 iosc.channelsSrc[i] = FileChannel.open
                     ( iosc.pathsSrc[i], APPEND, DSYNC, SPARSE );
             else if ( iosc.writeSync )
