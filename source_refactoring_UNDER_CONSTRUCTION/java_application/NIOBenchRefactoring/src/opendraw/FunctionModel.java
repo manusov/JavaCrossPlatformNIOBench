@@ -141,28 +141,27 @@ public FunctionModel( FunctionControllerInterface x, APPLICATION_PANELS ap )
         int m = getCurrentIndexes()[i];
         if ( m > 0 )
             {
-            if ( ( i == 0 )&&( function[i+1][0] != null ) ) 
-                max = ( function[i+1][0] ).doubleValue();
-            for ( int j=0; j<m; j++ )
+            if ( ( i == 0 )&&( function[i+1][0] != null ) )
                 {
-                double temp = 0.0;
-                if ( function[i+1][j] != null )
-                    temp = ( function[i+1][j] ).doubleValue();
+                double temp = ( function[i+1][0] ).doubleValue();
                 if ( max < temp ) max = temp;
                 }
+            for ( int j=0; j<m; j++ )
+                {
+                if ( function[i+1][j] != null )
+                    {
+                    double temp = ( function[i+1][j] ).doubleValue();
+                    if ( max < temp ) max = temp;
+                    }
+                }
             }
-        int tempScale = 0;
-        while ( max > tempScale )
-            {
-            tempScale += DEFAULT_SCALE_DELTA;
-            }
-        
-        // prevent overflow
-        if ( tempScale == 0 )
-            tempScale = DEFAULT_SCALE_DELTA;
-        
-        scale = tempScale;
         }
+    // select optimal scale = f(max)
+    int tempScale = 0;
+    while ( max > tempScale ) tempScale += DEFAULT_SCALE_DELTA;
+    // prevent overflow and update scale variable
+    if ( tempScale == 0 ) tempScale = DEFAULT_SCALE_DELTA;
+    scale = tempScale;
     }
 
 @Override public void updateValue( BigDecimal[] x, boolean increment ) 
