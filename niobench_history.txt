@@ -1,0 +1,25 @@
+NIOBench v0.03.04 (February, 09, 2021)
+1) Changed web link.
+2) Repository reordered.
+
+
+
+Previous old history:
+
+v0.53 first build at JDK8 mode (advanced)
+v0.52 last build at JDK7 mode (legacy).
+
+v0.52
+Redesign native libraries call algorithm,
+with block size control, this optimize
+performance at "Unbuffered native" mode.
+
+v0.51
+AFTER: new native libraries connection, 
+supports API return executed size per call,
+repeat call if partial size.
+BEFORE: redesign native libraries call algorithm,
+with block size control.
+
+v0.50
+Fix source code NetBeans IDE warnings. Edit comments.

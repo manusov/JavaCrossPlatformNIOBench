@@ -1,0 +1,61 @@
+Java NIOBench v0.03.04
+(C)2021 IC Book Labs
+https://github.com/manusov
+Report file.
+
+--- Benchmark runs at Tue Feb 09 14:00:43 EET 2021 ---
+--- Benchmark done at Tue Feb 09 14:04:34 EET 2021 ---
+Duration include service time is 00:03:50 (230 seconds)
+Total scenario MBPS include files cycle overhead:
+Read = 102,431 , Write = 95,428 , Copy = 42,663
+
+--- Native OS API IO scenario options ---
+Source path      : 
+Destination path : 
+File             : 100 MB
+Block            : 10 MB
+Count            : 10
+Threads          : 1
+Data             : Zeroes
+Address          : Sequental
+R/W              : File group 5 repeats
+Fast copy        : Enabled
+Read sync        : Unbuffered
+Write sync       : Write through
+Copy sync        : Write through
+Read delay       : None
+Write delay      : None
+Copy delay       : None
+
+--- Measurements ---
+ Iteration   Read       Write     Copy     
+--------------------------------------------
+ 1           100,23     78,03     42,20    
+ 2           102,26     97,27 M   42,47 M  
+ 3           101,62     96,66     42,27    
+ 4           102,64     95,94     42,41    
+ 5           103,74     98,58     43,95    
+ 6           103,84     102,56    43,18    
+ 7           102,72 M   98,51 M   42,73    
+ 8           102,89     100,68    42,14    
+ 9           102,72 M   99,54     44,25    
+ 10          102,79     95,74     42,55 M  
+                                           
+ Median      102,72     97,89     42,51    
+ Average     102,54     96,35     42,81    
+ Minimum     100,23     78,03     42,14    
+ Maximum     103,84     102,56    44,25    
+ Integral    102,43     95,43     42,66    
+--------------------------------------------
+
+--- Summary ---
+ Value, MBPS     Actual   Minimum   Maximum   Integral  
+------------------------------------------------------
+ Median, Read    102,72   102,72    102,72    102,43    
+ Write           97,89    97,27     98,51     95,43     
+ Copy            42,51    42,47     42,55     42,66     
+ Average, Read   102,54   100,23    103,84    102,43    
+ Write           96,35    78,03     102,56    95,43     
+ Copy            42,81    42,14     44,25     42,66     
+------------------------------------------------------
+
