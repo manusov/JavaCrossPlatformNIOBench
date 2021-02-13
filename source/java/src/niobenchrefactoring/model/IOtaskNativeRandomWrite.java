@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Write phase at Native OS API IO scenario.
@@ -10,7 +10,7 @@ Io tasks is basic components for build IO scenarios.
 
 package niobenchrefactoring.model;
 
-public class IOtaskNativeRandomWrite extends IOtask
+class IOtaskNativeRandomWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write/Random/Native";
 

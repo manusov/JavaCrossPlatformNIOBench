@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Operation handler for "Clear" button: clear previous results.
@@ -62,10 +62,10 @@ public HandlerClear( Application application )
             FunctionController fc = draw.getController();
             if ( fc != null )
                 {
-                FunctionModelInterface fim = fc.getModel();
-                if ( fim != null )
+                FunctionModelInterface fmi = fc.getModel();
+                if ( fmi != null )
                     {
-                    fim.blankModel();
+                    fmi.blankModel();
                     draw.repaint();
                     draw.revalidate();
                     }

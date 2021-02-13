@@ -1,3 +1,13 @@
+NIOBench v0.03.05 (February, 13, 2021)
+1) Added some comments, renamed classes for native library debug.
+2) Optimized access modifiers: public, protected, default, private.
+3) Fixed concurrency bug at HandlerRun.java. Incorrect sequence of
+   fields initialization and usage. 
+4) Fixed space lose bug when report loaded, remove one trim
+   operation at HandlerLoad.java.
+
+
+
 NIOBench v0.03.04 (February, 09, 2021)
 1) Changed web link.
 2) Repository reordered.

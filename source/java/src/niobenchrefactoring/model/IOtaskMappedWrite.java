@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Write phase at NIO Memory Mapped Files IO scenario.
@@ -14,7 +14,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskMappedWrite extends IOtask
+class IOtaskMappedWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write/NIO memory mapped";
 

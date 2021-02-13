@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Platform Abstraction Layer (PAL) class for
@@ -110,6 +110,13 @@ public boolean getBinaryValid() { return binaryValid; }
 public native int checkBinary();
 public native int entryBinary( long[] a, long[] b, long c, long d );
 
+/*
+Load native library for current OS, "DLL" for Windows, "SO" for Linux,
+4 variants: Windows 32, Windows 64, Linux 32, Linux 64.
+return = status, 
+if status >= 0, library loaded OK,
+otherwise error: library not loaded.
+*/
 public int loadUserModeLibrary()
     {
     // Initializing variables
@@ -144,11 +151,11 @@ public int loadUserModeLibrary()
                     }
                 }
             if ( count > 0   ) { System.load( library.getAbsolutePath() ); }
-            if ( status == 0 ) { break; }
+            if ( status == 0 ) { break; }  // break if library match OK
             }
         catch ( IOException e )
             {
-            status = -1;
+            status = -1;  // set status for error detect
             }
         }
     binaryValid = status >= 0;

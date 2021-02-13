@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Static helper class for time delays.
@@ -11,7 +11,8 @@ package niobenchrefactoring.model;
 public class HelperDelay 
 {
 /*
-functionally, this method can be not public, but it public for testability    
+Delay, input value in milliseconds
+return status string
 */
 public static StatusEntry delay( int milliseconds )
     {

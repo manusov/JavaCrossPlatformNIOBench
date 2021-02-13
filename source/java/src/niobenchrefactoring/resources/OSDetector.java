@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Class with static helper method for native platform detection.
@@ -76,15 +76,15 @@ static int detect()
         }
     // Final data analysing, platform = F ( os, cpu )
     // 0 = Windows ia32
-    if ( ( osType==0 ) && ( cpuType==0 ) ) { platformType = 0; }
+    if ( ( osType == 0 ) && ( cpuType == 0 ) ) { platformType = 0; }
     // 1 = Windows x64
-    if ( ( osType==0 ) && ( cpuType==1 ) ) { platformType = 1; }
+    if ( ( osType == 0 ) && ( cpuType == 1 ) ) { platformType = 1; }
     // 2 = Linux ia32
-    if ( ( osType==1 ) && ( cpuType==0 ) ) { platformType = 2; }
+    if ( ( osType == 1 ) && ( cpuType == 0 ) ) { platformType = 2; }
     // 2 = duplicated Linux ia32
-    if ( ( osType==1 ) && ( cpuType==2 ) ) { platformType = 2; }
+    if ( ( osType == 1 ) && ( cpuType == 2 ) ) { platformType = 2; }
     // 3 = Linux x64
-    if ( ( osType==1 ) && ( cpuType==1 ) ) { platformType = 3; }
+    if ( ( osType == 1 ) && ( cpuType == 1 ) ) { platformType = 3; }
     return platformType;
     }
 }

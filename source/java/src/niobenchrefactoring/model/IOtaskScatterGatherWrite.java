@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Write phase at Java Scatter-Gather file IO scenario.
@@ -16,7 +16,7 @@ import java.nio.file.Files;
 import static java.nio.file.StandardOpenOption.*;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskScatterGatherWrite extends IOtask
+class IOtaskScatterGatherWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write/ST/NIO scatter-gather";
 

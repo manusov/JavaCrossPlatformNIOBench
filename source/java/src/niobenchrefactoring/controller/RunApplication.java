@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Application run class.
@@ -26,7 +26,7 @@ public void run()
     PAL pal = new PAL();
     int loadStatus = pal.loadUserModeLibrary();
     int palWidth = -1;
-    if ( loadStatus==0 )
+    if ( loadStatus == 0 )
         {
         try 
             {

@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 NIOBench GUI application main window frame with tabbed sub-panels
@@ -346,7 +346,6 @@ private void selectionHelper()
 /*
 Helper for optimize table columns width
 */
-
 public void optimizeColumnsWidths( JTable table, int x )
     {
     TableModel tm = table.getModel();

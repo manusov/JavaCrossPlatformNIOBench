@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Static helper class for storage IO address randomization purposes.
@@ -33,7 +33,7 @@ private static class Entry implements Comparable<Entry>
     }
 
 /*
-Return random sorted array of integers with unique elements [ o...size )
+Return random sorted array of integers with unique elements [ 0...size )
 */
 public static int[] randomArray( int size )
     {

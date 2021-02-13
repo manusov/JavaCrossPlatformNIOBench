@@ -6,10 +6,8 @@ Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Application main class.
 This class must run CONTROLLER at MODEL/VIEW/CONTROLLER (MVC) functionality.
-
-UNDER CONSTRUCTION. 
-This main module also can be used as sequence of tests, see:
-C:\3-java\93-NIOBench-Refactoring-OLD\TEMP_source_with_tests_in_main_module
+This main module also can be used for call sequence of tests
+at application debug phase.
 
 */
 
@@ -21,26 +19,23 @@ public class NIOBenchRefactoring
 {
 public static void main( String[] args ) 
     {
-/*
-    // TODO. Use total size calculation:
-    // TotalSize =  fileSize * fileCount * measurementResults
-    // for all native scenarios, implement for windows and linux.
-    // Linux native libraries yet not calculate TotalSize.
-    // DEBUG FRAGMENT
-    DebugNativeIO d = new DebugNativeIO();
-    d.testWrite();
-    d.testCopy();
-    d.testRead();
-    d.testDelete();
-*/
-/*  
-    // DEBUG FRAGMENT
-    DebugNativeLinear d = new DebugNativeLinear();
-    d.testLinear();
-*/
+    // Debug (1) MBPS: separate methods for Write, Copy, Read, Delete.
+    // DebugNative d = new DebugNative();
+    // d.testWrite();
+    // d.testCopy();
+    // d.testRead();
+    // d.testDelete();
+  
+    // Debug (2) MBPS: single method for Write, Copy, Read, Delete. 
+    // DebugNativeMBPS d = new DebugNativeMBPS();
+    // d.testLinear();
+        
+    // Debug (3) IOPS.
+    // Under Construction.
 
+    // Run CONTROLLER at MODEL/VIEW/CONTROLLER (MVC) functionality,
+    // Initialize native layer, set GUI style options, run application.
     RunApplication ra = new RunApplication();
     ra.run();
-
     }
 }

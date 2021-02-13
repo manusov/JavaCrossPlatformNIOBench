@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Pack phase at archives IO scenario.
@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskArchivePack extends IOtaskChannelWriteMT
+class IOtaskArchivePack extends IOtaskChannelWriteMT
 {
 private final static String IOTASK_NAME = "Pack/Zip";
 final IOscenarioArchives iosa;
@@ -86,7 +86,6 @@ Run IO task
     if ( ( ! statusEntry.flag )&&( iosa.lastError.flag ) )
         iosa.lastError = statusEntry;
     }
-
 
 /*
 File pack task for parallel execution

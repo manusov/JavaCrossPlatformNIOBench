@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 This class used for debug native linear write/copy/read file group scenario,
@@ -9,32 +9,36 @@ This class can be removed from ready product
 or used for console mode and/or debug mode support.
 */
 
-
 package niobenchrefactoring;
 
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import niobenchrefactoring.resources.PAL;
 import static niobenchrefactoring.resources.PAL.*;
 
-public class DebugNativeIO
+class DebugNative
 {
-// private final String SRC_FILE_NAME = "C:\\TEMP\\a1.bin";
-// private final String DST_FILE_NAME = "C:\\TEMP\\a2.bin";
-    
-private final String SRC_FILE_NAME = "/home/manusov/PROJECTS/NB/a1.bin";
-private final String DST_FILE_NAME = "/home/manusov/PROJECTS/NB/a2.bin";
+// This two strings for Windows Debug variant
+private final String SRC_FILE_NAME = "C:\\TEMP\\a1.bin";
+private final String DST_FILE_NAME = "C:\\TEMP\\a2.bin";
+// This two strings for Linux Debug variant
+// private final String SRC_FILE_NAME = "/home/manusov/PROJECTS/NB/a1.bin";
+// private final String DST_FILE_NAME = "/home/manusov/PROJECTS/NB/a2.bin";
     
 final PAL pal;
 boolean binaryValid = false;
 
-DebugNativeIO()
+/*
+Constructor initializes binary level for this debug
+class and other (child) debug classes
+*/
+DebugNative()
     {
     pal = new PAL();
     int loadStatus = pal.loadUserModeLibrary();
     binaryValid = false;
     int binaryType = -1;
     int palWidth = -1;
-    if ( loadStatus==0 )
+    if ( loadStatus == 0 )
         {
         try 
             {
@@ -55,7 +59,12 @@ DebugNativeIO()
                               binaryValid, loadStatus, binaryType, palWidth );
     System.out.println( s );
     }
-    
+
+/*
+Read fixed-size file, call native function MEASURE_READ_FILE.
+Supports debug messages and Read speed calculation.
+Depends on global variables (binaryValid, pal) initialized by constructor.
+*/
 void testRead()
     {
     if ( ! binaryValid )
@@ -89,7 +98,7 @@ void testRead()
         if ( ( a == 0 )&&( status > 0 ) )
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
-            megabytes /= ( 1024*1024 );
+            megabytes /= ( 1024 * 1024 );
             double seconds = opb[OPB_TIMER_DELTA];
             seconds /= 1E9;
             double mbps = megabytes / seconds;
@@ -105,6 +114,11 @@ void testRead()
         }
     }
 
+/*
+Create and Write fixed-size file, call native function MEASURE_WRITE_FILE.
+Supports debug messages and Write speed calculation.
+Depends on global variables (binaryValid, pal) initialized by constructor.
+*/
 void testWrite()
     {
     if ( ! binaryValid )
@@ -138,7 +152,7 @@ void testWrite()
         if ( ( a == 0 )&&( status > 0 ) )
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
-            megabytes /= ( 1024*1024 );
+            megabytes /= ( 1024 * 1024 );
             double seconds = opb[OPB_TIMER_DELTA];
             seconds /= 1E9;
             double mbps = megabytes / seconds;
@@ -154,6 +168,11 @@ void testWrite()
         }
     }
 
+/*
+Copy fixed-size file, call native function MEASURE_COPY_FILE.
+Supports debug messages and Copy speed calculation.
+Depends on global variables (binaryValid, pal) initialized by constructor.
+*/
 void testCopy()
     {
     if ( ! binaryValid )
@@ -191,7 +210,7 @@ void testCopy()
         if ( ( a == 0 )&&( status > 0 ) )
             {
             double megabytes = opb[OPB_OPERATION_SIZE];
-            megabytes /= ( 1024*1024 );
+            megabytes /= ( 1024 * 1024 );
             double seconds = opb[OPB_TIMER_DELTA];
             seconds /= 1E9;
             double mbps = megabytes / seconds;
@@ -205,15 +224,22 @@ void testCopy()
             }
         System.out.println( s );
         }
-
     }
 
+/*
+Delete file with fixed path, call native function MEASURE_DELETE_FILE.
+Supports debug messages.
+Depends on global variables (pal) initialized by constructor.
+*/
 void testDelete()
     {
     testDelete( SRC_FILE_NAME );
     testDelete( DST_FILE_NAME );
     }
 
+/*
+Same delete operation, file path and name is input string.
+*/
 void testDelete( String fileName )
     {
     int ipbSize = FILE_API_IPB_SIZE;
@@ -234,7 +260,5 @@ void testDelete( String fileName )
         s = "delete failed, error = " + a;
         }
     System.out.println( s );
-    
     }
-
 }

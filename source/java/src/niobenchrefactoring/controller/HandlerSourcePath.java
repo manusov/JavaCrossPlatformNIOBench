@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Operation handler for "Browse" button for source path: select path.
@@ -15,9 +15,9 @@ import niobenchrefactoring.view.Application;
 
 public class HandlerSourcePath extends Handler
 {
-private final PAL pal;
-private final String name;
-private final JTextField field1, field2;
+private final PAL pal;                    // required for diff. Windows/Linux
+private final String name;                // dialogue window name
+private final JTextField field1, field2;  // text fields for src. , dst. paths
 private final static JFileChooser CHOOSER = new JFileChooser();
 
 public HandlerSourcePath( Application application, String name, 
@@ -26,8 +26,8 @@ public HandlerSourcePath( Application application, String name,
     super( application );
     this.pal = application.getPAL();
     this.name = name;
-    this.field1 = field1;
-    this.field2 = field2;
+    this.field1 = field1;  // source or destination path for single path init
+    this.field2 = field2;  // destination path for double path init
     }
 
 @Override public void actionPerformed( ActionEvent e )
@@ -50,11 +50,11 @@ public HandlerSourcePath( Application application, String name,
             int b = pal.getBinaryType();
             if ( ( ( b == 0 )|( b == 1 ) )&( a != '\\' ) )
                 {
-                s1 = s1 + "\\"; 
+                s1 = s1 + "\\";  // this for Windows mode 
                 }
             if ( ( ( b == 2 )|( b == 3 ) )&( a != '/' ) )
                 {
-                s1 = s1 + "/";  
+                s1 = s1 + "/";  // this for Linux mode
                 }
             }
         }

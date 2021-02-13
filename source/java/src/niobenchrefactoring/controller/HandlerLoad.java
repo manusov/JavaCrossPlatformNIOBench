@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Operation handler for "Load" button: 
@@ -153,7 +153,7 @@ public HandlerLoad( Application application )
         for( int i=0; i<n; i++ )
             {
             // raw text store
-            String s = ( reportStrings.get( i ) ).trim();
+            String s = reportStrings.get( i );
             sb.append( "\r\n" );
             sb.append( s );
             // summary table store

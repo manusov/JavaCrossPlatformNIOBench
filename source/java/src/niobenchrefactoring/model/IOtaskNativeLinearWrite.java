@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Write phase at Native OS API IO scenario.
@@ -22,7 +22,7 @@ import static niobenchrefactoring.model.IOscenarioNative.RW_GROUP_5;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import static niobenchrefactoring.resources.PAL.*;
 
-public class IOtaskNativeLinearWrite extends IOtask
+class IOtaskNativeLinearWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write/Linear/Native";
 private final static int NATIVE_WRITE_DEFAULT_REPEATS = 5;

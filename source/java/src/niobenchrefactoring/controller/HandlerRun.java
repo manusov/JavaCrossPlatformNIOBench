@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Operation handler for "Run" button: run selected benchmark scenario.
@@ -50,6 +50,23 @@ public HandlerRun( Application application )
     {
     if ( application != null )
         {
+        // initialize local fields from Application View fields
+        childLog   = application.getChildLog();
+        childTable = application.getChildTable();
+        if ( childTable != null )
+            {
+            childTableModel = childTable.getTableModel();
+            }
+        childDraw  = application.getChildDraw();
+        if ( childDraw != null )
+            {
+            FunctionController ctrl = childDraw.getController();
+            if ( ctrl != null )
+                {
+                childDrawModel = ctrl.getModel();
+                }
+            }
+        // execute RUN or STOP, depends on context
         ApplicationPanel panel = application.getSelectedPanel();
         if ( panel != null )
             {
@@ -64,21 +81,6 @@ public HandlerRun( Application application )
                 {  // test STOPPED by this button press when test running
                 interrupt = true;
                 threadRun.interrupt();
-                }
-            }
-        childLog   = application.getChildLog();
-        childTable = application.getChildTable();
-        if ( childTable != null )
-            {
-            childTableModel = childTable.getTableModel();
-            }
-        childDraw  = application.getChildDraw();
-        if ( childDraw != null )
-            {
-            FunctionController ctrl = childDraw.getController();
-            if ( ctrl != null )
-                {
-                childDrawModel = ctrl.getModel();
                 }
             }
         }

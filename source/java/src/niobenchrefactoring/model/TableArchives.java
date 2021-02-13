@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Benchmark results table model for "Archives" scenario.
@@ -27,7 +27,6 @@ public class TableArchives extends TableChannel
 /*
 Update table for each measured value from Report Monitor.
 */
-
 @Override public void measurementNotify( StateAsync[] async )
     {
     if ( ( async.length >= WRITE_ID )&&( async.length >= READ_ID ) )

@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Unpack phase at archives IO scenario.
@@ -18,7 +18,7 @@ import java.util.zip.ZipInputStream;
 import static niobenchrefactoring.model.IOscenario.TOTAL_UNPACK_ID;
 import static niobenchrefactoring.model.IOscenario.UNPACK_ID;
 
-public class IOtaskArchiveUnpack extends IOtaskChannelWriteMT // IOtask
+class IOtaskArchiveUnpack extends IOtaskChannelWriteMT // IOtask
 {
 private final static String IOTASK_NAME = "Unpack/Zip";
 final IOscenarioArchives iosa;

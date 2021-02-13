@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Package for support functions Y=F(X) drawings.
@@ -12,9 +12,8 @@ package opendraw;
 import java.math.BigDecimal;
 import niobenchrefactoring.view.Application.APPLICATION_PANELS;
 
-public class FunctionModel implements FunctionModelInterface
+class FunctionModel implements FunctionModelInterface
 {
-
 private BigDecimal[][] function;
 
 private final int DEFAULT_SCALE_BASE  = 1000;
@@ -32,7 +31,7 @@ private APPLICATION_PANELS ap;
     this.ap = ap;
     }
 
-public FunctionModel( FunctionControllerInterface x, APPLICATION_PANELS ap )
+FunctionModel( FunctionControllerInterface x, APPLICATION_PANELS ap )
     {
     scale = DEFAULT_SCALE_BASE;
     maxCount = DEFAULT_MAX_COUNT;

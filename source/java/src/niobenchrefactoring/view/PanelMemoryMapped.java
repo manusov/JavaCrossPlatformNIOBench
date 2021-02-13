@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Sub-panel for Java NIO Memory-Mapped Files benchmark scenario.
@@ -12,7 +12,7 @@ package niobenchrefactoring.view;
 
 import niobenchrefactoring.model.*;
 
-public class PanelMemoryMapped extends PanelChannel
+class PanelMemoryMapped extends PanelChannel
 {
 private final TableChannel tableModel = new TableMapped();
 

@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Write phase at NIO Asynchronous Channels IO scenario.
@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import static java.nio.file.StandardOpenOption.*;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskAsyncChannelWrite extends IOtask
+class IOtaskAsyncChannelWrite extends IOtask
 {
 private final static String IOTASK_NAME = "Write NIO async channel";
 

@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Class with static helpers methods for conversion between 
@@ -12,7 +12,13 @@ package niobenchrefactoring.resources;
 
 public class IOPB 
 {
-
+/*
+Read string as sequence of chars from array of longs.
+Each long unpack to 8 bytes, each byte zero-extend to 16-bit word.
+Method used for read native I/O library name.
+data   = source array of long numbers, contain chars as ASCII bytes
+return = string as sequence of 16-bit chars
+*/
 public static String receiveStringFromOPB( long[] data )
     {
     StringBuilder sb = new StringBuilder( "" );
@@ -31,6 +37,13 @@ public static String receiveStringFromOPB( long[] data )
     return sb.toString();
     }
 
+/*
+Read sequence of bytes from array of longs. Each long unpack to 8 bytes.
+Method used for read data from random numbers generator
+during native I/O benchmarks.
+qwords = source array of long numbers
+bytes  = destination array of bytes
+*/
 public static void receiveBytesFromOPB( long[] qwords, byte[] bytes )
     {
     int k = 0;
@@ -46,6 +59,15 @@ public static void receiveBytesFromOPB( long[] qwords, byte[] bytes )
         }
     }
 
+/*
+Copy string as sequence of ASCII bytes to array of longs.
+Each 16-bit char converted to 8-bit ASCII char, as byte,
+each 8-byte group pack to long.
+Method used for write file names to IPB during native I/O benchmarks.
+s    = source string
+ipb  = destination array
+base = offset in the destination array, units = long numbers
+*/
 public static void transmitStringToIPB( String s, long[] ipb, int base )
     {
     int i = base;
@@ -86,6 +108,15 @@ Note about DTA.
 DTA base + OPB base + OPB size.
 DTA = Data Transfer Area,
 OPB = Output Parameters Block.
+*/
+/*
+Copy source bytes array to destination long array, for integer number of longs.
+Each 8-byte group pack to long.
+Method used for write data to files during native I/O benchmarks.
+dstQwords = destination array
+srcBytes  = source array
+dstOffset = offset in the destination array, units = long numbers
+length    = copy size, units = long numbers
 */
 public static void transmitBytesToDTA
             ( long[] dstQwords, byte[] srcBytes, int dstOffset, int length )

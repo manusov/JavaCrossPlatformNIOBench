@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Read phase at NIO Channels and Buffers IO scenario.
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.channels.ClosedByInterruptException;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskChannelRead extends IOtask
+class IOtaskChannelRead extends IOtask
 {
 private final static String IOTASK_NAME = "Read/ST/NIO channel";
 

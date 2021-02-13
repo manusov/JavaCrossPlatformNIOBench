@@ -1,6 +1,6 @@
 /*
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 IO task for files Copy phase at NIO Channels and Buffers IO scenario.
@@ -15,7 +15,7 @@ import java.nio.channels.*;
 import static java.nio.file.StandardOpenOption.*;
 import static niobenchrefactoring.model.IOscenario.*;
 
-public class IOtaskChannelCopy extends IOtask
+class IOtaskChannelCopy extends IOtask
 {
 private final static String IOTASK_NAME = "Copy/ST/NIO channel";
 

@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 Operation handler for "Default MBPS" button: default settings for options,
@@ -12,6 +12,7 @@ package niobenchrefactoring.controller;
 import java.awt.event.ActionEvent;
 import niobenchrefactoring.view.Application;
 import niobenchrefactoring.view.ApplicationPanel;
+import niobenchrefactoring.view.ApplicationPanel.SCENARIO;
 
 public class HandlerDefaultMBPS extends Handler
 {
@@ -24,7 +25,6 @@ public HandlerDefaultMBPS( Application application )
     {
     ApplicationPanel selectedPanel = application.getSelectedPanel();
     if ( selectedPanel != null )
-        selectedPanel.setDefaults( ApplicationPanel.SCENARIO.MBPS );
+        selectedPanel.setDefaults( SCENARIO.MBPS );
     }
-    
 }

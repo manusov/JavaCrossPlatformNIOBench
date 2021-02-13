@@ -1,6 +1,6 @@
 /* 
 NIOBench. Mass storage and file I/O benchmark utility. 
-(C)2020 IC Book Labs, the code is written by Manusov I.V.
+(C)2021 IC Book Labs, the code is written by Manusov I.V.
 Project second generation, refactoring started at 2019-2020.
 -----------------------------------------------------------------------------
 This class used for debug native linear write/copy/read single file scenario,
@@ -14,13 +14,13 @@ package niobenchrefactoring;
 import static niobenchrefactoring.resources.IOPB.transmitStringToIPB;
 import static niobenchrefactoring.resources.PAL.*;
 
-public class DebugNativeLinear extends DebugNativeIO
+class DebugNativeMBPS extends DebugNative
 {
-// private final String SRC_PREFIX    = "C:\\TEMP\\src";
-private final String SRC_PREFIX    = "src";
+private final String SRC_PREFIX    = "C:\\TEMP\\src";    // Windows variant
+// private final String SRC_PREFIX    = "src";           // Universal variant
 private final String SRC_POSTFIX   = ".bin";
-// private final String DST_PREFIX    = "C:\\TEMP\\dst";
-private final String DST_PREFIX    = "dst";
+private final String DST_PREFIX    = "C:\\TEMP\\dst";    // Windows variant
+// private final String DST_PREFIX    = "dst";           // Universal variant
 private final String DST_POSTFIX   = ".bin";
 
 private final int FILE_SIZE        = 10 * 1024 * 1024;   // 512 * 1024;
@@ -30,6 +30,12 @@ private final int ITERATIONS_COUNT = 5;
 
 // Total size example = 512 * 1024 * 20 * 5 = 52,428,800
 
+/*
+Write/Copy/Read fixed-size file, call native function PRECISION_LINEAR.
+Supports debug messages and Write/Copy/Read speeds calculation.
+Depends on global variables (binaryValid, pal)
+initialized by parent class constructor.
+*/
 void testLinear()
     {
     if ( ! binaryValid )
