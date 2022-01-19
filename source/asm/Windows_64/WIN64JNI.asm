@@ -203,10 +203,10 @@ iFunctionSelector  DQ  GetRandomData         ; 0 = Get array of random data
                    DQ  MeasureCopyFile       ; 3 = Copy file
                    DQ  MeasureDeleteFile     ; 4 = Delete file
                    DQ  PrecisionLinear       ; 5 = Write, Copy, Read per 1 call
-                   DQ  PrecisionMixed        ; 6 = Tandom mixed IO per 1 call
+                   DQ  PrecisionMixed        ; 6 = Random mixed IO per 1 call
                    DQ  0                     ; Reserved unused
 ;--- Native library name string ---
-LibraryName        DB  'NIOBench native library v0.04.00 for Windows x64.',0  
+LibraryName        DB  'NIOBench native library v0.04.01 for Windows x64.',0  
 ;---------- Export section ----------------------------------------------------;
 section '.edata' export data readable
 export 'WIN64JNI.dll' ,\

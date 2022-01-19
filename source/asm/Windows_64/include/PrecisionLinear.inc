@@ -162,14 +162,14 @@ mov rbx,OPB_BUFFER_BASE
 mov rcx,[r12]              ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                ; RDX = Parm#2 = Pointer to buffer
 mov r8,rbp                 ; R8  = Parm#3 = Block size
-lea r9,PARM_6              ; R9  = Parm#4 = Pointer for size return
+lea r9,PARM_6_Q            ; R9  = Parm#4 = Pointer for size return
 mov PARM_5,0               ; Parm#5 = Pointer to overlapped, not used
 call [WriteFile]
 test rax,rax
 mov eax,STEP_WRITE 
 jz ErrorFileContext
-mov rax,PARM_6             ; RAX = Return executed write size
-test rax,rax
+mov eax,PARM_6_D           ; RAX = Return executed write size
+test eax,eax
 jz .WriteDone              ; Go done if zero size returned
 js .WriteDone              ; Go done if negative size returned
 add OPB_TOTAL_WRITE,rax    ; Support total write size for code self-check
@@ -226,14 +226,14 @@ mov rbx,OPB_BUFFER_BASE
 mov rcx,[r12]              ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                ; RDX = Parm#2 = Pointer to buffer
 mov r8,OPB_BUFFER_SIZE     ; R8  = Parm#3 = Block size
-lea r9,PARM_6              ; R9  = Parm#4 = Pointer for size return
+lea r9,PARM_6_Q            ; R9  = Parm#4 = Pointer for size return
 mov PARM_5,0               ; Parm#5 = Pointer to overlapped, not used
 call [ReadFile]
 test rax,rax
 mov eax,STEP_READ 
 jz ErrorFileContext
-mov rax,PARM_6
-test rax,rax
+mov eax,PARM_6_D
+test eax,eax
 jz .ReadCopyDone           ; Go done if zero size returned
 js .ReadCopyDone           ; Go done if negative size returned
 ;--- Cycle for blocks READ ---
@@ -249,14 +249,14 @@ mov rbx,OPB_BUFFER_BASE
 mov rcx,[r14]              ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                ; RDX = Parm#2 = Pointer to buffer
 mov r8,OPB_BUFFER_SIZE     ; R8  = Parm#3 = Block size
-lea r9,PARM_6              ; R9  = Parm#4 = Pointer for size return
+lea r9,PARM_6_Q            ; R9  = Parm#4 = Pointer for size return
 mov PARM_5,0               ; Parm#5 = Pointer to overlapped, not used
 call [WriteFile]
 test rax,rax
 mov eax,STEP_WRITE 
 jz ErrorFileContext
-mov rax,PARM_6             ; RAX = Return executed write(copy) size
-test rax,rax
+mov eax,PARM_6_D           ; RAX = Return executed write(copy) size
+test eax,eax
 jz .WriteCopyDone          ; Go done if zero size returned
 js .WriteCopyDone          ; Go done if negative size returned
 add OPB_TOTAL_COPY,rax     ; Support total copy size for code self-check
@@ -323,14 +323,14 @@ mov rbx,OPB_BUFFER_BASE
 mov rcx,[r12]                  ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                    ; RDX = Parm#2 = Pointer to buffer
 mov r8,rbp                     ; R8  = Parm#3 = Block size
-lea r9,PARM_6                  ; R9  = Parm#4 = Pointer for size return
+lea r9,PARM_6_Q                ; R9  = Parm#4 = Pointer for size return
 mov PARM_5,0                   ; Parm#5 = Pointer to overlapped, not used
 call [ReadFile]
 test rax,rax
 mov eax,STEP_READ 
 jz ErrorFileContext
-mov rax,PARM_6                 ; RAX = Return executed read size
-test rax,rax
+mov eax,PARM_6_D               ; RAX = Return executed read size
+test eax,eax
 jz .ReadDone                   ; Go done if zero size returned
 js .ReadDone                   ; Go done if negative size returned
 add OPB_TOTAL_READ,rax         ; Support total read size for code self-check

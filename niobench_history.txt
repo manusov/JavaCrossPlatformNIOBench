@@ -1,3 +1,12 @@
+NIOBench v0.03.06 (January, 19, 2022)
+Bug fixed with analysing status information from Win API functions:
+ReadFile and WriteFile 
+On Windows x64, read and write data size from WinAPI get as QWORD,
+correct is DWORD.
+Occurred at Windows x64 with JDK17, test method: Native OS API.
+
+
+
 NIOBench v0.03.05 (February, 13, 2021)
 1) Added some comments, renamed classes for native library debug.
 2) Optimized access modifiers: public, protected, default, private.
@@ -7,11 +16,9 @@ NIOBench v0.03.05 (February, 13, 2021)
    operation at HandlerLoad.java.
 
 
-
 NIOBench v0.03.04 (February, 09, 2021)
 1) Changed web link.
 2) Repository reordered.
-
 
 
 Previous old history:

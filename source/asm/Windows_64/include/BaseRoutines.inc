@@ -198,7 +198,7 @@ test IPB_SRC_ATTRIBUTES,00000010b
 jz @f
 or eax,FILE_FLAG_WRITE_THROUGH
 @@:
-mov PARM_6,rax                 ; Parm#6 = File attribute and flags 
+mov PARM_6_Q,rax               ; Parm#6 = File attribute and flags 
 mov PARM_7,r8                  ; Parm#7 = 0 = Template file handle, not used
 call [CreateFileA]
 ;--- Update file handle ---
@@ -240,7 +240,7 @@ test IPB_DST_ATTRIBUTES,00000010b
 jz @f
 or eax,FILE_FLAG_WRITE_THROUGH
 @@:
-mov PARM_6,rax                 ; Parm#6 = File attribute and flags 
+mov PARM_6_Q,rax               ; Parm#6 = File attribute and flags 
 mov PARM_7,r8                  ; Parm#7 = 0 = Template file handle, not used
 call [CreateFileA]
 ;--- Update file handle ---

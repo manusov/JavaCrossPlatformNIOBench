@@ -55,10 +55,13 @@ void testLinear()
         ipb[IPB_BLOCK_SIZE]     = BLOCK_SIZE;
         ipb[IPB_FILE_COUNT]     = FILE_COUNT;
         ipb[IPB_ITERATIONS]     = ITERATIONS_COUNT;
-        ipb[IPB_SRC_ATTRIBUTES] = FILE_ATTRIBUTE_BLANK +
-                                  FILE_ATTRIBUTE_READ_SYNC +
-                                  FILE_ATTRIBUTE_WRITE_SYNC;
         
+        long attributes = FILE_ATTRIBUTE_BLANK +
+                       FILE_ATTRIBUTE_READ_SYNC +
+                       FILE_ATTRIBUTE_WRITE_SYNC;
+        ipb[IPB_SRC_ATTRIBUTES] = attributes;
+        ipb[IPB_DST_ATTRIBUTES] = attributes;
+
         transmitStringToIPB( SRC_PREFIX,  ipb, IPB_SRC_PATH_PREFIX );
         transmitStringToIPB( SRC_POSTFIX, ipb, IPB_SRC_PATH_POSTFIX );
         transmitStringToIPB( DST_PREFIX,  ipb, IPB_DST_PATH_PREFIX );

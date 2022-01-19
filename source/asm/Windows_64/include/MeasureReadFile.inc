@@ -81,14 +81,14 @@ mov rbx,OPB_BUFFER_BASE
 mov rcx,r12                    ; RCX = Parm#1 = Target file handle
 mov rdx,rbx                    ; RDX = Parm#2 = Pointer to buffer
 mov r8,rbp                     ; R8  = Parm#3 = Block size
-lea r9,PARM_6                  ; R9  = Parm#4 = Pointer for size return
+lea r9,PARM_6_Q                ; R9  = Parm#4 = Pointer for size return
 mov PARM_5,0                   ; Parm#5 = Pointer to overlapped, not used
 call [ReadFile]
 test rax,rax
 mov eax,STEP_READ 
 jz ErrorFileContext
-mov rax,PARM_6
-test rax,rax
+mov eax,PARM_6_D
+test eax,eax
 jz .ReadDone                   ; Go done if zero size returned
 js .ReadDone                   ; Go done if negative size returned
 ;--- Cycle for blocks ---
